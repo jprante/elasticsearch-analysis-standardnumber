@@ -1,0 +1,17 @@
+{
+   "index" : {
+      "analysis" : {
+          "filter" : {
+              "standardnumber" : {
+                  "type" : "standardnumber"
+              }
+          },
+          "analyzer" : {
+              "standardnumber" : {
+                  "tokenizer" : "whitespace",
+                  "filter" : [ "standardnumber", "unique" ]
+              }
+          }
+      }
+   }
+}
