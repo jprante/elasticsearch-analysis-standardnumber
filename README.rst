@@ -5,15 +5,16 @@ Standardnumber Analysis Plugin for Elasticsearch
 Standardnumber is an analysis plugin for `Elasticsearch <http://github.com/elasticsearch/elasticsearch>`_.
 
 What are standard numbers? Standard numbers are globally unique character sequences, often digits, with
-rules, domains, and canonical forms defined by a standardization bodies or organizations like ISO.
-For using standard numbers safely, often check digits are used, for better validation. The main
+rules, domains, and canonical forms defined by standardization bodies or organizations like the
+International Organisation for Standardization (ISO).
+For using valid standard numbers only, often check digits are used. The main
 purpose of standard numbers is the identifcation of items.
 
-Because standard numbers may appear in some literal variants, the canonical form should be computed
-so standard numbers can be compared for equality.
+Because standard numbers may appear in some literal variants, the canonical form must be deduced from the input
+so standard numbers can be compared for equivalence.
 
 With the standard number analysis, you can use a token filter for finding standard numbers and index
-them in canonical form and all their variants.
+them in canonical form plus all their valid variants.
 
 Currently, only ISBN (International Standard Book Number) is implemented.
 
@@ -27,11 +28,11 @@ Prerequisites::
 
   Elasticsearch 0.90+
 
-=============  =========  =================  =============================================================
+=============  =========  =================  =================================================================
 ES version     Plugin     Release date       Command
--------------  ---------  -----------------  -------------------------------------------------------------
-0.90.7         **1.0.0**  Dec 18, 2013       ./bin/plugin --install baseform --url
-=============  =========  =================  =============================================================
+-------------  ---------  -----------------  -----------------------------------------------------------------
+0.90.7         **1.0.0**  Dec 18, 2013       ./bin/plugin --install standardnumber --url http://bit.ly/1fmJgJR
+=============  =========  =================  =================================================================
 
 Do not forget to restart the node after installing.
 
@@ -110,7 +111,7 @@ normalized into ISBN-10/ISBN13 variant forms, which are added as extra tokens to
 License
 =======
 
-Elasticsearch Baseform Analysis Plugin
+Standardnumber Analysis Plugin for Elasticsearch
 
 Copyright (C) 2013 Jörg Prante
 
