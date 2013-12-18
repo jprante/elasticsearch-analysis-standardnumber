@@ -11,7 +11,7 @@
 
     <name>Elasticsearch Analysis Standard Number Plugin</name>
     <description>
-        Standard number recognition for Elasticsearch
+        Standard number analysis for Elasticsearch
     </description>
 
     <url>http://github.com/jprante/elasticsearch-analysis-standardnumber</url>
