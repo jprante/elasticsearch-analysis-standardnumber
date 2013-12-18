@@ -1,0 +1,108 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.xbib.standardnumber.check;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    public interface Digit {<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>        /**<a name="line.5"></a>
+<FONT color="green">006</FONT>         * Add check digits to a string containing digits<a name="line.6"></a>
+<FONT color="green">007</FONT>         * @param digits  the input data string containing only digits '0'-'9'<a name="line.7"></a>
+<FONT color="green">008</FONT>         * @return a new string containing data and check digits<a name="line.8"></a>
+<FONT color="green">009</FONT>         */<a name="line.9"></a>
+<FONT color="green">010</FONT>        String encode(String digits);<a name="line.10"></a>
+<FONT color="green">011</FONT>    <a name="line.11"></a>
+<FONT color="green">012</FONT>        /**<a name="line.12"></a>
+<FONT color="green">013</FONT>         * Verify a string that has been encoded with a check digit<a name="line.13"></a>
+<FONT color="green">014</FONT>         *<a name="line.14"></a>
+<FONT color="green">015</FONT>         * @param digits input digits<a name="line.15"></a>
+<FONT color="green">016</FONT>         */<a name="line.16"></a>
+<FONT color="green">017</FONT>        void verify(String digits) throws NumberFormatException;<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>        /**<a name="line.19"></a>
+<FONT color="green">020</FONT>         * Computes the check digit value<a name="line.20"></a>
+<FONT color="green">021</FONT>         *<a name="line.21"></a>
+<FONT color="green">022</FONT>         * @param digits - a string containing data<a name="line.22"></a>
+<FONT color="green">023</FONT>         * @return an integer representing the check digit<a name="line.23"></a>
+<FONT color="green">024</FONT>         */<a name="line.24"></a>
+<FONT color="green">025</FONT>        int compute(String digits);<a name="line.25"></a>
+<FONT color="green">026</FONT>    <a name="line.26"></a>
+<FONT color="green">027</FONT>        /**<a name="line.27"></a>
+<FONT color="green">028</FONT>         * Extract just the check digits from an encoded string<a name="line.28"></a>
+<FONT color="green">029</FONT>         *<a name="line.29"></a>
+<FONT color="green">030</FONT>         * @param digits input data containing check and data digits<a name="line.30"></a>
+<FONT color="green">031</FONT>         * @return the check digit, as an int.<a name="line.31"></a>
+<FONT color="green">032</FONT>         */<a name="line.32"></a>
+<FONT color="green">033</FONT>        int getDigit(String digits);<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>        /**<a name="line.35"></a>
+<FONT color="green">036</FONT>         * Extracts the raw data without the check digits<a name="line.36"></a>
+<FONT color="green">037</FONT>         *<a name="line.37"></a>
+<FONT color="green">038</FONT>         * @param digits -- A string containing only digits 0-9<a name="line.38"></a>
+<FONT color="green">039</FONT>         * @return a string without check digits<a name="line.39"></a>
+<FONT color="green">040</FONT>         */<a name="line.40"></a>
+<FONT color="green">041</FONT>        String getNumber(String digits);<a name="line.41"></a>
+<FONT color="green">042</FONT>    }<a name="line.42"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

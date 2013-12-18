@@ -1,0 +1,191 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.xbib.standardnumber;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.util.regex.Matcher;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.util.regex.Pattern;<a name="line.4"></a>
+<FONT color="green">005</FONT>    <a name="line.5"></a>
+<FONT color="green">006</FONT>    /**<a name="line.6"></a>
+<FONT color="green">007</FONT>     *  Z39.56 Serial Item and Contribution Identifier<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     * The SICI code (Serial Item and Contribution Identifier) is described in the<a name="line.9"></a>
+<FONT color="green">010</FONT>     * American standard ANSI/NISO Z39.56. The SICI code is known among<a name="line.10"></a>
+<FONT color="green">011</FONT>     * international scientific publishers and reproduction rights agencies.<a name="line.11"></a>
+<FONT color="green">012</FONT>     * The SICI even provides for the unambiguous identification of each article<a name="line.12"></a>
+<FONT color="green">013</FONT>     * or contribution published in a given issue of a serial publication.<a name="line.13"></a>
+<FONT color="green">014</FONT>     *<a name="line.14"></a>
+<FONT color="green">015</FONT>     * The SICI contains:<a name="line.15"></a>
+<FONT color="green">016</FONT>     *<a name="line.16"></a>
+<FONT color="green">017</FONT>     * - the ISSN<a name="line.17"></a>
+<FONT color="green">018</FONT>     *<a name="line.18"></a>
+<FONT color="green">019</FONT>     * - the date of publication, between brackets and formatted according to the<a name="line.19"></a>
+<FONT color="green">020</FONT>     *   formula YYYYMM<a name="line.20"></a>
+<FONT color="green">021</FONT>     *<a name="line.21"></a>
+<FONT color="green">022</FONT>     * - the issue number<a name="line.22"></a>
+<FONT color="green">023</FONT>     *<a name="line.23"></a>
+<FONT color="green">024</FONT>     * - the version number of the standard, here 1, preceded by a semicolon<a name="line.24"></a>
+<FONT color="green">025</FONT>     *<a name="line.25"></a>
+<FONT color="green">026</FONT>     * - and lastly a hyphen which precedes the control character calculated<a name="line.26"></a>
+<FONT color="green">027</FONT>     *   on the basis of all the preceding characters<a name="line.27"></a>
+<FONT color="green">028</FONT>     *<a name="line.28"></a>
+<FONT color="green">029</FONT>     *  Example:<a name="line.29"></a>
+<FONT color="green">030</FONT>     *  0095-4403(199502/03)21:3&lt;12:WATIIB&gt;2.0.TX;2-J<a name="line.30"></a>
+<FONT color="green">031</FONT>     *<a name="line.31"></a>
+<FONT color="green">032</FONT>     */<a name="line.32"></a>
+<FONT color="green">033</FONT>    public class SICI implements Comparable&lt;SICI&gt;, StandardNumber {<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>        private static final Pattern PATTERN = Pattern.compile("[\\p{Graph}\\p{Punct}]{12,64}");<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>        private String value;<a name="line.37"></a>
+<FONT color="green">038</FONT>    <a name="line.38"></a>
+<FONT color="green">039</FONT>        private String formatted;<a name="line.39"></a>
+<FONT color="green">040</FONT>    <a name="line.40"></a>
+<FONT color="green">041</FONT>        private boolean createWithChecksum;<a name="line.41"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>        @Override<a name="line.43"></a>
+<FONT color="green">044</FONT>        public int compareTo(SICI sici) {<a name="line.44"></a>
+<FONT color="green">045</FONT>            return sici != null ? normalizedValue().compareTo(sici.normalizedValue()) : -1;<a name="line.45"></a>
+<FONT color="green">046</FONT>        }<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>        @Override<a name="line.48"></a>
+<FONT color="green">049</FONT>        public SICI set(CharSequence value) {<a name="line.49"></a>
+<FONT color="green">050</FONT>            this.value = value != null ? value.toString() : null;<a name="line.50"></a>
+<FONT color="green">051</FONT>            return this;<a name="line.51"></a>
+<FONT color="green">052</FONT>        }<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>        @Override<a name="line.54"></a>
+<FONT color="green">055</FONT>        public SICI checksum() {<a name="line.55"></a>
+<FONT color="green">056</FONT>            this.createWithChecksum = true;<a name="line.56"></a>
+<FONT color="green">057</FONT>            return this;<a name="line.57"></a>
+<FONT color="green">058</FONT>        }<a name="line.58"></a>
+<FONT color="green">059</FONT>    <a name="line.59"></a>
+<FONT color="green">060</FONT>        @Override<a name="line.60"></a>
+<FONT color="green">061</FONT>        public SICI normalize() {<a name="line.61"></a>
+<FONT color="green">062</FONT>            Matcher m = PATTERN.matcher(value);<a name="line.62"></a>
+<FONT color="green">063</FONT>            if (m.find()) {<a name="line.63"></a>
+<FONT color="green">064</FONT>                this.value = clean(value.substring(m.start(), m.end()));<a name="line.64"></a>
+<FONT color="green">065</FONT>            }<a name="line.65"></a>
+<FONT color="green">066</FONT>            return this;<a name="line.66"></a>
+<FONT color="green">067</FONT>        }<a name="line.67"></a>
+<FONT color="green">068</FONT>    <a name="line.68"></a>
+<FONT color="green">069</FONT>        @Override<a name="line.69"></a>
+<FONT color="green">070</FONT>        public SICI verify() throws NumberFormatException {<a name="line.70"></a>
+<FONT color="green">071</FONT>            check();<a name="line.71"></a>
+<FONT color="green">072</FONT>            return this;<a name="line.72"></a>
+<FONT color="green">073</FONT>        }<a name="line.73"></a>
+<FONT color="green">074</FONT>    <a name="line.74"></a>
+<FONT color="green">075</FONT>        @Override<a name="line.75"></a>
+<FONT color="green">076</FONT>        public String normalizedValue() {<a name="line.76"></a>
+<FONT color="green">077</FONT>            return value;<a name="line.77"></a>
+<FONT color="green">078</FONT>        }<a name="line.78"></a>
+<FONT color="green">079</FONT>    <a name="line.79"></a>
+<FONT color="green">080</FONT>        @Override<a name="line.80"></a>
+<FONT color="green">081</FONT>        public String format() {<a name="line.81"></a>
+<FONT color="green">082</FONT>            return formatted;<a name="line.82"></a>
+<FONT color="green">083</FONT>        }<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>        private final static String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#";<a name="line.85"></a>
+<FONT color="green">086</FONT>    <a name="line.86"></a>
+<FONT color="green">087</FONT>        private final static int modulus = ALPHABET.length();<a name="line.87"></a>
+<FONT color="green">088</FONT>    <a name="line.88"></a>
+<FONT color="green">089</FONT>        private void check() throws NumberFormatException {<a name="line.89"></a>
+<FONT color="green">090</FONT>            if (value == null) {<a name="line.90"></a>
+<FONT color="green">091</FONT>                throw new NumberFormatException("null");<a name="line.91"></a>
+<FONT color="green">092</FONT>            }<a name="line.92"></a>
+<FONT color="green">093</FONT>            int l = value.length() - 1;<a name="line.93"></a>
+<FONT color="green">094</FONT>            int val;<a name="line.94"></a>
+<FONT color="green">095</FONT>            int sum = 0;<a name="line.95"></a>
+<FONT color="green">096</FONT>            for (int i = 0; i &lt; l; i++) {<a name="line.96"></a>
+<FONT color="green">097</FONT>                val = ALPHABET.indexOf(value.charAt(i));<a name="line.97"></a>
+<FONT color="green">098</FONT>                sum += val *  (i %2 == 0 ? 1 : 3);<a name="line.98"></a>
+<FONT color="green">099</FONT>            }<a name="line.99"></a>
+<FONT color="green">100</FONT>            int chk = modulus - sum % modulus;<a name="line.100"></a>
+<FONT color="green">101</FONT>            if (createWithChecksum) {<a name="line.101"></a>
+<FONT color="green">102</FONT>                char ch = chk &gt; 35 ? '#' : chk &gt; 9 ? (char)(10 + (chk - 'A')) : (char)('0' + chk);<a name="line.102"></a>
+<FONT color="green">103</FONT>                value = value.substring(0, l) + ch;<a name="line.103"></a>
+<FONT color="green">104</FONT>            }<a name="line.104"></a>
+<FONT color="green">105</FONT>            char digit = value.charAt(l);<a name="line.105"></a>
+<FONT color="green">106</FONT>            int chk2 = digit == '#' ? 36 : (digit &gt;= '0' &amp;&amp; digit &lt;= '9') ? digit - '0' : digit -'A' + 10;<a name="line.106"></a>
+<FONT color="green">107</FONT>            boolean valid = chk == chk2;<a name="line.107"></a>
+<FONT color="green">108</FONT>            if (!valid) {<a name="line.108"></a>
+<FONT color="green">109</FONT>                throw new NumberFormatException("invalid checksum: " + chk + " != " + chk2);<a name="line.109"></a>
+<FONT color="green">110</FONT>            }<a name="line.110"></a>
+<FONT color="green">111</FONT>        }<a name="line.111"></a>
+<FONT color="green">112</FONT>    <a name="line.112"></a>
+<FONT color="green">113</FONT>        private String clean(String raw) {<a name="line.113"></a>
+<FONT color="green">114</FONT>            if (raw == null) {<a name="line.114"></a>
+<FONT color="green">115</FONT>                return raw;<a name="line.115"></a>
+<FONT color="green">116</FONT>            }<a name="line.116"></a>
+<FONT color="green">117</FONT>            StringBuilder sb = new StringBuilder(raw);<a name="line.117"></a>
+<FONT color="green">118</FONT>            int pos = sb.indexOf("SICI ");<a name="line.118"></a>
+<FONT color="green">119</FONT>            if (pos &gt;= 0) {<a name="line.119"></a>
+<FONT color="green">120</FONT>                sb = new StringBuilder(sb.substring(pos + 5));<a name="line.120"></a>
+<FONT color="green">121</FONT>            }<a name="line.121"></a>
+<FONT color="green">122</FONT>            this.formatted = "SICI " + sb;<a name="line.122"></a>
+<FONT color="green">123</FONT>            return sb.toString();<a name="line.123"></a>
+<FONT color="green">124</FONT>        }<a name="line.124"></a>
+<FONT color="green">125</FONT>    }<a name="line.125"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,87 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.xbib.elasticsearch.plugin.analysis.standardnumber;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import org.elasticsearch.common.inject.Inject;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import org.elasticsearch.common.settings.Settings;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import org.elasticsearch.index.AbstractIndexComponent;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import org.elasticsearch.index.Index;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import org.elasticsearch.index.mapper.MapperService;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.elasticsearch.index.settings.IndexSettings;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import org.xbib.elasticsearch.index.analysis.Detector;<a name="line.9"></a>
+<FONT color="green">010</FONT>    import org.xbib.elasticsearch.index.mapper.standardnumber.StandardNumberMapper;<a name="line.10"></a>
+<FONT color="green">011</FONT>    <a name="line.11"></a>
+<FONT color="green">012</FONT>    public class RegisterStandardNumberType extends AbstractIndexComponent {<a name="line.12"></a>
+<FONT color="green">013</FONT>    <a name="line.13"></a>
+<FONT color="green">014</FONT>        @Inject<a name="line.14"></a>
+<FONT color="green">015</FONT>        public RegisterStandardNumberType(Index index, @IndexSettings Settings indexSettings,<a name="line.15"></a>
+<FONT color="green">016</FONT>                                          MapperService mapperService, Detector detector) {<a name="line.16"></a>
+<FONT color="green">017</FONT>            super(index, indexSettings);<a name="line.17"></a>
+<FONT color="green">018</FONT>            mapperService.documentMapperParser().putTypeParser("stdnum",<a name="line.18"></a>
+<FONT color="green">019</FONT>                    new StandardNumberMapper.TypeParser(detector));<a name="line.19"></a>
+<FONT color="green">020</FONT>        }<a name="line.20"></a>
+<FONT color="green">021</FONT>    }<a name="line.21"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

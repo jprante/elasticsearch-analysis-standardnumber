@@ -1,0 +1,110 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.xbib.elasticsearch.index.analysis;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import org.xbib.standardnumber.ISBN;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import org.xbib.standardnumber.StandardNumber;<a name="line.4"></a>
+<FONT color="green">005</FONT>    <a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.util.Collection;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    import static org.elasticsearch.common.collect.Lists.newLinkedList;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    public class Detector {<a name="line.10"></a>
+<FONT color="green">011</FONT>    <a name="line.11"></a>
+<FONT color="green">012</FONT>        public Collection&lt;StandardNumber&gt; detect(CharSequence content) {<a name="line.12"></a>
+<FONT color="green">013</FONT>            Collection&lt;StandardNumber&gt; candidates = newLinkedList();<a name="line.13"></a>
+<FONT color="green">014</FONT>            try {<a name="line.14"></a>
+<FONT color="green">015</FONT>                ISBN isbn = new ISBN().set(content).normalize().verify();<a name="line.15"></a>
+<FONT color="green">016</FONT>                candidates.add(isbn);<a name="line.16"></a>
+<FONT color="green">017</FONT>            } catch (NumberFormatException e) {<a name="line.17"></a>
+<FONT color="green">018</FONT>                // ignore ISBN<a name="line.18"></a>
+<FONT color="green">019</FONT>            }<a name="line.19"></a>
+<FONT color="green">020</FONT>            return candidates;<a name="line.20"></a>
+<FONT color="green">021</FONT>        }<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>        public Collection&lt;CharSequence&gt; lookup(CharSequence content) {<a name="line.23"></a>
+<FONT color="green">024</FONT>            Collection&lt;CharSequence&gt; variants = newLinkedList();<a name="line.24"></a>
+<FONT color="green">025</FONT>            try {<a name="line.25"></a>
+<FONT color="green">026</FONT>                ISBN isbn = new ISBN().set(content).normalize().verify();<a name="line.26"></a>
+<FONT color="green">027</FONT>                if (!isbn.isEAN()) {<a name="line.27"></a>
+<FONT color="green">028</FONT>                    // create up to 4 variants: ISBN, ISBN normalized, ISBN-13, ISBN-13 normalized<a name="line.28"></a>
+<FONT color="green">029</FONT>                    variants.add(isbn.ean(false).format());<a name="line.29"></a>
+<FONT color="green">030</FONT>                    variants.add(isbn.ean(false).normalizedValue());<a name="line.30"></a>
+<FONT color="green">031</FONT>                    isbn = isbn.ean(true).set(content).normalize().verify();<a name="line.31"></a>
+<FONT color="green">032</FONT>                    variants.add(isbn.format());<a name="line.32"></a>
+<FONT color="green">033</FONT>                    variants.add(isbn.normalizedValue());<a name="line.33"></a>
+<FONT color="green">034</FONT>                } else {<a name="line.34"></a>
+<FONT color="green">035</FONT>                    // 2 variants, do not create ISBN-10 for an ISBN-13<a name="line.35"></a>
+<FONT color="green">036</FONT>                    variants.add(isbn.ean(true).format());<a name="line.36"></a>
+<FONT color="green">037</FONT>                    variants.add(isbn.ean(true).normalizedValue());<a name="line.37"></a>
+<FONT color="green">038</FONT>                }<a name="line.38"></a>
+<FONT color="green">039</FONT>            } catch (NumberFormatException e) {<a name="line.39"></a>
+<FONT color="green">040</FONT>                // ignore ISBN<a name="line.40"></a>
+<FONT color="green">041</FONT>            }<a name="line.41"></a>
+<FONT color="green">042</FONT>            return variants;<a name="line.42"></a>
+<FONT color="green">043</FONT>        }<a name="line.43"></a>
+<FONT color="green">044</FONT>    }<a name="line.44"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

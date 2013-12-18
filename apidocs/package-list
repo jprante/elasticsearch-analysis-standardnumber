@@ -1,0 +1,6 @@
+org.xbib.elasticsearch.index.analysis
+org.xbib.elasticsearch.index.mapper.standardnumber
+org.xbib.elasticsearch.plugin.analysis.standardnumber
+org.xbib.standardnumber
+org.xbib.standardnumber.check
+org.xbib.standardnumber.check.iso7064

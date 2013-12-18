@@ -1,0 +1,82 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    <a name="line.1"></a>
+<FONT color="green">002</FONT>    package org.xbib.standardnumber;<a name="line.2"></a>
+<FONT color="green">003</FONT>    <a name="line.3"></a>
+<FONT color="green">004</FONT>    import org.testng.Assert;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import org.testng.annotations.Test;<a name="line.5"></a>
+<FONT color="green">006</FONT>    <a name="line.6"></a>
+<FONT color="green">007</FONT>    public class SICITest extends Assert {<a name="line.7"></a>
+<FONT color="green">008</FONT>    <a name="line.8"></a>
+<FONT color="green">009</FONT>        @Test<a name="line.9"></a>
+<FONT color="green">010</FONT>        public void testSICI1() throws Exception {<a name="line.10"></a>
+<FONT color="green">011</FONT>            SICI sici = new SICI().set("0095-4403(199502/03)21:3&lt;12:WATIIB&gt;2.0.TX;2-J").normalize().verify();<a name="line.11"></a>
+<FONT color="green">012</FONT>            assertEquals("0095-4403(199502/03)21:3&lt;12:WATIIB&gt;2.0.TX;2-J", sici.normalizedValue());<a name="line.12"></a>
+<FONT color="green">013</FONT>            assertEquals("SICI 0095-4403(199502/03)21:3&lt;12:WATIIB&gt;2.0.TX;2-J", sici.format());<a name="line.13"></a>
+<FONT color="green">014</FONT>        }<a name="line.14"></a>
+<FONT color="green">015</FONT>    <a name="line.15"></a>
+<FONT color="green">016</FONT>    }<a name="line.16"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
