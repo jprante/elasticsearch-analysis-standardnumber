@@ -16,10 +16,41 @@ so standard numbers can be compared for equivalence.
 With the standard number analysis, you can use a token filter for finding standard numbers and index
 them in canonical form plus all their valid variants.
 
-Currently, only ISBN (International Standard Book Number) is implemented.
+Available standard numbers:
 
-Other standard numbers will follow: EAN, GTIN, IBAN, ISAN, ISMN, ISNI, ISSN, ISTC, ISWC, LCCN, ORCID, PPN, SICI, UPC and ZDB.
+ARK Archival Resource Key
 
+DOI ISO 26324 Digital Object Identifier System
+
+EAN European Article Number
+
+GTIN Global Trade Item Number
+
+IBAN ISO 13616 International Bank Account Number
+
+ISAN ISO 15706 International Standard Audiovisual Number
+
+ISBN ISO 2108 International Standard Book Number
+
+ISMN ISO 10957 International Standard Music Number
+
+ISNI ISO 27729 International Standard Name Identifier
+
+ISSN ISO 3297 International Standard Serial Number
+
+ISTC ISO 21047 International Standard Text Code
+
+ISWC ISO 15707 International Standard Musical Work Code
+
+ORCID Open Researcher and Contributor ID (compatible to ISNI)
+
+PPN Pica Productie Nummer
+
+SICI Serial Item and Contribution Identifier
+
+UPC ISO 15420 Universal Product Code
+
+ZDB Zeitschriftendatenbank ID
 
 Installation
 ------------
@@ -31,7 +62,7 @@ Prerequisites::
 =============  =========  =================  =================================================================
 ES version     Plugin     Release date       Command
 -------------  ---------  -----------------  -----------------------------------------------------------------
-0.90.7         **1.0.0**  Dec 18, 2013       ./bin/plugin --install standardnumber --url http://bit.ly/1fmJgJR
+0.90.7         **1.0.0**  Dec 21, 2013       ./bin/plugin --install standardnumber --url http://bit.ly/1fmJgJR
 =============  =========  =================  =================================================================
 
 Do not forget to restart the node after installing.

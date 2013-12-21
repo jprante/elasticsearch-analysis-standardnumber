@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * ISO 10957: International Standard Music Number (ISMN)
+ * ISO 10957 International Standard Music Number (ISMN)
  *
  * Z39.50 BIB-1 Use Attribute 1092
  *

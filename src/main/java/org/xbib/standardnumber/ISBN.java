@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * ISO 2108: International Standard Book Number (ISBN)
+ * ISO 2108 International Standard Book Number (ISBN)
  *
  * Z39.50 BIB-1 Use Attribute 7
  *

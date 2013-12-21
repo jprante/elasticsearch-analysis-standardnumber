@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * ISO 15707: International Standard Musical Work Code (ISWC)
+ * ISO 15707 International Standard Musical Work Code (ISWC)
  *
  * International Standard Musical Work Code (ISWC) is a unique identifier for
  * musical works, similar to ISBN.

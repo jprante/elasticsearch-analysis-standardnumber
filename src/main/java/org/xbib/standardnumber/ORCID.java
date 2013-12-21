@@ -3,7 +3,7 @@ package org.xbib.standardnumber;
 import java.net.URI;
 
 /**
- * ORCID
+ * Open Researcher and Contributor ID - ORCID
  *
  * ORCID is comptabible to International Standard Name Identifier (ISNI)  ISO 2772
  *

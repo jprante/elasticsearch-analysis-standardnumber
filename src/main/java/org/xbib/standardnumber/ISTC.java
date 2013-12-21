@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * ISO 21047: International Standard Text Code (ISTC)
+ * ISO 21047 International Standard Text Code (ISTC)
  *
  * The International Standard Text Code (ISTC) is a numbering system for the unique identification
  * of text-based works; the term “work” can refer to any content appearing in conventional

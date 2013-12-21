@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * ISO 3297: International Standard Serial Number (ISSN)
+ * ISO 3297 International Standard Serial Number (ISSN)
  *
  * Z39.50 BIB-1 Use Attribute 8
  *
