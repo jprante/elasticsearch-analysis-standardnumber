@@ -42,7 +42,10 @@ public class ISAN implements Comparable<ISAN>, StandardNumber {
 
     private boolean versioned;
 
-    private boolean createChecksum;
+    @Override
+    public String type() {
+        return "isan";
+    }
 
     @Override
     public int compareTo(ISAN isan) {
@@ -56,7 +59,7 @@ public class ISAN implements Comparable<ISAN>, StandardNumber {
     }
 
     @Override
-    public ISAN checksum() {
+    public ISAN createChecksum(boolean createWithChecksum) {
         return this;
     }
 
@@ -71,8 +74,18 @@ public class ISAN implements Comparable<ISAN>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public ISAN verify() throws NumberFormatException {
-        check();
+        if (value == null) {
+            throw new NumberFormatException();
+        }
+        if (!check()) {
+            throw new NumberFormatException("invalid createChecksum");
+        }
         return this;
     }
 
@@ -91,27 +104,33 @@ public class ISAN implements Comparable<ISAN>, StandardNumber {
         return this;
     }
 
+    @Override
+    public ISAN reset() {
+        this.value = null;
+        this.formatted = null;
+        this.versioned = false;
+        return this;
+    }
+
     private final static MOD3736 check = new MOD3736();
 
-    private void check() throws NumberFormatException {
-        if (value == null) {
-            throw new NumberFormatException("null");
-        }
+    private boolean check() {
         if (versioned) {
             int chk1 = check.compute(value.substring(0,17));
             int chk2 = check.compute(value.substring(0,16) + value.substring(17,26));
             if (chk1 != 1) {
-                throw new NumberFormatException("invalid first checksum: " + chk1);
+                return false;
             }
             if (chk2 != 1) {
-                throw new NumberFormatException("invalid second checksum: " + chk2);
+                return false;
             }
         } else {
             int chk = check.compute(value);
             if (chk != 1) {
-                throw new NumberFormatException("invalid checksum: " + chk);
+                return false;
             }
         }
+        return true;
     }
 
     private String clean(String value) {

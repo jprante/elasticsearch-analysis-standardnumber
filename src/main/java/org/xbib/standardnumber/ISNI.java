@@ -25,6 +25,11 @@ public class ISNI implements Comparable<ISNI>, StandardNumber {
 
     private boolean createWithChecksum;
 
+    @Override
+    public String type() {
+        return "isni";
+    }
+
     /**
      * Creates a new ISNI
      *
@@ -37,8 +42,8 @@ public class ISNI implements Comparable<ISNI>, StandardNumber {
     }
 
     @Override
-    public ISNI checksum() {
-        this.createWithChecksum = true;
+    public ISNI createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -48,8 +53,15 @@ public class ISNI implements Comparable<ISNI>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public ISNI verify() throws NumberFormatException {
-        check();
+        if (!check()) {
+            throw new NumberFormatException("bad createChecksum");
+        }
         return this;
     }
 
@@ -84,16 +96,24 @@ public class ISNI implements Comparable<ISNI>, StandardNumber {
         return this;
     }
 
+    @Override
+    public ISNI reset() {
+        this.value = null;
+        this.formatted = null;
+        this.createWithChecksum = false;
+        return this;
+    }
+
     private final static MOD112 check = new MOD112();
 
-    private void check() throws NumberFormatException {
+    private boolean check() {
         if (createWithChecksum) {
             this.value = check.encode(value.length() < 16 ? value : value.substring(0, value.length()-1));
         }
         if (value.length() < 16) {
-            throw new NumberFormatException("too short: " + value);
+            return false;
         }
-        check.verify(value);
+        return check.verify(value);
     }
 
     private String clean(String isbn) {

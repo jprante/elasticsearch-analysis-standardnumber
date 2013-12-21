@@ -29,7 +29,12 @@ public class ARK implements Comparable<ARK>, StandardNumber {
 
     private static final Pattern URI_PATTERN = Pattern.compile("^(ark)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
 
-    private Object value;
+    private URI value;
+
+    @Override
+    public String type() {
+        return "ark";
+    }
 
     @Override
     public int compareTo(ARK ark) {
@@ -38,16 +43,12 @@ public class ARK implements Comparable<ARK>, StandardNumber {
 
     @Override
     public ARK set(CharSequence value) {
-        this.value = value != null ? value.toString() : null;
+        this.value = value != null ? URI.create(value.toString()) : null;
         return this;
     }
 
-    /**
-     * No checksum
-     * @return this ARK
-     */
     @Override
-    public ARK checksum() {
+    public ARK createChecksum(boolean checksum) {
         return this;
     }
 
@@ -68,6 +69,11 @@ public class ARK implements Comparable<ARK>, StandardNumber {
         return this;
     }
 
+    @Override
+    public boolean isValid() {
+       return "ark".equals(value.getScheme());
+    }
+
     /**
      * No verification.
      *
@@ -76,6 +82,9 @@ public class ARK implements Comparable<ARK>, StandardNumber {
      */
     @Override
     public ARK verify() throws NumberFormatException {
+        if (!"ark".equals(value.getScheme())) {
+            throw new NumberFormatException();
+        }
         return this;
     }
 
@@ -90,6 +99,11 @@ public class ARK implements Comparable<ARK>, StandardNumber {
     }
 
     public URI asURI() {
-        return (URI)value;
+        return value;
+    }
+
+    public ARK reset() {
+        this.value = null;
+        return this;
     }
 }

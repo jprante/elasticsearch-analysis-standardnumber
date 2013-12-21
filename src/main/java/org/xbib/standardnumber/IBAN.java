@@ -19,7 +19,11 @@ import java.util.regex.Pattern;
  */
 public class IBAN implements Comparable<IBAN>, StandardNumber {
 
-    private static final Pattern PATTERN = Pattern.compile("[\\p{Alnum}\\-\\s]{5,34}");
+    /**
+     * Norway = 15, Malta = 31 + "IBAN "
+     *
+     */
+    private static final Pattern PATTERN = Pattern.compile("[\\p{Alnum}\\-\\s]{15,36}");
 
     private String formatted;
 
@@ -28,6 +32,11 @@ public class IBAN implements Comparable<IBAN>, StandardNumber {
     private String country;
 
     private boolean createWithChecksum;
+
+    @Override
+    public String type() {
+        return "iban";
+    }
 
     @Override
     public int compareTo(IBAN iban) {
@@ -41,8 +50,8 @@ public class IBAN implements Comparable<IBAN>, StandardNumber {
     }
 
     @Override
-    public IBAN checksum() {
-        this.createWithChecksum = true;
+    public IBAN createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -51,13 +60,31 @@ public class IBAN implements Comparable<IBAN>, StandardNumber {
         Matcher m = PATTERN.matcher(value);
         if (m.find()) {
             this.value = parse(value.substring(m.start(), m.end()));
+        } else {
+            this.value = null;
+        }
+        if (value != null && createWithChecksum) {
+            int c = check.compute(value.substring(0, value.length()-2));
+            String chk = String.format("%02d", c);
+            this.value = value + chk;
+            this.formatted = formatted.substring(0,2) + chk + formatted.substring(4);
         }
         return this;
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public IBAN verify() throws NumberFormatException {
-        check();
+        if (value == null || value.isEmpty()) {
+            throw new NumberFormatException("invalid");
+        }
+        if (!check()) {
+            throw new NumberFormatException("bad checksum");
+        }
         if (formatted.length() != getLengthForCountryCode(country)) {
             throw new NumberFormatException("invalid length for country: "
                     + formatted.length() + " " + formatted);
@@ -75,20 +102,19 @@ public class IBAN implements Comparable<IBAN>, StandardNumber {
         return formatted;
     }
 
+    @Override
+    public IBAN reset() {
+        this.value = null;
+        this.formatted = null;
+        this.country = null;
+        this.createWithChecksum = false;
+        return this;
+    }
+
     private final static MOD9710 check = new MOD9710();
 
-    private void check() throws NumberFormatException {
-        if (createWithChecksum) {
-            int c = check.compute(value.substring(0, value.length()-2));
-            String chk = String.format("%02d", c);
-            this.value = value + chk;
-            this.formatted = formatted.substring(0,2) + chk + formatted.substring(4);
-        }
-        try {
-            check.verify(value);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException(e.getMessage() + ": " + formatted);
-        }
+    private boolean check() {
+        return value != null && !value.isEmpty() && check.verify(value);
     }
 
     private String parse(String raw) {

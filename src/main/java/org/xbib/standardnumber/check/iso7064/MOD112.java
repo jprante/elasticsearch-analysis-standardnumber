@@ -11,11 +11,8 @@ public class MOD112 implements Digit {
     }
 
     @Override
-    public void verify(String digits) throws NumberFormatException {
-        boolean b = compute(getNumber(digits)) == getDigit(digits);
-        if (!b) {
-            throw new NumberFormatException("bad checksum: " + digits);
-        }
+    public boolean verify(String digits) {
+        return compute(getNumber(digits)) == getDigit(digits);
     }
 
     @Override
@@ -23,10 +20,7 @@ public class MOD112 implements Digit {
         int p = 0;
         for (int i = 0; i < digits.length(); ++i) {
             int c = digits.charAt(i) - '0';
-            if (c < 0 || c > 9) {
-                throw new NumberFormatException("'" + digits + "' has bad digit: '" + digits.charAt(i) + "'");
-            }
-            p = 2*(p + c);
+            p = 2 * (p + c);
         }
         p = p % 11;
         return (12 - p) % 11;

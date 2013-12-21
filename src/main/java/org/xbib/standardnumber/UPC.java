@@ -30,6 +30,11 @@ public class UPC implements Comparable<UPC>, StandardNumber {
     private boolean createWithChecksum;
 
     @Override
+    public String type() {
+        return "upc";
+    }
+
+    @Override
     public int compareTo(UPC upc) {
         return upc != null ? normalizedValue().compareTo(upc.normalizedValue()) : -1;
     }
@@ -41,8 +46,8 @@ public class UPC implements Comparable<UPC>, StandardNumber {
     }
 
     @Override
-    public UPC checksum() {
-        this.createWithChecksum = true;
+    public UPC createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -56,8 +61,18 @@ public class UPC implements Comparable<UPC>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public UPC verify() throws NumberFormatException {
-        check();
+        if (value == null || value.isEmpty()) {
+            throw new NumberFormatException("invalid");
+        }
+        if (!check()) {
+            throw new NumberFormatException("bad checksum");
+        }
         return this;
     }
 
@@ -71,16 +86,20 @@ public class UPC implements Comparable<UPC>, StandardNumber {
         return value;
     }
 
-    private void check() throws NumberFormatException {
+    @Override
+    public UPC reset() {
+        this.value = null;
+        this.createWithChecksum = false;
+        return this;
+    }
+
+    private boolean check() {
         int l = value.length() - 1;
         int checksum = 0;
         int weight;
         int val;
         for (int i = 0; i < l; i++) {
             val = value.charAt(i) - '0';
-            if (val < 0 || val > 9) {
-                throw new NumberFormatException("not a digit: " + val );
-            }
             weight = i%2 == 0 ? 3 : 1;
             checksum += val * weight;
         }
@@ -89,9 +108,6 @@ public class UPC implements Comparable<UPC>, StandardNumber {
             char ch = (char)('0' + chk);
             value = value.substring(0, l) + ch;
         }
-        boolean valid = chk == (value.charAt(l) - '0');
-        if (!valid) {
-            throw new NumberFormatException("invalid checksum: " + chk + " != " + value.charAt(l));
-        }
+        return chk == (value.charAt(l) - '0');
     }
 }

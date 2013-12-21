@@ -35,6 +35,11 @@ public class ISTC implements Comparable<ISTC>, StandardNumber {
     private boolean createWithChecksum;
 
     @Override
+    public String type() {
+        return "istc";
+    }
+
+    @Override
     public int compareTo(ISTC istc) {
         return istc != null ? normalizedValue().compareTo(istc.normalizedValue()) : -1;
     }
@@ -46,8 +51,8 @@ public class ISTC implements Comparable<ISTC>, StandardNumber {
     }
 
     @Override
-    public ISTC checksum() {
-        this.createWithChecksum = true;
+    public ISTC createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -61,8 +66,18 @@ public class ISTC implements Comparable<ISTC>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public ISTC verify() throws NumberFormatException {
-        check();
+        if (value == null || value.isEmpty()) {
+            throw new NumberFormatException("invalid");
+        }
+        if (!check()) {
+            throw new NumberFormatException("bad createChecksum");
+        }
         return this;
     }
 
@@ -76,10 +91,15 @@ public class ISTC implements Comparable<ISTC>, StandardNumber {
         return formatted;
     }
 
-    private void check() throws NumberFormatException {
-        if (value == null) {
-            throw new NumberFormatException("null");
-        }
+    @Override
+    public ISTC reset() {
+        this.value = null;
+        this.formatted = null;
+        this.createWithChecksum = false;
+        return this;
+    }
+
+    private boolean check() {
         int l = value.length() - 1;
         int checksum = 0;
         int weight;
@@ -93,9 +113,6 @@ public class ISTC implements Comparable<ISTC>, StandardNumber {
             if (val >= '0' && val <= '9') {
                 val = val - '0';
             }
-            if (val < 0 || val > 35) {
-                throw new NumberFormatException("not a valid symbol: " + val );
-            }
             factor = i % 4 < 2 ? 1 : 5;
             weight = (12 - 2 * (i % 4)) - factor; // --> 11,9,3,1
             checksum += val * weight;
@@ -107,15 +124,12 @@ public class ISTC implements Comparable<ISTC>, StandardNumber {
         }
         char digit = value.charAt(l);
         int chk2 = (digit >= '0' && digit <= '9') ? digit - '0' : digit -'A' + 10;
-        boolean valid = chk == chk2;
-        if (!valid) {
-            throw new NumberFormatException("invalid checksum: " + chk + " != " + chk2);
-        }
+        return chk == chk2;
     }
 
     private String clean(String raw) {
         if (raw == null) {
-            return raw;
+            return null;
         }
         StringBuilder sb = new StringBuilder(raw);
         int i = sb.indexOf("-");
@@ -131,11 +145,13 @@ public class ISTC implements Comparable<ISTC>, StandardNumber {
         if (sb.indexOf("ISTC") == 0) {
             sb = new StringBuilder(sb.substring(4));
         }
-        this.formatted = "ISTC "
+        if (sb.length() > 15) {
+            this.formatted = "ISTC "
                 + sb.substring(0,3) + "-"
                 + sb.substring(3,7) + "-"
                 + sb.substring(7,15) + "-"
                 + sb.substring(15);
+        }
         return sb.toString();
     }
 }

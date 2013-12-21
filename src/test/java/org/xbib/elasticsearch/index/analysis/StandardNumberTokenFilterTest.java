@@ -27,7 +27,7 @@ import org.xbib.elasticsearch.plugin.analysis.standardnumber.AnalysisStandardNum
 import java.io.IOException;
 
 
-public class StandardNumberTokenFilterTests extends Assert {
+public class StandardNumberTokenFilterTest extends Assert {
 
     private final static ESLogger logger = ESLoggerFactory.getLogger("test");
 
@@ -52,7 +52,10 @@ public class StandardNumberTokenFilterTests extends Assert {
                 "Action",
                 "lautet",
                 "9781617291623",
-                "978-1-61729-162-3"
+                "EAN 9781617291623",
+                "GTIN 9781617291623",
+                "ISBN 978-1-61729-162-3",
+                "ISBN 9781617291623"
         };
         assertSimpleTSOutput(analyzer.tokenStream("content", source), expected);
     }
@@ -70,10 +73,10 @@ public class StandardNumberTokenFilterTests extends Assert {
                 "Action",
                 "lautet",
                 "1-9339-8817-7.",
-                "1-933988-17-7",
-                "1933988177",
-                "978-1-933988-17-7",
-                "9781933988177"
+                "ISBN 1-933988-17-7",
+                "ISBN 1933988177",
+                "ISBN 978-1-933988-17-7",
+                "ISBN 9781933988177"
         };
         assertSimpleTSOutput(analyzer.tokenStream("content", source), expected);
     }

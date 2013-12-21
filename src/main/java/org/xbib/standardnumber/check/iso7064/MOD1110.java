@@ -13,11 +13,8 @@ public class MOD1110 implements Digit {
     }
 
     @Override
-    public void verify(String digits) throws NumberFormatException {
-        boolean b = compute(digits) == 1;
-        if (!b) {
-            throw new NumberFormatException("bad checksum: " + digits);
-        }
+    public boolean verify(String digits) {
+        return compute(digits) == 1;
     }
 
     @Override

@@ -56,6 +56,13 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
 
     private boolean valid;
 
+    private boolean isEAN;
+
+    @Override
+    public String type() {
+        return "isbn";
+    }
+
     /**
      * Set ISBN value
      *
@@ -68,8 +75,8 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
     }
 
     @Override
-    public ISBN checksum() {
-        this.createWithChecksum = true;
+    public ISBN createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -91,7 +98,15 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
      * @return true if valid, false otherwise
      */
     @Override
+    public boolean isValid() throws NumberFormatException {
+        return value != null && !value.isEmpty() && check() && (eanPreferred ? eanvalue != null : value != null);
+    }
+
+    @Override
     public ISBN verify() throws NumberFormatException {
+        if (value == null || value.isEmpty()) {
+            throw new NumberFormatException("must not be null");
+        }
         check();
         this.valid = eanPreferred ? eanvalue != null : value != null;
         if (!valid) {
@@ -117,14 +132,27 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
      */
     @Override
     public String format() {
-        return valid ? eanPreferred ?
+        if ((!eanPreferred && value == null) || eanvalue == null) {
+            return null;
+        }
+        return eanPreferred ?
                         fix(eanvalue != null ? eanvalue : "978" + value) :
-                        fix("978" +value).substring(4) :
-                "";
+                        fix("978" + value).substring(4);
+    }
+
+    @Override
+    public ISBN reset() {
+        this.value = null;
+        this.createWithChecksum = false;
+        this.eanvalue = null;
+        this.eanPreferred = false;
+        this.valid = false;
+        this.isEAN = false;
+        return this;
     }
 
     public boolean isEAN() {
-        return eanvalue != null;
+        return isEAN;
     }
 
     /**
@@ -141,7 +169,7 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
      * @return the country/publisher code from ISBN
      */
     public String getCountryAndPublisherCode()  {
-        // we don't care about the wrong checksum when we fix the value
+        // we don't care about the wrong createChecksum when we fix the value
         String code = eanvalue != null ? fix(eanvalue) : fix("978" + value);
         String s = code.substring(4);
         int pos1 = s.indexOf('-');
@@ -179,15 +207,13 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
         return sb.toString();
     }
 
-    private void check() throws NumberFormatException {
-        if (value == null) {
-            throw new NumberFormatException("must not be null");
-        }
-        eanvalue = null;
+    private boolean check() {
+        this.eanvalue = null;
+        this.isEAN = false;
         int i;
         int val;
         if (value.length() < 9) {
-            throw new NumberFormatException("too short");
+            return false;
         }
         if (value.length() == 10) {
             // ISBN-10
@@ -198,12 +224,12 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
                         : value.charAt(i) - '0';
                 if (val >= 0) {
                     if (val == 10 && weight != 1) {
-                        throw new NumberFormatException("bad X symbol"); // bad place for X
+                        return false;
                     }
                     checksum += weight * val;
                     weight--;
                 } else {
-                    throw new NumberFormatException("invalid char"); // invalid char
+                    return false;
                 }
             }
             String s = value.substring(0, 9);
@@ -211,16 +237,14 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
                 if (createWithChecksum) {
                     this.value = s + createCheckDigit10(s);
                 } else {
-                    throw new NumberFormatException("bad checksum"); // bad checksum
+                    return false;
                 }
             }
-            if (eanPreferred) {
-                this.eanvalue = "978" + s + createCheckDigit13("978" + s);
-            }
+            this.eanvalue = "978" + s + createCheckDigit13("978" + s);
         } else if (value.length() == 13) {
             // ISBN-13 "book land"
             if (!value.startsWith("978") && !value.startsWith("979")) {
-                throw new NumberFormatException("bad prefix, must be 978 or 979: " + value);
+                return false;
             }
             int checksum13 = 0;
             int weight13 = 1;
@@ -228,25 +252,24 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
                 val = value.charAt(i) == 'X' || value.charAt(i) == 'x' ? 10 : value.charAt(i) - '0';
                 if (val >= 0) {
                     if (val == 10) {
-                        throw new NumberFormatException("bad symbol: " + value);
+                        return false;
                     }
                     checksum13 += (weight13 * val);
                     weight13 = (weight13 + 2) % 4;
                 } else {
-                    throw new NumberFormatException("invalid char");
+                    return false;
                 }
             }
             // set value
             if ((checksum13 % 10) != 0) {
                 if (eanPreferred && createWithChecksum) {
-                    // with checksum
-                    this.eanvalue = value.substring(0, 12) + createCheckDigit13(value.substring(0, 12));
+                    // with createChecksum
+                    eanvalue = value.substring(0, 12) + createCheckDigit13(value.substring(0, 12));
                 } else {
-                    throw new NumberFormatException("bad checksum");
+                    return false;
                 }
             } else {
-                // correct checksum
-                this.eanvalue = value;
+                eanvalue = value;
             }
             if (!eanPreferred && (eanvalue.startsWith("978") || eanvalue.startsWith("979"))) {
                 // create 10-digit from 13-digit
@@ -255,20 +278,21 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
                 // 10 digit version not available - not an error
                 this.value = null;
             }
+            this.isEAN = true;
         } else if (value.length() == 9) {
             String s = value.substring(0, 9);
             // repair ISBN-10 ?
             if (createWithChecksum) {
-                // create 978 from 10-digit without checksum
-                this.eanvalue = "978" + s + createCheckDigit13("978" + s);
-                this.value = s + createCheckDigit10(s);
+                // create 978 from 10-digit without createChecksum
+                eanvalue = "978" + s + createCheckDigit13("978" + s);
+                value = s + createCheckDigit10(s);
             } else {
-                throw new NumberFormatException("invalid");
+                return false;
             }
         } else if (value.length() == 12) {
             // repair ISBN-13 ?
             if (!value.startsWith("978") && !value.startsWith("979")) {
-                throw new NumberFormatException("bad prefix");
+                return false;
             }
             if (createWithChecksum) {
                 String s = value.substring(0, 9);
@@ -277,11 +301,13 @@ public class ISBN implements Comparable<ISBN>, StandardNumber {
                 this.eanvalue = "978" + s + createCheckDigit13("978" + s);
                 this.value = t + createCheckDigit10(t);
             } else {
-                throw new NumberFormatException("invalid");
+                return false;
             }
+            this.isEAN = true;
         } else {
-            throw new NumberFormatException("invalid");
+            return false;
         }
+        return true;
     }
 
     /**

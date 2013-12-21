@@ -30,6 +30,11 @@ public class ISWC implements Comparable<ISWC>, StandardNumber {
     private String formatted;
 
     @Override
+    public String type() {
+        return "iswc";
+    }
+
+    @Override
     public int compareTo(ISWC iswc) {
         return iswc != null ? normalizedValue().compareTo(iswc.normalizedValue()) : -1;
     }
@@ -41,7 +46,7 @@ public class ISWC implements Comparable<ISWC>, StandardNumber {
     }
 
     @Override
-    public ISWC checksum() {
+    public ISWC createChecksum(boolean createChecksum) {
         return this;
     }
 
@@ -55,8 +60,18 @@ public class ISWC implements Comparable<ISWC>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public ISWC verify() throws NumberFormatException {
-        check();
+        if (value == null || value.isEmpty()) {
+            throw new NumberFormatException("invalid");
+        }
+        if (!check()) {
+            throw new NumberFormatException("bad createChecksum");
+        }
         return this;
     }
 
@@ -70,32 +85,30 @@ public class ISWC implements Comparable<ISWC>, StandardNumber {
         return formatted;
     }
 
-    private void check() throws NumberFormatException {
-        if (value == null) {
-            throw new NumberFormatException("null");
-        }
+    @Override
+    public ISWC reset() {
+        this.value = null;
+        this.formatted = null;
+        return this;
+    }
+
+    private boolean check() {
         int l = value.length();
         int checksum = 1;
         int val;
         int weight;
         for (int i = 1; i < l; i++) {
             val = value.charAt(i) - '0';
-            if (val < 0 || val > 9) {
-                throw new NumberFormatException("not a digit: " + val );
-            }
             weight = i < l - 1 ? i : 1;
             checksum += val * weight;
         }
         int chk = checksum % 10;
-        boolean valid = chk == 0;
-        if (!valid) {
-            throw new NumberFormatException("invalid checksum: " + chk);
-        }
+        return chk == 0;
     }
 
     private String clean(String raw) {
         if (raw == null) {
-            return raw;
+            return null;
         }
         StringBuilder sb = new StringBuilder(raw);
         int i = sb.indexOf("-");
@@ -111,10 +124,12 @@ public class ISWC implements Comparable<ISWC>, StandardNumber {
         if (sb.indexOf("ISWC") == 0) {
             sb = new StringBuilder(sb.substring(4));
         }
-        this.formatted = "ISWC "
+        if (sb.length() > 10) {
+            this.formatted = "ISWC "
                 + "T-"
                 + sb.substring(1,10) + "-"
                 + sb.substring(10,11);
+        }
         return sb.toString();
     }
 }

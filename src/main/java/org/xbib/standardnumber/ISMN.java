@@ -31,6 +31,11 @@ public class ISMN implements Comparable<ISMN>, StandardNumber {
     private boolean createWithChecksum;
 
     @Override
+    public String type() {
+        return "ismn";
+    }
+
+    @Override
     public int compareTo(ISMN ismn) {
         return ismn != null ? normalizedValue().compareTo(ismn.normalizedValue()) : -1;
     }
@@ -42,8 +47,8 @@ public class ISMN implements Comparable<ISMN>, StandardNumber {
     }
 
     @Override
-    public ISMN checksum() {
-        this.createWithChecksum = true;
+    public ISMN createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -58,8 +63,18 @@ public class ISMN implements Comparable<ISMN>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public ISMN verify() throws NumberFormatException {
-        check();
+        if (value == null || value.isEmpty()) {
+            throw new NumberFormatException("invalid");
+        }
+        if (!check()) {
+            throw new NumberFormatException("invalid createChecksum");
+        }
         return this;
     }
 
@@ -73,20 +88,24 @@ public class ISMN implements Comparable<ISMN>, StandardNumber {
         return value;
     }
 
+    @Override
+    public ISMN reset() {
+        this.value = null;
+        this.createWithChecksum = false;
+        return this;
+    }
+
     public GTIN toGTIN() throws NumberFormatException {
         return new GTIN().set(value).normalize().verify();
     }
 
-    private void check() throws NumberFormatException {
+    private boolean check() {
         int l = createWithChecksum ? value.length() : value.length() - 1;
         int checksum = 0;
         int weight;
         int val;
         for (int i = 0; i < l; i++) {
             val = value.charAt(i) - '0';
-            if (val < 0 || val > 9) {
-                throw new NumberFormatException("not a digit: " + val );
-            }
             weight = i % 2 == 0 ? 1 : 3;
             checksum += val * weight;
         }
@@ -95,10 +114,7 @@ public class ISMN implements Comparable<ISMN>, StandardNumber {
             char ch = (char)('0' + chk);
             value = value + ch;
         }
-        boolean valid = chk == value.charAt(l) - '0';
-        if (!valid) {
-            throw new NumberFormatException("invalid checksum: " + chk + " != " + value.charAt(l));
-        }
+        return chk == value.charAt(l) - '0';
     }
 
     private String dehyphenate(String isbn) {

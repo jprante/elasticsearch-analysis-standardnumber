@@ -41,6 +41,11 @@ public class SICI implements Comparable<SICI>, StandardNumber {
     private boolean createWithChecksum;
 
     @Override
+    public String type() {
+        return "sici";
+    }
+
+    @Override
     public int compareTo(SICI sici) {
         return sici != null ? normalizedValue().compareTo(sici.normalizedValue()) : -1;
     }
@@ -52,8 +57,8 @@ public class SICI implements Comparable<SICI>, StandardNumber {
     }
 
     @Override
-    public SICI checksum() {
-        this.createWithChecksum = true;
+    public SICI createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -67,8 +72,18 @@ public class SICI implements Comparable<SICI>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public SICI verify() throws NumberFormatException {
-        check();
+        if (value == null) {
+            throw new NumberFormatException("invalid");
+        }
+        if (!check()) {
+            throw new NumberFormatException("bad checksum");
+        }
         return this;
     }
 
@@ -82,14 +97,19 @@ public class SICI implements Comparable<SICI>, StandardNumber {
         return formatted;
     }
 
+    @Override
+    public SICI reset() {
+        this.value = null;
+        this.formatted = null;
+        this.createWithChecksum = false;
+        return this;
+    }
+
     private final static String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
 
     private final static int modulus = ALPHABET.length();
 
-    private void check() throws NumberFormatException {
-        if (value == null) {
-            throw new NumberFormatException("null");
-        }
+    private boolean check() {
         int l = value.length() - 1;
         int val;
         int sum = 0;
@@ -104,15 +124,12 @@ public class SICI implements Comparable<SICI>, StandardNumber {
         }
         char digit = value.charAt(l);
         int chk2 = digit == '#' ? 36 : (digit >= '0' && digit <= '9') ? digit - '0' : digit -'A' + 10;
-        boolean valid = chk == chk2;
-        if (!valid) {
-            throw new NumberFormatException("invalid checksum: " + chk + " != " + chk2);
-        }
+        return chk == chk2;
     }
 
     private String clean(String raw) {
         if (raw == null) {
-            return raw;
+            return null;
         }
         StringBuilder sb = new StringBuilder(raw);
         int pos = sb.indexOf("SICI ");

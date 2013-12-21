@@ -21,7 +21,7 @@ public class ZDBTest extends Assert {
 
     @Test
     public void testZDB3() throws Exception {
-        ZDB zdb = new ZDB().set("1279760").checksum().normalize().verify();
+        ZDB zdb = new ZDB().set("1279760").createChecksum(true).normalize().verify();
         assertEquals("1279762", zdb.normalizedValue());
         assertEquals("127976-2", zdb.format());
     }

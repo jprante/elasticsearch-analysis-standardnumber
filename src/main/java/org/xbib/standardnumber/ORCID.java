@@ -12,14 +12,19 @@ import java.net.URI;
 public class ORCID extends ISNI {
 
     @Override
+    public String type() {
+        return "orcid";
+    }
+
+    @Override
     public ORCID set(CharSequence value) {
         super.set(value);
         return this;
     }
 
     @Override
-    public ORCID checksum() {
-        super.checksum();
+    public ORCID createChecksum(boolean createChecksum) {
+        super.createChecksum(createChecksum);
         return this;
     }
 

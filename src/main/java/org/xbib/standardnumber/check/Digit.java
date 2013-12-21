@@ -13,8 +13,9 @@ public interface Digit {
      * Verify a string that has been encoded with a check digit
      *
      * @param digits input digits
+     * @return true if valid, false otherwise
      */
-    void verify(String digits) throws NumberFormatException;
+    boolean verify(String digits);
 
     /**
      * Computes the check digit value
@@ -25,10 +26,10 @@ public interface Digit {
     int compute(String digits);
 
     /**
-     * Extract just the check digits from an encoded string
+     * Extract just the check digit from an encoded string
      *
      * @param digits input data containing check and data digits
-     * @return the check digit, as an int.
+     * @return the check digit, as an int
      */
     int getDigit(String digits);
 

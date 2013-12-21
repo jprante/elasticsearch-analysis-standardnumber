@@ -1,7 +1,7 @@
 package org.xbib.standardnumber.check;
 
 /**
- * Verhoeff's algorithm for checksum computation
+ * Verhoeff's algorithm for createChecksum computation
  *
  * J. Verhoeff, Error Detecting Decimal Codes, Mathematical Centre Tract 29, The Mathematical Centre, Amsterdam, 1969
  */
@@ -38,15 +38,12 @@ public class DihedralGroup implements Digit {
     }
 
     @Override
-    public void verify(String digits) throws NumberFormatException {
+    public boolean verify(String digits){
         int check = 0;
         for (int i = 0; i < digits.length(); ++i) {
             check = a[check][p[i % 8][digits.charAt(i) - '0']];
         }
-        boolean b = check == 0;
-        if (!b) {
-            throw new NumberFormatException("bad checksum");
-        }
+        return check == 0;
     }
 
     @Override
@@ -54,9 +51,6 @@ public class DihedralGroup implements Digit {
         int check = 0;
         for (int i = 0; i < digits.length(); ++i) {
             int c = digits.charAt(i) - '0';
-            if (c < 0 || c > 9) {
-                throw new NumberFormatException("Bad digit: '" + digits.charAt(i) + "'");
-            }
             check = a[check][p[(i + 1) % 8][c]];
         }
         return inverse[check];

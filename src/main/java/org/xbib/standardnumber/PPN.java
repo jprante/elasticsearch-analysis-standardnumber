@@ -13,13 +13,18 @@ import java.util.regex.Pattern;
  */
 public class PPN implements Comparable<PPN>, StandardNumber {
 
-    private final static Pattern PATTERN = Pattern.compile("[\\p{Digit}xX\\-]{0,11}");
+    private final static Pattern PATTERN = Pattern.compile("[\\p{Digit}]{3,10}\\-{0,1}[\\p{Digit}xX]{1}\\b");
 
     private String value;
 
     private String formatted;
 
     private boolean createWithChecksum;
+
+    @Override
+    public String type() {
+        return "ppn";
+    }
 
     @Override
     public PPN set(CharSequence value) {
@@ -38,8 +43,8 @@ public class PPN implements Comparable<PPN>, StandardNumber {
     }
 
     @Override
-    public PPN checksum() {
-        this.createWithChecksum = true;
+    public PPN createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -53,8 +58,18 @@ public class PPN implements Comparable<PPN>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public PPN verify() throws NumberFormatException {
-        check();
+        if (value == null || value.isEmpty()) {
+            throw new NumberFormatException("invalid");
+        }
+        if (!check()) {
+            throw new NumberFormatException("bad checksum");
+        }
         return this;
     }
 
@@ -67,27 +82,29 @@ public class PPN implements Comparable<PPN>, StandardNumber {
         return formatted;
     }
 
-    private void check() throws NumberFormatException {
+    @Override
+    public PPN reset() {
+        this.value = null;
+        this.formatted = null;
+        this.createWithChecksum = false;
+        return this;
+    }
+
+    private boolean check() {
         int checksum = 0;
         int weight = 2;
         int val;
         int l = value.length() - 1;
         for (int i = l - 1; i >= 0; i--) {
             val = value.charAt(i) - '0';
-            if (val < 0 || val > 9) {
-                throw new NumberFormatException("not valid a digit in " + value);
-            }
             checksum += val * weight++;
         }
         if (createWithChecksum) {
             char ch = checksum % 11 == 10 ? 'X' : (char)('0' + (checksum % 11));
             value = value.substring(0, l) + ch;
         }
-        boolean valid = 11 - checksum % 11 ==
+        return 11 - checksum % 11 ==
                 (value.charAt(l) == 'X' || value.charAt(l) == 'x' ? 10 : value.charAt(l) - '0');
-        if (!valid) {
-            throw new NumberFormatException("invalid checksum: " + value.charAt(l));
-        }
     }
 
     private String dehyphenate(String value) {

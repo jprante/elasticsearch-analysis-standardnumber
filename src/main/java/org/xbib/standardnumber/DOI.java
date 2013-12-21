@@ -44,13 +44,20 @@ import java.util.regex.Pattern;
  */
 public class DOI implements Comparable<DOI>, StandardNumber {
 
-    private static final Pattern PATTERN = Pattern.compile("[\\p{Graph}\\p{Punct}]{0,48}");
+    private static final Pattern PATTERN = Pattern.compile("\\b10\\.\\d{4}([.][0-9]+)*/[/-a-z0-9.()<>_:;\\\\]+\\b");
 
-    private static final Pattern URI_PATTERN = Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+    private static final Pattern URI_PATTERN = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]\\b");
 
     private String prefix = "http://doi.org/";
 
-    private Object value;
+    private Object raw;
+
+    private URI value;
+
+    @Override
+    public String type() {
+        return "doi";
+    }
 
     @Override
     public int compareTo(DOI doi) {
@@ -59,34 +66,34 @@ public class DOI implements Comparable<DOI>, StandardNumber {
 
     @Override
     public DOI set(CharSequence value) {
-        this.value = value != null ? value.toString() : null;
+        this.raw = value;
         return this;
     }
 
     @Override
-    public DOI checksum() {
+    public DOI createChecksum(boolean checksum) {
         return this;
     }
 
     @Override
     public DOI normalize() {
-        if (value == null) {
+        if (raw == null) {
             return this;
         }
-        String s = value.toString();
-        Matcher m = URI_PATTERN.matcher(s);
-        if (m.find()) {
-            this.value = URI.create(s.substring(m.start(), m.end()));
-        }
-        m = PATTERN.matcher(s);
-        if (m.find()) {
-            this.value = URI.create(prefix + s.substring(m.start(), m.end()));
-        }
+        this.value = make(raw.toString());
         return this;
     }
 
     @Override
+    public boolean isValid() {
+        return value != null;
+    }
+
+    @Override
     public DOI verify() throws NumberFormatException {
+        if (value == null) {
+            throw new NumberFormatException();
+        }
         return this;
     }
 
@@ -106,7 +113,34 @@ public class DOI implements Comparable<DOI>, StandardNumber {
     }
 
     public URI asURI() {
-        return (URI)value;
+        return value;
+    }
+
+    public DOI reset() {
+        this.value = null;
+        return this;
+    }
+
+    private URI make(String content) {
+        // is it an already a DOI URI?
+        Matcher m = URI_PATTERN.matcher(content);
+        if (m.find()) {
+            String t = content.substring(m.start(), m.end());
+            URI u = URI.create(t);
+            if ("http".equals(u.getScheme()) && ("dx.doi.org".equals(u.getHost()) || "doi.org".equals(u.getHost()))) {
+                m = PATTERN.matcher(u.getRawPath());
+                if (m.find()) {
+                    return u;
+                }
+            }
+        }
+        // not an URI, just the path?
+        m = PATTERN.matcher(content);
+        if (m.find()) {
+            return URI.create(prefix + content.substring(m.start(), m.end()));
+        } else {
+            return null;
+        }
     }
 
 }

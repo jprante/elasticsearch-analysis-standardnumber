@@ -8,6 +8,7 @@ public class MOD9710 implements Digit {
 
     private static final BigDecimal CONSTANT_97 = new BigDecimal(97);
 
+    @Override
     public String encode(String digits) {
         int c = compute(digits);
         if (c == 0) {
@@ -19,20 +20,22 @@ public class MOD9710 implements Digit {
         }
     }
 
-    public void verify(String digits) throws NumberFormatException {
-        boolean b = new BigDecimal(digits).remainder(CONSTANT_97).intValue() == 1;
-        if (!b) {
-            throw new NumberFormatException("bad checksum");
-        }
+    @Override
+    public boolean verify(String digits) {
+        return new BigDecimal(digits != null ? digits : "0").remainder(CONSTANT_97).intValue() == 1;
     }
 
+    @Override
     public int compute(String digits) {
         return new BigDecimal(digits).remainder(CONSTANT_97).intValue();
     }
 
+    @Override
     public int getDigit(String digits) {
         return Integer.parseInt(digits.substring(digits.length() - 2));
     }
+
+    @Override
     public String getNumber(String digits) {
         return digits.substring(0, digits.length() - 2);
     }

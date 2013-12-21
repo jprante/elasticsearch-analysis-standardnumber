@@ -38,11 +38,16 @@ import java.util.regex.Pattern;
  */
 public class GTIN implements Comparable<GTIN>, StandardNumber {
 
-    private static final Pattern PATTERN = Pattern.compile("[\\p{Digit}\\-]{8,18}");
+    private static final Pattern PATTERN = Pattern.compile("\\b[\\p{Digit}\\-]{3,18}\\b");
 
     private String value;
 
     private boolean createWithChecksum;
+
+    @Override
+    public String type() {
+        return "gtin";
+    }
 
     @Override
     public int compareTo(GTIN gtin) {
@@ -56,8 +61,8 @@ public class GTIN implements Comparable<GTIN>, StandardNumber {
     }
 
     @Override
-    public GTIN checksum() {
-        this.createWithChecksum = true;
+    public GTIN createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -71,8 +76,18 @@ public class GTIN implements Comparable<GTIN>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public GTIN verify() throws NumberFormatException {
-        check();
+        if (value == null || value.isEmpty()) {
+            throw new NumberFormatException("invalid");
+        }
+        if (!check()) {
+            throw new NumberFormatException("bad checksum");
+        }
         return this;
     }
 
@@ -86,19 +101,20 @@ public class GTIN implements Comparable<GTIN>, StandardNumber {
         return value;
     }
 
-    private void check() throws NumberFormatException {
-        if (value == null) {
-            throw new NumberFormatException("null is invalid");
-        }
+    @Override
+    public GTIN reset() {
+        this.value = null;
+        this.createWithChecksum = false;
+        return this;
+    }
+
+    private boolean check() {
         int l = value.length() - 1;
         int checksum = 0;
         int weight;
         int val;
         for (int i = 0; i < l; i++) {
             val = value.charAt(i) - '0';
-            if (val < 0 || val > 9) {
-                throw new NumberFormatException("not a digit: " + val );
-            }
             weight = i % 2 == 0 ? 1 : 3;
             checksum += val * weight;
         }
@@ -107,10 +123,7 @@ public class GTIN implements Comparable<GTIN>, StandardNumber {
             char ch = (char)('0' + chk);
             value = value.substring(0, l) + ch;
         }
-        boolean valid = chk == (value.charAt(l) - '0');
-        if (!valid) {
-            throw new NumberFormatException("invalid checksum: " + chk + " != " + value.charAt(l));
-        }
+        return chk == (value.charAt(l) - '0');
     }
 
     private String dehyphenate(String isbn) {

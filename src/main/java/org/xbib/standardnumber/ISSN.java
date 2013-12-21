@@ -57,13 +57,18 @@ import java.util.regex.Pattern;
  */
 public class ISSN implements Comparable<ISSN>, StandardNumber {
 
-    private final static Pattern PATTERN = Pattern.compile("[\\p{Digit}xX\\-]+");
+    private final static Pattern PATTERN = Pattern.compile("[0-9xX\\-]{8,9}");
 
     private String value;
 
     private String formatted;
 
     private boolean createWithChecksum;
+
+    @Override
+    public String type() {
+        return "issn";
+    }
 
     @Override
     public int compareTo(ISSN issn) {
@@ -77,8 +82,8 @@ public class ISSN implements Comparable<ISSN>, StandardNumber {
     }
 
     @Override
-    public ISSN checksum() {
-        this.createWithChecksum = true;
+    public ISSN createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -93,8 +98,18 @@ public class ISSN implements Comparable<ISSN>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public ISSN verify() throws NumberFormatException {
-        check();
+        if (value == null || value.isEmpty()) {
+            throw new NumberFormatException("invalid");
+        }
+        if (!check()) {
+            throw new NumberFormatException("bad createChecksum");
+        }
         return this;
     }
 
@@ -117,48 +132,48 @@ public class ISSN implements Comparable<ISSN>, StandardNumber {
         return formatted;
     }
 
+    @Override
+    public ISSN reset() {
+        this.value = null;
+        this.formatted = null;
+        this.createWithChecksum = false;
+        return this;
+    }
+
     public GTIN toGTIN() throws NumberFormatException {
-        return new GTIN().set("977" + value.substring(0, 7) + "000").checksum().normalize().verify();
+        return new GTIN().set("977" + value.substring(0, 7) + "000").createChecksum(true).normalize().verify();
     }
 
     public GTIN toGTIN(String additionalCode) throws NumberFormatException {
-        // "977" + ISSN + add-on + placeholder for checksum
-        return new GTIN().set("977" + value.substring(0, 7) + additionalCode + "0").checksum().normalize().verify();
+        // "977" + ISSN + add-on + placeholder for createChecksum
+        return new GTIN().set("977" + value.substring(0, 7) + additionalCode + "0").createChecksum(true).normalize().verify();
     }
 
-    private void check() throws NumberFormatException {
+    private boolean check() {
         int l = createWithChecksum ? value.length() : value.length() - 1;
         int checksum = 0;
         int weight;
         int val;
         for (int i = 0; i < l; i++) {
             val = value.charAt(i) - '0';
-            if (val < 0 || val > 9) {
-                throw new IllegalArgumentException("not a digit in " + value);
-            }
             weight = 8 - i;
             checksum += weight * val;
         }
         int chk = checksum % 11;
         char p = chk == 0 ? '0' : chk == 1 ? 'X' : (char)((11-chk) + '0');
-        /*int mod = sum % 11;
-        mod = mod == 0 ? 0 : 11 - mod; 
-        char p = mod == 10 ? 'X' : (char) ('0' + mod);
-        */
-        boolean valid = p == Character.toUpperCase(value.charAt(l));
-        if (!valid) {
-            throw new NumberFormatException("invalid checksum: " + chk + " != " + value.charAt(l));
-        }
+        return p == Character.toUpperCase(value.charAt(l));
     }
 
     private String dehyphenate(String isbn) {
         StringBuilder sb = new StringBuilder(isbn);
         int i = sb.indexOf("-");
-        while (i >= 0) {
+        while (i > 0) {
             sb.deleteCharAt(i);
             i = sb.indexOf("-");
         }
-        this.formatted = value.substring(0, 4) + "-" + value.substring(4, 8);
+        if (sb.length() > 7) {
+            this.formatted = sb.substring(0, 4) + "-" + sb.substring(4, 8);
+        }
         return sb.toString();
     }
 

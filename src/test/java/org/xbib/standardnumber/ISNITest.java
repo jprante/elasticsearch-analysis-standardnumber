@@ -24,18 +24,18 @@ public class ISNITest extends Assert {
 
     @Test
     public void testISNI3() throws Exception {
-        // fix wrong checksum in MARBI example http://www.loc.gov/marc/marbi/2010/2010-dp03.html
+        // fix wrong createChecksum in MARBI example http://www.loc.gov/marc/marbi/2010/2010-dp03.html
         String value = "ISNI 8462 8328 5653 6435";
-        ISNI isni = new ISNI().set(value).checksum().normalize().verify();
+        ISNI isni = new ISNI().set(value).createChecksum(true).normalize().verify();
         assertEquals("8462832856536436", isni.normalizedValue());
         assertEquals("8462832856536436", isni.format());
     }
 
     @Test
     public void testISNI4() throws Exception {
-        // fix wrong checksum in MARBI example http://www.loc.gov/marc/marbi/2010/2010-dp03.html
+        // fix wrong createChecksum in MARBI example http://www.loc.gov/marc/marbi/2010/2010-dp03.html
         String value = "ISNI 0023 0000 1001 1234";
-        ISNI isni = new ISNI().set(value).checksum().normalize().verify();
+        ISNI isni = new ISNI().set(value).createChecksum(true).normalize().verify();
         assertEquals("0023000010011235", isni.normalizedValue());
         assertEquals("0023000010011235", isni.format());
     }

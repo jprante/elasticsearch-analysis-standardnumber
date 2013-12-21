@@ -12,11 +12,16 @@ import java.util.regex.Pattern;
  */
 public class EAN implements Comparable<EAN>, StandardNumber {
 
-    private static final Pattern PATTERN = Pattern.compile("[\\p{Digit}\\s]{0,18}");
+    private static final Pattern PATTERN = Pattern.compile("\\b[\\p{Digit}\\s]{13,18}\\b");
 
     private String value;
 
     private boolean createWithChecksum;
+
+    @Override
+    public String type() {
+        return "ean";
+    }
 
     @Override
     public int compareTo(EAN ean) {
@@ -30,8 +35,8 @@ public class EAN implements Comparable<EAN>, StandardNumber {
     }
 
     @Override
-    public EAN checksum() {
-        this.createWithChecksum = true;
+    public EAN createChecksum(boolean createWithChecksum) {
+        this.createWithChecksum = createWithChecksum;
         return this;
     }
 
@@ -45,8 +50,18 @@ public class EAN implements Comparable<EAN>, StandardNumber {
     }
 
     @Override
+    public boolean isValid() {
+        return value != null && !value.isEmpty() && check();
+    }
+
+    @Override
     public EAN verify() throws NumberFormatException {
-        check();
+        if (value == null || value.isEmpty()) {
+            throw new NumberFormatException("invalid");
+        }
+        if (!check()) {
+            throw new NumberFormatException("bad checkum");
+        }
         return this;
     }
 
@@ -60,19 +75,19 @@ public class EAN implements Comparable<EAN>, StandardNumber {
         return value;
     }
 
-    private void check() throws NumberFormatException {
-        if (value == null) {
-            throw new NumberFormatException("null is invalid");
-        }
+    public EAN reset() {
+        this.value = null;
+        this.createWithChecksum = false;
+        return this;
+    }
+
+    private boolean check() {
         int l = value.length() - 1;
         int checksum = 0;
         int weight;
         int val;
         for (int i = 0; i < l; i++) {
             val = value.charAt(i) - '0';
-            if (val < 0 || val > 9) {
-                throw new NumberFormatException("not a digit: " + val );
-            }
             weight = i % 2 == 0 ? 1 : 3;
             checksum += val * weight;
         }
@@ -81,10 +96,7 @@ public class EAN implements Comparable<EAN>, StandardNumber {
             char ch = (char)('0' + chk);
             value = value.substring(0, l) + ch;
         }
-        boolean valid = chk == (value.charAt(l) - '0');
-        if (!valid) {
-            throw new NumberFormatException("invalid checksum: " + chk + " != " + value.charAt(l));
-        }
+        return chk == (value.charAt(l) - '0');
     }
 
     private String despace(String isbn) {

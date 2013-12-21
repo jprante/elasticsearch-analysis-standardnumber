@@ -18,12 +18,11 @@ public class StandardNumberTokenFilterFactory extends AbstractTokenFilterFactory
                                             @IndexSettings Settings indexSettings, Environment env,
                                             @Assisted String name, @Assisted Settings settings) {
         super(index, indexSettings, name, settings);
-        this.detector = new Detector();
+        this.detector = new Detector(settings);
     }
 
     @Override
     public TokenStream create(TokenStream tokenStream) {
         return new StandardNumberTokenFilter(tokenStream, detector);
-
     }
 }

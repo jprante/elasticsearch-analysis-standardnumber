@@ -80,7 +80,10 @@ will be tokenized into::
     "Action",
     "lautet",
     "9781617291623",
-    "978-1-61729-162-3"
+    "EAN 9781617291623",
+    "GTIN 9781617291623",
+    "ISBN 978-1-61729-162-3",
+    "ISBN 9781617291623"
 
 The formatting of ISBN-13 was added as an extra token to the stream.
 
@@ -100,10 +103,10 @@ The content ``Die ISBN von Lucene in Action lautet 1-9339-8817-7.`` will be toke
     "Action",
     "lautet",
     "1-9339-8817-7.",
-    "1-933988-17-7",
-    "1933988177",
-    "978-1-933988-17-7",
-    "9781933988177"
+    "ISBN 1-933988-17-7",
+    "ISBN 1933988177",
+    "ISBN 978-1-933988-17-7",
+    "ISBN 9781933988177"
 
 ISBN-10 were the only form valid before Januar 1, 2007. Such old ISBNs will be reformatted, validated, and
 normalized into ISBN-10/ISBN13 variant forms, which are added as extra tokens to the token stream.
