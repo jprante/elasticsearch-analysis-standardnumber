@@ -11,9 +11,9 @@
 <FONT color="green">008</FONT>        @Test<a name="line.8"></a>
 <FONT color="green">009</FONT>        public void testISSN() throws Exception {<a name="line.9"></a>
 <FONT color="green">010</FONT>            ISSN issn = new ISSN().set("1869-7127").normalize().verify();<a name="line.10"></a>
-<FONT color="green">011</FONT>            assertEquals("18697127", issn.normalizedValue());<a name="line.11"></a>
-<FONT color="green">012</FONT>            assertEquals("1869-7127", issn.format());<a name="line.12"></a>
-<FONT color="green">013</FONT>            assertEquals("9771869712038", issn.checksum().toGTIN("03").normalizedValue());<a name="line.13"></a>
+<FONT color="green">011</FONT>            assertEquals(issn.normalizedValue(), "18697127");<a name="line.11"></a>
+<FONT color="green">012</FONT>            assertEquals(issn.format(), "1869-7127");<a name="line.12"></a>
+<FONT color="green">013</FONT>            assertEquals(issn.createChecksum(true).toGTIN("03").normalizedValue(), "9771869712038");<a name="line.13"></a>
 <FONT color="green">014</FONT>        }<a name="line.14"></a>
 <FONT color="green">015</FONT>    <a name="line.15"></a>
 <FONT color="green">016</FONT>    <a name="line.16"></a>

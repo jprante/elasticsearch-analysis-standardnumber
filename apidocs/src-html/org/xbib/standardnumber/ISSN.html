@@ -8,7 +8,7 @@
 <FONT color="green">005</FONT>    import java.util.regex.Pattern;<a name="line.5"></a>
 <FONT color="green">006</FONT>    <a name="line.6"></a>
 <FONT color="green">007</FONT>    /**<a name="line.7"></a>
-<FONT color="green">008</FONT>     * ISO 3297: International Standard Serial Number (ISSN)<a name="line.8"></a>
+<FONT color="green">008</FONT>     * ISO 3297 International Standard Serial Number (ISSN)<a name="line.8"></a>
 <FONT color="green">009</FONT>     *<a name="line.9"></a>
 <FONT color="green">010</FONT>     * Z39.50 BIB-1 Use Attribute 8<a name="line.10"></a>
 <FONT color="green">011</FONT>     *<a name="line.11"></a>
@@ -60,7 +60,7 @@
 <FONT color="green">057</FONT>     */<a name="line.57"></a>
 <FONT color="green">058</FONT>    public class ISSN implements Comparable&lt;ISSN&gt;, StandardNumber {<a name="line.58"></a>
 <FONT color="green">059</FONT>    <a name="line.59"></a>
-<FONT color="green">060</FONT>        private final static Pattern PATTERN = Pattern.compile("[\\p{Digit}xX\\-]+");<a name="line.60"></a>
+<FONT color="green">060</FONT>        private final static Pattern PATTERN = Pattern.compile("[0-9xX\\-]{8,9}");<a name="line.60"></a>
 <FONT color="green">061</FONT>    <a name="line.61"></a>
 <FONT color="green">062</FONT>        private String value;<a name="line.62"></a>
 <FONT color="green">063</FONT>    <a name="line.63"></a>
@@ -69,103 +69,118 @@
 <FONT color="green">066</FONT>        private boolean createWithChecksum;<a name="line.66"></a>
 <FONT color="green">067</FONT>    <a name="line.67"></a>
 <FONT color="green">068</FONT>        @Override<a name="line.68"></a>
-<FONT color="green">069</FONT>        public int compareTo(ISSN issn) {<a name="line.69"></a>
-<FONT color="green">070</FONT>            return value != null ? normalizedValue().compareTo(issn.normalizedValue()) : -1;<a name="line.70"></a>
+<FONT color="green">069</FONT>        public String type() {<a name="line.69"></a>
+<FONT color="green">070</FONT>            return "issn";<a name="line.70"></a>
 <FONT color="green">071</FONT>        }<a name="line.71"></a>
 <FONT color="green">072</FONT>    <a name="line.72"></a>
 <FONT color="green">073</FONT>        @Override<a name="line.73"></a>
-<FONT color="green">074</FONT>        public ISSN set(CharSequence value) {<a name="line.74"></a>
-<FONT color="green">075</FONT>            this.value = value != null ? value.toString() : null;<a name="line.75"></a>
-<FONT color="green">076</FONT>            return this;<a name="line.76"></a>
-<FONT color="green">077</FONT>        }<a name="line.77"></a>
-<FONT color="green">078</FONT>    <a name="line.78"></a>
-<FONT color="green">079</FONT>        @Override<a name="line.79"></a>
-<FONT color="green">080</FONT>        public ISSN checksum() {<a name="line.80"></a>
-<FONT color="green">081</FONT>            this.createWithChecksum = true;<a name="line.81"></a>
-<FONT color="green">082</FONT>            return this;<a name="line.82"></a>
-<FONT color="green">083</FONT>        }<a name="line.83"></a>
-<FONT color="green">084</FONT>    <a name="line.84"></a>
-<FONT color="green">085</FONT>    <a name="line.85"></a>
-<FONT color="green">086</FONT>        @Override<a name="line.86"></a>
-<FONT color="green">087</FONT>        public ISSN normalize() {<a name="line.87"></a>
-<FONT color="green">088</FONT>            Matcher m = PATTERN.matcher(value);<a name="line.88"></a>
-<FONT color="green">089</FONT>            if (m.find()) {<a name="line.89"></a>
-<FONT color="green">090</FONT>                this.value = dehyphenate(value.substring(m.start(), m.end()));<a name="line.90"></a>
-<FONT color="green">091</FONT>            }<a name="line.91"></a>
-<FONT color="green">092</FONT>            return this;<a name="line.92"></a>
-<FONT color="green">093</FONT>        }<a name="line.93"></a>
-<FONT color="green">094</FONT>    <a name="line.94"></a>
-<FONT color="green">095</FONT>        @Override<a name="line.95"></a>
-<FONT color="green">096</FONT>        public ISSN verify() throws NumberFormatException {<a name="line.96"></a>
-<FONT color="green">097</FONT>            check();<a name="line.97"></a>
-<FONT color="green">098</FONT>            return this;<a name="line.98"></a>
-<FONT color="green">099</FONT>        }<a name="line.99"></a>
-<FONT color="green">100</FONT>    <a name="line.100"></a>
-<FONT color="green">101</FONT>        /**<a name="line.101"></a>
-<FONT color="green">102</FONT>         * Returns the value representation of the standard number<a name="line.102"></a>
-<FONT color="green">103</FONT>         * @return value<a name="line.103"></a>
-<FONT color="green">104</FONT>         */<a name="line.104"></a>
+<FONT color="green">074</FONT>        public int compareTo(ISSN issn) {<a name="line.74"></a>
+<FONT color="green">075</FONT>            return value != null ? normalizedValue().compareTo(issn.normalizedValue()) : -1;<a name="line.75"></a>
+<FONT color="green">076</FONT>        }<a name="line.76"></a>
+<FONT color="green">077</FONT>    <a name="line.77"></a>
+<FONT color="green">078</FONT>        @Override<a name="line.78"></a>
+<FONT color="green">079</FONT>        public ISSN set(CharSequence value) {<a name="line.79"></a>
+<FONT color="green">080</FONT>            this.value = value != null ? value.toString() : null;<a name="line.80"></a>
+<FONT color="green">081</FONT>            return this;<a name="line.81"></a>
+<FONT color="green">082</FONT>        }<a name="line.82"></a>
+<FONT color="green">083</FONT>    <a name="line.83"></a>
+<FONT color="green">084</FONT>        @Override<a name="line.84"></a>
+<FONT color="green">085</FONT>        public ISSN createChecksum(boolean createWithChecksum) {<a name="line.85"></a>
+<FONT color="green">086</FONT>            this.createWithChecksum = createWithChecksum;<a name="line.86"></a>
+<FONT color="green">087</FONT>            return this;<a name="line.87"></a>
+<FONT color="green">088</FONT>        }<a name="line.88"></a>
+<FONT color="green">089</FONT>    <a name="line.89"></a>
+<FONT color="green">090</FONT>    <a name="line.90"></a>
+<FONT color="green">091</FONT>        @Override<a name="line.91"></a>
+<FONT color="green">092</FONT>        public ISSN normalize() {<a name="line.92"></a>
+<FONT color="green">093</FONT>            Matcher m = PATTERN.matcher(value);<a name="line.93"></a>
+<FONT color="green">094</FONT>            if (m.find()) {<a name="line.94"></a>
+<FONT color="green">095</FONT>                this.value = dehyphenate(value.substring(m.start(), m.end()));<a name="line.95"></a>
+<FONT color="green">096</FONT>            }<a name="line.96"></a>
+<FONT color="green">097</FONT>            return this;<a name="line.97"></a>
+<FONT color="green">098</FONT>        }<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>        @Override<a name="line.100"></a>
+<FONT color="green">101</FONT>        public boolean isValid() {<a name="line.101"></a>
+<FONT color="green">102</FONT>            return value != null &amp;&amp; !value.isEmpty() &amp;&amp; check();<a name="line.102"></a>
+<FONT color="green">103</FONT>        }<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
 <FONT color="green">105</FONT>        @Override<a name="line.105"></a>
-<FONT color="green">106</FONT>        public String normalizedValue() {<a name="line.106"></a>
-<FONT color="green">107</FONT>            return value;<a name="line.107"></a>
-<FONT color="green">108</FONT>        }<a name="line.108"></a>
-<FONT color="green">109</FONT>    <a name="line.109"></a>
-<FONT color="green">110</FONT>        /**<a name="line.110"></a>
-<FONT color="green">111</FONT>         * Format this number<a name="line.111"></a>
-<FONT color="green">112</FONT>         *<a name="line.112"></a>
-<FONT color="green">113</FONT>         * @return the formatted number<a name="line.113"></a>
-<FONT color="green">114</FONT>         */<a name="line.114"></a>
-<FONT color="green">115</FONT>        @Override<a name="line.115"></a>
-<FONT color="green">116</FONT>        public String format() {<a name="line.116"></a>
-<FONT color="green">117</FONT>            return formatted;<a name="line.117"></a>
-<FONT color="green">118</FONT>        }<a name="line.118"></a>
-<FONT color="green">119</FONT>    <a name="line.119"></a>
-<FONT color="green">120</FONT>        public GTIN toGTIN() throws NumberFormatException {<a name="line.120"></a>
-<FONT color="green">121</FONT>            return new GTIN().set("977" + value.substring(0, 7) + "000").checksum().normalize().verify();<a name="line.121"></a>
-<FONT color="green">122</FONT>        }<a name="line.122"></a>
-<FONT color="green">123</FONT>    <a name="line.123"></a>
-<FONT color="green">124</FONT>        public GTIN toGTIN(String additionalCode) throws NumberFormatException {<a name="line.124"></a>
-<FONT color="green">125</FONT>            // "977" + ISSN + add-on + placeholder for checksum<a name="line.125"></a>
-<FONT color="green">126</FONT>            return new GTIN().set("977" + value.substring(0, 7) + additionalCode + "0").checksum().normalize().verify();<a name="line.126"></a>
-<FONT color="green">127</FONT>        }<a name="line.127"></a>
-<FONT color="green">128</FONT>    <a name="line.128"></a>
-<FONT color="green">129</FONT>        private void check() throws NumberFormatException {<a name="line.129"></a>
-<FONT color="green">130</FONT>            int l = createWithChecksum ? value.length() : value.length() - 1;<a name="line.130"></a>
-<FONT color="green">131</FONT>            int checksum = 0;<a name="line.131"></a>
-<FONT color="green">132</FONT>            int weight;<a name="line.132"></a>
-<FONT color="green">133</FONT>            int val;<a name="line.133"></a>
-<FONT color="green">134</FONT>            for (int i = 0; i &lt; l; i++) {<a name="line.134"></a>
-<FONT color="green">135</FONT>                val = value.charAt(i) - '0';<a name="line.135"></a>
-<FONT color="green">136</FONT>                if (val &lt; 0 || val &gt; 9) {<a name="line.136"></a>
-<FONT color="green">137</FONT>                    throw new IllegalArgumentException("not a digit in " + value);<a name="line.137"></a>
-<FONT color="green">138</FONT>                }<a name="line.138"></a>
-<FONT color="green">139</FONT>                weight = 8 - i;<a name="line.139"></a>
-<FONT color="green">140</FONT>                checksum += weight * val;<a name="line.140"></a>
-<FONT color="green">141</FONT>            }<a name="line.141"></a>
-<FONT color="green">142</FONT>            int chk = checksum % 11;<a name="line.142"></a>
-<FONT color="green">143</FONT>            char p = chk == 0 ? '0' : chk == 1 ? 'X' : (char)((11-chk) + '0');<a name="line.143"></a>
-<FONT color="green">144</FONT>            /*int mod = sum % 11;<a name="line.144"></a>
-<FONT color="green">145</FONT>            mod = mod == 0 ? 0 : 11 - mod; <a name="line.145"></a>
-<FONT color="green">146</FONT>            char p = mod == 10 ? 'X' : (char) ('0' + mod);<a name="line.146"></a>
-<FONT color="green">147</FONT>            */<a name="line.147"></a>
-<FONT color="green">148</FONT>            boolean valid = p == Character.toUpperCase(value.charAt(l));<a name="line.148"></a>
-<FONT color="green">149</FONT>            if (!valid) {<a name="line.149"></a>
-<FONT color="green">150</FONT>                throw new NumberFormatException("invalid checksum: " + chk + " != " + value.charAt(l));<a name="line.150"></a>
-<FONT color="green">151</FONT>            }<a name="line.151"></a>
-<FONT color="green">152</FONT>        }<a name="line.152"></a>
-<FONT color="green">153</FONT>    <a name="line.153"></a>
-<FONT color="green">154</FONT>        private String dehyphenate(String isbn) {<a name="line.154"></a>
-<FONT color="green">155</FONT>            StringBuilder sb = new StringBuilder(isbn);<a name="line.155"></a>
-<FONT color="green">156</FONT>            int i = sb.indexOf("-");<a name="line.156"></a>
-<FONT color="green">157</FONT>            while (i &gt;= 0) {<a name="line.157"></a>
-<FONT color="green">158</FONT>                sb.deleteCharAt(i);<a name="line.158"></a>
-<FONT color="green">159</FONT>                i = sb.indexOf("-");<a name="line.159"></a>
-<FONT color="green">160</FONT>            }<a name="line.160"></a>
-<FONT color="green">161</FONT>            this.formatted = value.substring(0, 4) + "-" + value.substring(4, 8);<a name="line.161"></a>
-<FONT color="green">162</FONT>            return sb.toString();<a name="line.162"></a>
-<FONT color="green">163</FONT>        }<a name="line.163"></a>
-<FONT color="green">164</FONT>    <a name="line.164"></a>
-<FONT color="green">165</FONT>    }<a name="line.165"></a>
+<FONT color="green">106</FONT>        public ISSN verify() throws NumberFormatException {<a name="line.106"></a>
+<FONT color="green">107</FONT>            if (value == null || value.isEmpty()) {<a name="line.107"></a>
+<FONT color="green">108</FONT>                throw new NumberFormatException("invalid");<a name="line.108"></a>
+<FONT color="green">109</FONT>            }<a name="line.109"></a>
+<FONT color="green">110</FONT>            if (!check()) {<a name="line.110"></a>
+<FONT color="green">111</FONT>                throw new NumberFormatException("bad createChecksum");<a name="line.111"></a>
+<FONT color="green">112</FONT>            }<a name="line.112"></a>
+<FONT color="green">113</FONT>            return this;<a name="line.113"></a>
+<FONT color="green">114</FONT>        }<a name="line.114"></a>
+<FONT color="green">115</FONT>    <a name="line.115"></a>
+<FONT color="green">116</FONT>        /**<a name="line.116"></a>
+<FONT color="green">117</FONT>         * Returns the value representation of the standard number<a name="line.117"></a>
+<FONT color="green">118</FONT>         * @return value<a name="line.118"></a>
+<FONT color="green">119</FONT>         */<a name="line.119"></a>
+<FONT color="green">120</FONT>        @Override<a name="line.120"></a>
+<FONT color="green">121</FONT>        public String normalizedValue() {<a name="line.121"></a>
+<FONT color="green">122</FONT>            return value;<a name="line.122"></a>
+<FONT color="green">123</FONT>        }<a name="line.123"></a>
+<FONT color="green">124</FONT>    <a name="line.124"></a>
+<FONT color="green">125</FONT>        /**<a name="line.125"></a>
+<FONT color="green">126</FONT>         * Format this number<a name="line.126"></a>
+<FONT color="green">127</FONT>         *<a name="line.127"></a>
+<FONT color="green">128</FONT>         * @return the formatted number<a name="line.128"></a>
+<FONT color="green">129</FONT>         */<a name="line.129"></a>
+<FONT color="green">130</FONT>        @Override<a name="line.130"></a>
+<FONT color="green">131</FONT>        public String format() {<a name="line.131"></a>
+<FONT color="green">132</FONT>            return formatted;<a name="line.132"></a>
+<FONT color="green">133</FONT>        }<a name="line.133"></a>
+<FONT color="green">134</FONT>    <a name="line.134"></a>
+<FONT color="green">135</FONT>        @Override<a name="line.135"></a>
+<FONT color="green">136</FONT>        public ISSN reset() {<a name="line.136"></a>
+<FONT color="green">137</FONT>            this.value = null;<a name="line.137"></a>
+<FONT color="green">138</FONT>            this.formatted = null;<a name="line.138"></a>
+<FONT color="green">139</FONT>            this.createWithChecksum = false;<a name="line.139"></a>
+<FONT color="green">140</FONT>            return this;<a name="line.140"></a>
+<FONT color="green">141</FONT>        }<a name="line.141"></a>
+<FONT color="green">142</FONT>    <a name="line.142"></a>
+<FONT color="green">143</FONT>        public GTIN toGTIN() throws NumberFormatException {<a name="line.143"></a>
+<FONT color="green">144</FONT>            return new GTIN().set("977" + value.substring(0, 7) + "000").createChecksum(true).normalize().verify();<a name="line.144"></a>
+<FONT color="green">145</FONT>        }<a name="line.145"></a>
+<FONT color="green">146</FONT>    <a name="line.146"></a>
+<FONT color="green">147</FONT>        public GTIN toGTIN(String additionalCode) throws NumberFormatException {<a name="line.147"></a>
+<FONT color="green">148</FONT>            // "977" + ISSN + add-on + placeholder for createChecksum<a name="line.148"></a>
+<FONT color="green">149</FONT>            return new GTIN().set("977" + value.substring(0, 7) + additionalCode + "0").createChecksum(true).normalize().verify();<a name="line.149"></a>
+<FONT color="green">150</FONT>        }<a name="line.150"></a>
+<FONT color="green">151</FONT>    <a name="line.151"></a>
+<FONT color="green">152</FONT>        private boolean check() {<a name="line.152"></a>
+<FONT color="green">153</FONT>            int l = createWithChecksum ? value.length() : value.length() - 1;<a name="line.153"></a>
+<FONT color="green">154</FONT>            int checksum = 0;<a name="line.154"></a>
+<FONT color="green">155</FONT>            int weight;<a name="line.155"></a>
+<FONT color="green">156</FONT>            int val;<a name="line.156"></a>
+<FONT color="green">157</FONT>            for (int i = 0; i &lt; l; i++) {<a name="line.157"></a>
+<FONT color="green">158</FONT>                val = value.charAt(i) - '0';<a name="line.158"></a>
+<FONT color="green">159</FONT>                weight = 8 - i;<a name="line.159"></a>
+<FONT color="green">160</FONT>                checksum += weight * val;<a name="line.160"></a>
+<FONT color="green">161</FONT>            }<a name="line.161"></a>
+<FONT color="green">162</FONT>            int chk = checksum % 11;<a name="line.162"></a>
+<FONT color="green">163</FONT>            char p = chk == 0 ? '0' : chk == 1 ? 'X' : (char)((11-chk) + '0');<a name="line.163"></a>
+<FONT color="green">164</FONT>            return p == Character.toUpperCase(value.charAt(l));<a name="line.164"></a>
+<FONT color="green">165</FONT>        }<a name="line.165"></a>
+<FONT color="green">166</FONT>    <a name="line.166"></a>
+<FONT color="green">167</FONT>        private String dehyphenate(String isbn) {<a name="line.167"></a>
+<FONT color="green">168</FONT>            StringBuilder sb = new StringBuilder(isbn);<a name="line.168"></a>
+<FONT color="green">169</FONT>            int i = sb.indexOf("-");<a name="line.169"></a>
+<FONT color="green">170</FONT>            while (i &gt; 0) {<a name="line.170"></a>
+<FONT color="green">171</FONT>                sb.deleteCharAt(i);<a name="line.171"></a>
+<FONT color="green">172</FONT>                i = sb.indexOf("-");<a name="line.172"></a>
+<FONT color="green">173</FONT>            }<a name="line.173"></a>
+<FONT color="green">174</FONT>            if (sb.length() &gt; 7) {<a name="line.174"></a>
+<FONT color="green">175</FONT>                this.formatted = sb.substring(0, 4) + "-" + sb.substring(4, 8);<a name="line.175"></a>
+<FONT color="green">176</FONT>            }<a name="line.176"></a>
+<FONT color="green">177</FONT>            return sb.toString();<a name="line.177"></a>
+<FONT color="green">178</FONT>        }<a name="line.178"></a>
+<FONT color="green">179</FONT>    <a name="line.179"></a>
+<FONT color="green">180</FONT>    }<a name="line.180"></a>
 
 
 

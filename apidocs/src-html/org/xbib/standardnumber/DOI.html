@@ -47,72 +47,106 @@
 <FONT color="green">044</FONT>     */<a name="line.44"></a>
 <FONT color="green">045</FONT>    public class DOI implements Comparable&lt;DOI&gt;, StandardNumber {<a name="line.45"></a>
 <FONT color="green">046</FONT>    <a name="line.46"></a>
-<FONT color="green">047</FONT>        private static final Pattern PATTERN = Pattern.compile("[\\p{Graph}\\p{Punct}]{0,48}");<a name="line.47"></a>
+<FONT color="green">047</FONT>        private static final Pattern PATTERN = Pattern.compile("\\b10\\.\\d{4}([.][0-9]+)*/[/-a-z0-9.()&lt;&gt;_:;\\\\]+\\b");<a name="line.47"></a>
 <FONT color="green">048</FONT>    <a name="line.48"></a>
-<FONT color="green">049</FONT>        private static final Pattern URI_PATTERN = Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&amp;@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&amp;@#/%=~_|]");<a name="line.49"></a>
+<FONT color="green">049</FONT>        private static final Pattern URI_PATTERN = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&amp;@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&amp;@#/%=~_|]\\b");<a name="line.49"></a>
 <FONT color="green">050</FONT>    <a name="line.50"></a>
 <FONT color="green">051</FONT>        private String prefix = "http://doi.org/";<a name="line.51"></a>
 <FONT color="green">052</FONT>    <a name="line.52"></a>
-<FONT color="green">053</FONT>        private Object value;<a name="line.53"></a>
+<FONT color="green">053</FONT>        private Object raw;<a name="line.53"></a>
 <FONT color="green">054</FONT>    <a name="line.54"></a>
-<FONT color="green">055</FONT>        @Override<a name="line.55"></a>
-<FONT color="green">056</FONT>        public int compareTo(DOI doi) {<a name="line.56"></a>
-<FONT color="green">057</FONT>            return doi != null ? normalizedValue().compareTo(doi.normalizedValue()) : -1;<a name="line.57"></a>
-<FONT color="green">058</FONT>        }<a name="line.58"></a>
-<FONT color="green">059</FONT>    <a name="line.59"></a>
-<FONT color="green">060</FONT>        @Override<a name="line.60"></a>
-<FONT color="green">061</FONT>        public DOI set(CharSequence value) {<a name="line.61"></a>
-<FONT color="green">062</FONT>            this.value = value != null ? value.toString() : null;<a name="line.62"></a>
-<FONT color="green">063</FONT>            return this;<a name="line.63"></a>
-<FONT color="green">064</FONT>        }<a name="line.64"></a>
-<FONT color="green">065</FONT>    <a name="line.65"></a>
-<FONT color="green">066</FONT>        @Override<a name="line.66"></a>
-<FONT color="green">067</FONT>        public DOI checksum() {<a name="line.67"></a>
-<FONT color="green">068</FONT>            return this;<a name="line.68"></a>
-<FONT color="green">069</FONT>        }<a name="line.69"></a>
-<FONT color="green">070</FONT>    <a name="line.70"></a>
-<FONT color="green">071</FONT>        @Override<a name="line.71"></a>
-<FONT color="green">072</FONT>        public DOI normalize() {<a name="line.72"></a>
-<FONT color="green">073</FONT>            if (value == null) {<a name="line.73"></a>
-<FONT color="green">074</FONT>                return this;<a name="line.74"></a>
-<FONT color="green">075</FONT>            }<a name="line.75"></a>
-<FONT color="green">076</FONT>            String s = value.toString();<a name="line.76"></a>
-<FONT color="green">077</FONT>            Matcher m = URI_PATTERN.matcher(s);<a name="line.77"></a>
-<FONT color="green">078</FONT>            if (m.find()) {<a name="line.78"></a>
-<FONT color="green">079</FONT>                this.value = URI.create(s.substring(m.start(), m.end()));<a name="line.79"></a>
-<FONT color="green">080</FONT>            }<a name="line.80"></a>
-<FONT color="green">081</FONT>            m = PATTERN.matcher(s);<a name="line.81"></a>
-<FONT color="green">082</FONT>            if (m.find()) {<a name="line.82"></a>
-<FONT color="green">083</FONT>                this.value = URI.create(prefix + s.substring(m.start(), m.end()));<a name="line.83"></a>
-<FONT color="green">084</FONT>            }<a name="line.84"></a>
-<FONT color="green">085</FONT>            return this;<a name="line.85"></a>
-<FONT color="green">086</FONT>        }<a name="line.86"></a>
-<FONT color="green">087</FONT>    <a name="line.87"></a>
-<FONT color="green">088</FONT>        @Override<a name="line.88"></a>
-<FONT color="green">089</FONT>        public DOI verify() throws NumberFormatException {<a name="line.89"></a>
-<FONT color="green">090</FONT>            return this;<a name="line.90"></a>
-<FONT color="green">091</FONT>        }<a name="line.91"></a>
-<FONT color="green">092</FONT>    <a name="line.92"></a>
-<FONT color="green">093</FONT>        @Override<a name="line.93"></a>
-<FONT color="green">094</FONT>        public String normalizedValue() {<a name="line.94"></a>
-<FONT color="green">095</FONT>            return value != null ? value.toString() : null;<a name="line.95"></a>
-<FONT color="green">096</FONT>        }<a name="line.96"></a>
-<FONT color="green">097</FONT>    <a name="line.97"></a>
-<FONT color="green">098</FONT>        @Override<a name="line.98"></a>
-<FONT color="green">099</FONT>        public String format() {<a name="line.99"></a>
-<FONT color="green">100</FONT>            return value != null ? value.toString() : null;<a name="line.100"></a>
-<FONT color="green">101</FONT>        }<a name="line.101"></a>
-<FONT color="green">102</FONT>    <a name="line.102"></a>
-<FONT color="green">103</FONT>        public DOI prefix(String prefix) {<a name="line.103"></a>
-<FONT color="green">104</FONT>            this.prefix = prefix;<a name="line.104"></a>
-<FONT color="green">105</FONT>            return this;<a name="line.105"></a>
-<FONT color="green">106</FONT>        }<a name="line.106"></a>
-<FONT color="green">107</FONT>    <a name="line.107"></a>
-<FONT color="green">108</FONT>        public URI asURI() {<a name="line.108"></a>
-<FONT color="green">109</FONT>            return (URI)value;<a name="line.109"></a>
-<FONT color="green">110</FONT>        }<a name="line.110"></a>
-<FONT color="green">111</FONT>    <a name="line.111"></a>
-<FONT color="green">112</FONT>    }<a name="line.112"></a>
+<FONT color="green">055</FONT>        private URI value;<a name="line.55"></a>
+<FONT color="green">056</FONT>    <a name="line.56"></a>
+<FONT color="green">057</FONT>        @Override<a name="line.57"></a>
+<FONT color="green">058</FONT>        public String type() {<a name="line.58"></a>
+<FONT color="green">059</FONT>            return "doi";<a name="line.59"></a>
+<FONT color="green">060</FONT>        }<a name="line.60"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>        @Override<a name="line.62"></a>
+<FONT color="green">063</FONT>        public int compareTo(DOI doi) {<a name="line.63"></a>
+<FONT color="green">064</FONT>            return doi != null ? normalizedValue().compareTo(doi.normalizedValue()) : -1;<a name="line.64"></a>
+<FONT color="green">065</FONT>        }<a name="line.65"></a>
+<FONT color="green">066</FONT>    <a name="line.66"></a>
+<FONT color="green">067</FONT>        @Override<a name="line.67"></a>
+<FONT color="green">068</FONT>        public DOI set(CharSequence value) {<a name="line.68"></a>
+<FONT color="green">069</FONT>            this.raw = value;<a name="line.69"></a>
+<FONT color="green">070</FONT>            return this;<a name="line.70"></a>
+<FONT color="green">071</FONT>        }<a name="line.71"></a>
+<FONT color="green">072</FONT>    <a name="line.72"></a>
+<FONT color="green">073</FONT>        @Override<a name="line.73"></a>
+<FONT color="green">074</FONT>        public DOI createChecksum(boolean checksum) {<a name="line.74"></a>
+<FONT color="green">075</FONT>            return this;<a name="line.75"></a>
+<FONT color="green">076</FONT>        }<a name="line.76"></a>
+<FONT color="green">077</FONT>    <a name="line.77"></a>
+<FONT color="green">078</FONT>        @Override<a name="line.78"></a>
+<FONT color="green">079</FONT>        public DOI normalize() {<a name="line.79"></a>
+<FONT color="green">080</FONT>            if (raw == null) {<a name="line.80"></a>
+<FONT color="green">081</FONT>                return this;<a name="line.81"></a>
+<FONT color="green">082</FONT>            }<a name="line.82"></a>
+<FONT color="green">083</FONT>            this.value = make(raw.toString());<a name="line.83"></a>
+<FONT color="green">084</FONT>            return this;<a name="line.84"></a>
+<FONT color="green">085</FONT>        }<a name="line.85"></a>
+<FONT color="green">086</FONT>    <a name="line.86"></a>
+<FONT color="green">087</FONT>        @Override<a name="line.87"></a>
+<FONT color="green">088</FONT>        public boolean isValid() {<a name="line.88"></a>
+<FONT color="green">089</FONT>            return value != null;<a name="line.89"></a>
+<FONT color="green">090</FONT>        }<a name="line.90"></a>
+<FONT color="green">091</FONT>    <a name="line.91"></a>
+<FONT color="green">092</FONT>        @Override<a name="line.92"></a>
+<FONT color="green">093</FONT>        public DOI verify() throws NumberFormatException {<a name="line.93"></a>
+<FONT color="green">094</FONT>            if (value == null) {<a name="line.94"></a>
+<FONT color="green">095</FONT>                throw new NumberFormatException();<a name="line.95"></a>
+<FONT color="green">096</FONT>            }<a name="line.96"></a>
+<FONT color="green">097</FONT>            return this;<a name="line.97"></a>
+<FONT color="green">098</FONT>        }<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>        @Override<a name="line.100"></a>
+<FONT color="green">101</FONT>        public String normalizedValue() {<a name="line.101"></a>
+<FONT color="green">102</FONT>            return value != null ? value.toString() : null;<a name="line.102"></a>
+<FONT color="green">103</FONT>        }<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>        @Override<a name="line.105"></a>
+<FONT color="green">106</FONT>        public String format() {<a name="line.106"></a>
+<FONT color="green">107</FONT>            return value != null ? value.toString() : null;<a name="line.107"></a>
+<FONT color="green">108</FONT>        }<a name="line.108"></a>
+<FONT color="green">109</FONT>    <a name="line.109"></a>
+<FONT color="green">110</FONT>        public DOI prefix(String prefix) {<a name="line.110"></a>
+<FONT color="green">111</FONT>            this.prefix = prefix;<a name="line.111"></a>
+<FONT color="green">112</FONT>            return this;<a name="line.112"></a>
+<FONT color="green">113</FONT>        }<a name="line.113"></a>
+<FONT color="green">114</FONT>    <a name="line.114"></a>
+<FONT color="green">115</FONT>        public URI asURI() {<a name="line.115"></a>
+<FONT color="green">116</FONT>            return value;<a name="line.116"></a>
+<FONT color="green">117</FONT>        }<a name="line.117"></a>
+<FONT color="green">118</FONT>    <a name="line.118"></a>
+<FONT color="green">119</FONT>        public DOI reset() {<a name="line.119"></a>
+<FONT color="green">120</FONT>            this.value = null;<a name="line.120"></a>
+<FONT color="green">121</FONT>            return this;<a name="line.121"></a>
+<FONT color="green">122</FONT>        }<a name="line.122"></a>
+<FONT color="green">123</FONT>    <a name="line.123"></a>
+<FONT color="green">124</FONT>        private URI make(String content) {<a name="line.124"></a>
+<FONT color="green">125</FONT>            // is it an already a DOI URI?<a name="line.125"></a>
+<FONT color="green">126</FONT>            Matcher m = URI_PATTERN.matcher(content);<a name="line.126"></a>
+<FONT color="green">127</FONT>            if (m.find()) {<a name="line.127"></a>
+<FONT color="green">128</FONT>                String t = content.substring(m.start(), m.end());<a name="line.128"></a>
+<FONT color="green">129</FONT>                URI u = URI.create(t);<a name="line.129"></a>
+<FONT color="green">130</FONT>                if ("http".equals(u.getScheme()) &amp;&amp; ("dx.doi.org".equals(u.getHost()) || "doi.org".equals(u.getHost()))) {<a name="line.130"></a>
+<FONT color="green">131</FONT>                    m = PATTERN.matcher(u.getRawPath());<a name="line.131"></a>
+<FONT color="green">132</FONT>                    if (m.find()) {<a name="line.132"></a>
+<FONT color="green">133</FONT>                        return u;<a name="line.133"></a>
+<FONT color="green">134</FONT>                    }<a name="line.134"></a>
+<FONT color="green">135</FONT>                }<a name="line.135"></a>
+<FONT color="green">136</FONT>            }<a name="line.136"></a>
+<FONT color="green">137</FONT>            // not an URI, just the path?<a name="line.137"></a>
+<FONT color="green">138</FONT>            m = PATTERN.matcher(content);<a name="line.138"></a>
+<FONT color="green">139</FONT>            if (m.find()) {<a name="line.139"></a>
+<FONT color="green">140</FONT>                return URI.create(prefix + content.substring(m.start(), m.end()));<a name="line.140"></a>
+<FONT color="green">141</FONT>            } else {<a name="line.141"></a>
+<FONT color="green">142</FONT>                return null;<a name="line.142"></a>
+<FONT color="green">143</FONT>            }<a name="line.143"></a>
+<FONT color="green">144</FONT>        }<a name="line.144"></a>
+<FONT color="green">145</FONT>    <a name="line.145"></a>
+<FONT color="green">146</FONT>    }<a name="line.146"></a>
 
 
 

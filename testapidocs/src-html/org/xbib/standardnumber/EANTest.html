@@ -12,7 +12,7 @@
 <FONT color="green">009</FONT>        @Test<a name="line.9"></a>
 <FONT color="green">010</FONT>        public void testEAN() throws Exception {<a name="line.10"></a>
 <FONT color="green">011</FONT>            String value = "4 007630 000110";<a name="line.11"></a>
-<FONT color="green">012</FONT>            EAN ean = new EAN().set(value).checksum().normalize().verify();<a name="line.12"></a>
+<FONT color="green">012</FONT>            EAN ean = new EAN().set(value).createChecksum(true).normalize().verify();<a name="line.12"></a>
 <FONT color="green">013</FONT>            assertEquals("4007630000116", ean.normalizedValue());<a name="line.13"></a>
 <FONT color="green">014</FONT>            assertEquals("4007630000116", ean.format());<a name="line.14"></a>
 <FONT color="green">015</FONT>        }<a name="line.15"></a>
@@ -20,7 +20,7 @@
 <FONT color="green">017</FONT>        @Test<a name="line.17"></a>
 <FONT color="green">018</FONT>        public void testEAN2() throws Exception {<a name="line.18"></a>
 <FONT color="green">019</FONT>            String value = "7501031311309";<a name="line.19"></a>
-<FONT color="green">020</FONT>            EAN ean = new EAN().set(value).checksum().normalize().verify();<a name="line.20"></a>
+<FONT color="green">020</FONT>            EAN ean = new EAN().set(value).createChecksum(true).normalize().verify();<a name="line.20"></a>
 <FONT color="green">021</FONT>            assertEquals("7501031311309", ean.normalizedValue());<a name="line.21"></a>
 <FONT color="green">022</FONT>            assertEquals("7501031311309", ean.format());<a name="line.22"></a>
 <FONT color="green">023</FONT>        }<a name="line.23"></a>

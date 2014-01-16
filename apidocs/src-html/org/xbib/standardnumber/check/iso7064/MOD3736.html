@@ -16,35 +16,32 @@
 <FONT color="green">013</FONT>        }<a name="line.13"></a>
 <FONT color="green">014</FONT>    <a name="line.14"></a>
 <FONT color="green">015</FONT>        @Override<a name="line.15"></a>
-<FONT color="green">016</FONT>        public void verify(String digits) throws NumberFormatException {<a name="line.16"></a>
-<FONT color="green">017</FONT>            boolean b = compute(digits) == 1;<a name="line.17"></a>
-<FONT color="green">018</FONT>            if (!b) {<a name="line.18"></a>
-<FONT color="green">019</FONT>                throw new NumberFormatException("bad checksum: " + digits);<a name="line.19"></a>
-<FONT color="green">020</FONT>            }<a name="line.20"></a>
-<FONT color="green">021</FONT>        }<a name="line.21"></a>
-<FONT color="green">022</FONT>    <a name="line.22"></a>
-<FONT color="green">023</FONT>        @Override<a name="line.23"></a>
-<FONT color="green">024</FONT>        public int compute(String digits) {<a name="line.24"></a>
-<FONT color="green">025</FONT>            int modulus = ALPHABET.length();<a name="line.25"></a>
-<FONT color="green">026</FONT>            int check = modulus / 2;<a name="line.26"></a>
-<FONT color="green">027</FONT>            for (int i = 0; i &lt; digits.length(); i++) {<a name="line.27"></a>
-<FONT color="green">028</FONT>                check = (((check &gt; 0 ? check : modulus) * 2) % (modulus + 1)<a name="line.28"></a>
-<FONT color="green">029</FONT>                        + ALPHABET.indexOf(digits.charAt(i))) % modulus;<a name="line.29"></a>
-<FONT color="green">030</FONT>            }<a name="line.30"></a>
-<FONT color="green">031</FONT>            return check;<a name="line.31"></a>
-<FONT color="green">032</FONT>        }<a name="line.32"></a>
-<FONT color="green">033</FONT>    <a name="line.33"></a>
-<FONT color="green">034</FONT>        @Override<a name="line.34"></a>
-<FONT color="green">035</FONT>        public int getDigit(String digits) {<a name="line.35"></a>
-<FONT color="green">036</FONT>            return digits.charAt(digits.length() - 1);<a name="line.36"></a>
-<FONT color="green">037</FONT>        }<a name="line.37"></a>
-<FONT color="green">038</FONT>    <a name="line.38"></a>
-<FONT color="green">039</FONT>        @Override<a name="line.39"></a>
-<FONT color="green">040</FONT>        public String getNumber(String digits) {<a name="line.40"></a>
-<FONT color="green">041</FONT>            return digits.substring(0, digits.length() - 1);<a name="line.41"></a>
-<FONT color="green">042</FONT>        }<a name="line.42"></a>
-<FONT color="green">043</FONT>    <a name="line.43"></a>
-<FONT color="green">044</FONT>    }<a name="line.44"></a>
+<FONT color="green">016</FONT>        public boolean verify(String digits) {<a name="line.16"></a>
+<FONT color="green">017</FONT>            return compute(digits) == 1;<a name="line.17"></a>
+<FONT color="green">018</FONT>        }<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>        @Override<a name="line.20"></a>
+<FONT color="green">021</FONT>        public int compute(String digits) {<a name="line.21"></a>
+<FONT color="green">022</FONT>            int modulus = ALPHABET.length();<a name="line.22"></a>
+<FONT color="green">023</FONT>            int check = modulus / 2;<a name="line.23"></a>
+<FONT color="green">024</FONT>            for (int i = 0; i &lt; digits.length(); i++) {<a name="line.24"></a>
+<FONT color="green">025</FONT>                check = (((check &gt; 0 ? check : modulus) * 2) % (modulus + 1)<a name="line.25"></a>
+<FONT color="green">026</FONT>                        + ALPHABET.indexOf(digits.charAt(i))) % modulus;<a name="line.26"></a>
+<FONT color="green">027</FONT>            }<a name="line.27"></a>
+<FONT color="green">028</FONT>            return check;<a name="line.28"></a>
+<FONT color="green">029</FONT>        }<a name="line.29"></a>
+<FONT color="green">030</FONT>    <a name="line.30"></a>
+<FONT color="green">031</FONT>        @Override<a name="line.31"></a>
+<FONT color="green">032</FONT>        public int getDigit(String digits) {<a name="line.32"></a>
+<FONT color="green">033</FONT>            return digits.charAt(digits.length() - 1);<a name="line.33"></a>
+<FONT color="green">034</FONT>        }<a name="line.34"></a>
+<FONT color="green">035</FONT>    <a name="line.35"></a>
+<FONT color="green">036</FONT>        @Override<a name="line.36"></a>
+<FONT color="green">037</FONT>        public String getNumber(String digits) {<a name="line.37"></a>
+<FONT color="green">038</FONT>            return digits.substring(0, digits.length() - 1);<a name="line.38"></a>
+<FONT color="green">039</FONT>        }<a name="line.39"></a>
+<FONT color="green">040</FONT>    <a name="line.40"></a>
+<FONT color="green">041</FONT>    }<a name="line.41"></a>
 
 
 

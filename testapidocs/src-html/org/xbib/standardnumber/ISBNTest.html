@@ -35,7 +35,7 @@
 <FONT color="green">032</FONT>        @Test<a name="line.32"></a>
 <FONT color="green">033</FONT>        public void fixChecksum() throws Exception {<a name="line.33"></a>
 <FONT color="green">034</FONT>            String value = "3616065810";<a name="line.34"></a>
-<FONT color="green">035</FONT>            ISBN isbn = new ISBN().set(value).checksum().normalize().verify();<a name="line.35"></a>
+<FONT color="green">035</FONT>            ISBN isbn = new ISBN().set(value).createChecksum(true).normalize().verify();<a name="line.35"></a>
 <FONT color="green">036</FONT>            assertEquals(isbn.normalizedValue(), "361606581X");<a name="line.36"></a>
 <FONT color="green">037</FONT>        }<a name="line.37"></a>
 <FONT color="green">038</FONT>    <a name="line.38"></a>
@@ -50,7 +50,7 @@
 <FONT color="green">047</FONT>        @Test<a name="line.47"></a>
 <FONT color="green">048</FONT>        public void testEAN2() throws Exception {<a name="line.48"></a>
 <FONT color="green">049</FONT>            String value = "978-3-551-75213-1";<a name="line.49"></a>
-<FONT color="green">050</FONT>            ISBN ean = new ISBN().set(value).ean(true).checksum().normalize().verify();<a name="line.50"></a>
+<FONT color="green">050</FONT>            ISBN ean = new ISBN().set(value).ean(true).createChecksum(true).normalize().verify();<a name="line.50"></a>
 <FONT color="green">051</FONT>            assertEquals(ean.normalizedValue(), "9783551752130");<a name="line.51"></a>
 <FONT color="green">052</FONT>            assertEquals(ean.format(), "978-3-551-75213-0");<a name="line.52"></a>
 <FONT color="green">053</FONT>        }<a name="line.53"></a>
@@ -59,9 +59,33 @@
 <FONT color="green">056</FONT>        public void testWrongAndDirtyEAN() throws Exception {<a name="line.56"></a>
 <FONT color="green">057</FONT>            // correct ISBN-10 is 3-451-04112-X<a name="line.57"></a>
 <FONT color="green">058</FONT>            String value = "ISBN ISBN 3-451-4112-X kart. : DM 24.80";<a name="line.58"></a>
-<FONT color="green">059</FONT>            new ISBN().set(value).ean(false).checksum().normalize().verify();<a name="line.59"></a>
+<FONT color="green">059</FONT>            new ISBN().set(value).ean(false).createChecksum(true).normalize().verify();<a name="line.59"></a>
 <FONT color="green">060</FONT>        }<a name="line.60"></a>
-<FONT color="green">061</FONT>    }<a name="line.61"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>        @Test<a name="line.62"></a>
+<FONT color="green">063</FONT>        public void testVariants() throws Exception {<a name="line.63"></a>
+<FONT color="green">064</FONT>            String content = "1-9339-8817-7.";<a name="line.64"></a>
+<FONT color="green">065</FONT>            ISBN isbn = new ISBN().set(content).normalize();<a name="line.65"></a>
+<FONT color="green">066</FONT>            if (!isbn.isEAN()) {<a name="line.66"></a>
+<FONT color="green">067</FONT>                // create up to 4 variants: ISBN, ISBN normalized, ISBN-13, ISBN-13 normalized<a name="line.67"></a>
+<FONT color="green">068</FONT>                if (isbn.isValid()) {<a name="line.68"></a>
+<FONT color="green">069</FONT>                    assertEquals(isbn.ean(false).format(), "1-933988-17-7");<a name="line.69"></a>
+<FONT color="green">070</FONT>                    assertEquals(isbn.ean(false).normalizedValue(), "1933988177");<a name="line.70"></a>
+<FONT color="green">071</FONT>                }<a name="line.71"></a>
+<FONT color="green">072</FONT>                isbn = isbn.ean(true).set(content).normalize();<a name="line.72"></a>
+<FONT color="green">073</FONT>                if (isbn.isValid()) {<a name="line.73"></a>
+<FONT color="green">074</FONT>                    assertEquals(isbn.format(), "978-1-933988-17-7");<a name="line.74"></a>
+<FONT color="green">075</FONT>                    assertEquals(isbn.normalizedValue(), "9781933988177");<a name="line.75"></a>
+<FONT color="green">076</FONT>                }<a name="line.76"></a>
+<FONT color="green">077</FONT>            } else {<a name="line.77"></a>
+<FONT color="green">078</FONT>                // 2 variants, do not create ISBN-10 for an ISBN-13<a name="line.78"></a>
+<FONT color="green">079</FONT>                if (isbn.isValid()) {<a name="line.79"></a>
+<FONT color="green">080</FONT>                    assertEquals(isbn.ean(true).format(), "978-1-933988-17-7");<a name="line.80"></a>
+<FONT color="green">081</FONT>                    assertEquals(isbn.ean(true).normalizedValue(), "9781933988177");<a name="line.81"></a>
+<FONT color="green">082</FONT>                }<a name="line.82"></a>
+<FONT color="green">083</FONT>            }<a name="line.83"></a>
+<FONT color="green">084</FONT>        }<a name="line.84"></a>
+<FONT color="green">085</FONT>    }<a name="line.85"></a>
 
 
 

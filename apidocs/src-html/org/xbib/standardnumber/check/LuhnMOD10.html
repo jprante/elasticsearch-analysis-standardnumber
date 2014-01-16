@@ -5,50 +5,45 @@
 <FONT color="green">002</FONT>    <a name="line.2"></a>
 <FONT color="green">003</FONT>    public class LuhnMOD10 implements Digit {<a name="line.3"></a>
 <FONT color="green">004</FONT>    <a name="line.4"></a>
-<FONT color="green">005</FONT>        public String encode(String digits) {<a name="line.5"></a>
-<FONT color="green">006</FONT>            return digits + compute(digits);<a name="line.6"></a>
-<FONT color="green">007</FONT>        }<a name="line.7"></a>
-<FONT color="green">008</FONT>    <a name="line.8"></a>
-<FONT color="green">009</FONT>        public void verify(String digits) throws NumberFormatException {<a name="line.9"></a>
-<FONT color="green">010</FONT>            boolean b = (computeSum(digits) % 10) == 0;<a name="line.10"></a>
-<FONT color="green">011</FONT>            if (!b) {<a name="line.11"></a>
-<FONT color="green">012</FONT>                throw new NumberFormatException("bad checksum");<a name="line.12"></a>
-<FONT color="green">013</FONT>            }<a name="line.13"></a>
-<FONT color="green">014</FONT>        }<a name="line.14"></a>
-<FONT color="green">015</FONT>    <a name="line.15"></a>
+<FONT color="green">005</FONT>        @Override<a name="line.5"></a>
+<FONT color="green">006</FONT>        public String encode(String digits) {<a name="line.6"></a>
+<FONT color="green">007</FONT>            return digits + compute(digits);<a name="line.7"></a>
+<FONT color="green">008</FONT>        }<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>        @Override<a name="line.10"></a>
+<FONT color="green">011</FONT>        public boolean verify(String digits) {<a name="line.11"></a>
+<FONT color="green">012</FONT>            return computeSum(digits) % 10 == 0;<a name="line.12"></a>
+<FONT color="green">013</FONT>        }<a name="line.13"></a>
+<FONT color="green">014</FONT>    <a name="line.14"></a>
+<FONT color="green">015</FONT>        @Override<a name="line.15"></a>
 <FONT color="green">016</FONT>        public int compute(String digits) {<a name="line.16"></a>
 <FONT color="green">017</FONT>            int val = computeSum(digits);<a name="line.17"></a>
 <FONT color="green">018</FONT>            return (val == 0) ? 0 : (10 - val);<a name="line.18"></a>
 <FONT color="green">019</FONT>        }<a name="line.19"></a>
 <FONT color="green">020</FONT>    <a name="line.20"></a>
-<FONT color="green">021</FONT>        public int getDigit(String digits) {<a name="line.21"></a>
-<FONT color="green">022</FONT>            return digits.charAt(digits.length() - 1) - '0';<a name="line.22"></a>
-<FONT color="green">023</FONT>        }<a name="line.23"></a>
-<FONT color="green">024</FONT>    <a name="line.24"></a>
-<FONT color="green">025</FONT>        public String getNumber(String digits) {<a name="line.25"></a>
-<FONT color="green">026</FONT>            return digits.substring(0, digits.length() - 1);<a name="line.26"></a>
-<FONT color="green">027</FONT>        }<a name="line.27"></a>
-<FONT color="green">028</FONT>    <a name="line.28"></a>
-<FONT color="green">029</FONT>        private int computeSum(String digits) {<a name="line.29"></a>
-<FONT color="green">030</FONT>            int val = 0;<a name="line.30"></a>
-<FONT color="green">031</FONT>            for (int i = 0; i &lt; digits.length(); i += 2) {<a name="line.31"></a>
-<FONT color="green">032</FONT>                int c = digits.charAt(i) - '0';<a name="line.32"></a>
-<FONT color="green">033</FONT>                if (c &lt; 0 || c &gt; 9) {<a name="line.33"></a>
-<FONT color="green">034</FONT>                    throw new NumberFormatException("Bad digit: '" + digits.charAt(i) + "'");<a name="line.34"></a>
-<FONT color="green">035</FONT>                }<a name="line.35"></a>
-<FONT color="green">036</FONT>                val += c;<a name="line.36"></a>
-<FONT color="green">037</FONT>            }<a name="line.37"></a>
-<FONT color="green">038</FONT>    <a name="line.38"></a>
-<FONT color="green">039</FONT>            for (int i = 1; i &lt; digits.length(); i += 2) {<a name="line.39"></a>
-<FONT color="green">040</FONT>                int c = digits.charAt(i) - '0';<a name="line.40"></a>
-<FONT color="green">041</FONT>                if (c &lt; 0 || c &gt; 9) {<a name="line.41"></a>
-<FONT color="green">042</FONT>                    throw new NumberFormatException("Bad digit: '" + digits.charAt(i) + "'");<a name="line.42"></a>
-<FONT color="green">043</FONT>                }<a name="line.43"></a>
-<FONT color="green">044</FONT>                val += (c &gt;= 5) ? (2*c - 9) : (2*c);<a name="line.44"></a>
-<FONT color="green">045</FONT>            }<a name="line.45"></a>
-<FONT color="green">046</FONT>            return val % 10;<a name="line.46"></a>
-<FONT color="green">047</FONT>        }<a name="line.47"></a>
-<FONT color="green">048</FONT>    }<a name="line.48"></a>
+<FONT color="green">021</FONT>        @Override<a name="line.21"></a>
+<FONT color="green">022</FONT>        public int getDigit(String digits) {<a name="line.22"></a>
+<FONT color="green">023</FONT>            return digits.charAt(digits.length() - 1) - '0';<a name="line.23"></a>
+<FONT color="green">024</FONT>        }<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>        @Override<a name="line.26"></a>
+<FONT color="green">027</FONT>        public String getNumber(String digits) {<a name="line.27"></a>
+<FONT color="green">028</FONT>            return digits.substring(0, digits.length() - 1);<a name="line.28"></a>
+<FONT color="green">029</FONT>        }<a name="line.29"></a>
+<FONT color="green">030</FONT>    <a name="line.30"></a>
+<FONT color="green">031</FONT>        private int computeSum(String digits) {<a name="line.31"></a>
+<FONT color="green">032</FONT>            int val = 0;<a name="line.32"></a>
+<FONT color="green">033</FONT>            for (int i = 0; i &lt; digits.length(); i += 2) {<a name="line.33"></a>
+<FONT color="green">034</FONT>                int c = digits.charAt(i) - '0';<a name="line.34"></a>
+<FONT color="green">035</FONT>                val += c;<a name="line.35"></a>
+<FONT color="green">036</FONT>            }<a name="line.36"></a>
+<FONT color="green">037</FONT>            for (int i = 1; i &lt; digits.length(); i += 2) {<a name="line.37"></a>
+<FONT color="green">038</FONT>                int c = digits.charAt(i) - '0';<a name="line.38"></a>
+<FONT color="green">039</FONT>                val += (c &gt;= 5) ? (2*c - 9) : (2*c);<a name="line.39"></a>
+<FONT color="green">040</FONT>            }<a name="line.40"></a>
+<FONT color="green">041</FONT>            return val % 10;<a name="line.41"></a>
+<FONT color="green">042</FONT>        }<a name="line.42"></a>
+<FONT color="green">043</FONT>    }<a name="line.43"></a>
 
 
 
