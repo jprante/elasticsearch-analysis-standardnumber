@@ -22,4 +22,13 @@ public class EANTest extends Assert {
         assertEquals("7501031311309", ean.format());
     }
 
+    @Test
+    public void testEAN3() throws Exception {
+        String value = "9781617291623";
+        EAN ean = new EAN().set(value).normalize().verify();
+        assertEquals("9781617291623", ean.normalizedValue());
+        assertEquals("9781617291623", ean.format());
+    }
+
+
 }

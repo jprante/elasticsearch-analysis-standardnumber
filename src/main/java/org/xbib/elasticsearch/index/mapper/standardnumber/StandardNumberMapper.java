@@ -11,13 +11,12 @@ import org.elasticsearch.index.mapper.MergeMappingException;
 import org.elasticsearch.index.mapper.ObjectMapperListener;
 import org.elasticsearch.index.mapper.ParseContext;
 import org.elasticsearch.index.mapper.core.StringFieldMapper;
-import org.xbib.elasticsearch.index.analysis.Detector;
+import org.xbib.elasticsearch.index.analysis.standardnumber.Detector;
 import org.xbib.standardnumber.StandardNumber;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.index.mapper.MapperBuilders.stringField;
@@ -30,7 +29,7 @@ public class StandardNumberMapper implements Mapper {
 
         private StringFieldMapper.Builder contentBuilder;
 
-        private StringFieldMapper.Builder stdnumBuilder = stringField("stdnum");
+        private StringFieldMapper.Builder stdnumBuilder = stringField("standardnumber");
 
         private Detector detector;
 
@@ -46,8 +45,8 @@ public class StandardNumberMapper implements Mapper {
             return this;
         }
 
-        public Builder lang(StringFieldMapper.Builder lang) {
-            this.stdnumBuilder = lang;
+        public Builder stdnum(StringFieldMapper.Builder stdnum) {
+            this.stdnumBuilder = stdnum;
             return this;
         }
 
@@ -55,9 +54,9 @@ public class StandardNumberMapper implements Mapper {
         public StandardNumberMapper build(BuilderContext context) {
             context.path().add(name);
             StringFieldMapper contentMapper = contentBuilder.build(context);
-            StringFieldMapper langMapper = stdnumBuilder.build(context);
+            StringFieldMapper stdnumMapper = stdnumBuilder.build(context);
             context.path().remove();
-            return new StandardNumberMapper(name, detector, contentMapper, langMapper);
+            return new StandardNumberMapper(name, detector, contentMapper, stdnumMapper);
         }
     }
 
@@ -87,8 +86,8 @@ public class StandardNumberMapper implements Mapper {
                         if (name.equals(propName)) {
                             builder.content((StringFieldMapper.Builder) parserContext.typeParser("string").parse(name,
                                     (Map<String, Object>) propNode, parserContext));
-                        } else if ("stdnum".equals(propName)) {
-                            builder.lang((StringFieldMapper.Builder) parserContext.typeParser("string").parse("lang",
+                        } else if ("standardnumber".equals(propName)) {
+                            builder.stdnum((StringFieldMapper.Builder) parserContext.typeParser("string").parse(propName,
                                     (Map<String, Object>) propNode, parserContext));
                         }
                     }
@@ -126,15 +125,7 @@ public class StandardNumberMapper implements Mapper {
         XContentParser.Token token = parser.currentToken();
 
         if (token == XContentParser.Token.VALUE_STRING) {
-            // try decode UTF-8 base64 (e.g. from attachment mapper plugin)
             content = parser.text();
-            try {
-                byte[] b = parser.binaryValue();
-                if (b != null && b.length > 0) {
-                    content = new String(b, Charset.forName("UTF-8"));
-                }
-            } catch (Exception e) {
-            }
         }
 
         context.externalValue(content);

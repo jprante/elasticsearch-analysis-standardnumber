@@ -58,7 +58,7 @@ Installation
 =============  ===========  =================  =================================================================
 ES version     Plugin       Release date       Command
 -------------  -----------  -----------------  -----------------------------------------------------------------
-1.0.0.RC1      1.0.0.RC1.1  Jan 16, 2014       ./bin/plugin --install standardnumber --url http://bit.ly/1dSOKcr
+1.1.0          1.1.0.0      Apr 6, 2014        ./bin/plugin --install standardnumber --url http://bit.ly/1jRG3Wl
 =============  ===========  =================  =================================================================
 
 Do not forget to restart the node after installing.
@@ -137,6 +137,54 @@ The content ``Die ISBN von Lucene in Action lautet 1-9339-8817-7.`` will be toke
 
 ISBN-10 were the only form valid before Januar 1, 2007. Such old ISBNs will be reformatted, validated, and
 normalized into ISBN-10/ISBN13 variant forms, which are added as extra tokens to the token stream.
+
+Search example::
+
+    curl -XPUT '0:9200/stdnum' -d '
+    {
+        "mappings": {
+            "_default_" : {
+                "properties": {
+                    "num" : { "type" : "standardnumber" }
+                 }
+            }
+        }
+    }
+    '
+
+    curl -XPOST '0:9200/stdnum/test/1' -d '
+    {
+        "num" : "1-9339-8817-7"
+    }
+    '
+
+    curl -XPOST '0:9200/stdnum/test/_search' -d '
+    {
+        "query" : {
+            "match" : {
+                "_all" : "1933988177"
+            }
+        }
+    }
+    '
+
+Analyzer and token filter
+=========================
+
+With this plugin it is possible to use an analyzer `standardnumber` or a filter `standardnumber`,
+which is equivalent to::
+
+          "filter" : {
+              "standardnumber" : {
+                  "type" : "standardnumber"
+              }
+          },
+          "analyzer" : {
+              "standardnumber" : {
+                  "tokenizer" : "whitespace",
+                  "filter" : [ "standardnumber", "unique" ]
+              }
+          }
 
 License
 =======

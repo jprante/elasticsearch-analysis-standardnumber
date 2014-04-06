@@ -1,6 +1,9 @@
-package org.xbib.elasticsearch.index.analysis;
+package org.xbib.elasticsearch.index.analysis.standardnumber;
 
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.common.collect.Sets;
+import org.elasticsearch.common.component.AbstractLifecycleComponent;
+import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
 import org.xbib.standardnumber.ISBN;
 import org.xbib.standardnumber.StandardNumber;
@@ -11,17 +14,34 @@ import java.util.Set;
 
 import static org.elasticsearch.common.collect.Lists.newLinkedList;
 
-public class Detector {
+public class Detector extends AbstractLifecycleComponent<Detector>  {
 
     private final Set<StandardNumber> stdnums;
 
+    @Inject
     public Detector(Settings settings) {
+        super(settings);
         String[] s = settings.getAsArray("types", null);
         Set<String> types = s != null ? Sets.newTreeSet(Arrays.asList(s)) : null;
         this.stdnums = Sets.newLinkedHashSet();
         stdnums.addAll(types == null ?
                 StandardNumberService.create() :
                 StandardNumberService.create(types));
+    }
+
+    @Override
+    protected void doStart() throws ElasticsearchException {
+
+    }
+
+    @Override
+    protected void doStop() throws ElasticsearchException {
+
+    }
+
+    @Override
+    protected void doClose() throws ElasticsearchException {
+
     }
 
     public Collection<StandardNumber> detect(CharSequence content) {
@@ -42,7 +62,7 @@ public class Detector {
         for (StandardNumber stdnum : stdnums) {
             stdnum.reset();
             if (stdnum instanceof ISBN) {
-                lookupISBN(content, variants);
+                handleISBN((ISBN) stdnum, content, variants);
             } else {
                 stdnum = stdnum.set(content).normalize();
                 if (stdnum.isValid()) {
@@ -54,25 +74,20 @@ public class Detector {
         return variants;
     }
 
-    private void lookupISBN(CharSequence content, Collection<CharSequence> variants) throws NumberFormatException {
-        ISBN isbn = new ISBN().set(content).normalize();
-        if (!isbn.isValid()) {
-            return;
-        }
-        if (!isbn.isEAN()) {
-            // create up to 4 variants: ISBN, ISBN normalized, ISBN-13, ISBN-13 normalized
-            if (isbn.isValid()) {
+    private void handleISBN(ISBN stdnum, CharSequence content, Collection<CharSequence> variants) throws NumberFormatException {
+        ISBN isbn = stdnum.set(content).normalize();
+        if (isbn.isValid()) {
+            if (!isbn.isEAN()) {
+                // create up to 4 variants: ISBN, ISBN normalized, ISBN-13, ISBN-13 normalized
                 variants.add("ISBN " + isbn.ean(false).format());
                 variants.add("ISBN " + isbn.ean(false).normalizedValue());
-            }
-            isbn = isbn.ean(true).set(content).normalize();
-            if (isbn.isValid()) {
-                variants.add("ISBN " + isbn.format());
-                variants.add("ISBN " + isbn.normalizedValue());
-            }
-        } else {
-            // 2 variants, do not create ISBN-10 for an ISBN-13
-            if (isbn.isValid()) {
+                isbn = isbn.ean(true).set(content).normalize();
+                if (isbn.isValid()) {
+                    variants.add("ISBN " + isbn.format());
+                    variants.add("ISBN " + isbn.normalizedValue());
+                }
+            } else {
+                // 2 variants, do not create ISBN-10 for an ISBN-13
                 variants.add("ISBN " + isbn.ean(true).format());
                 variants.add("ISBN " + isbn.ean(true).normalizedValue());
             }

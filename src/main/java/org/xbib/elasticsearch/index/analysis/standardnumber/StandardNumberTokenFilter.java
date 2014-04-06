@@ -1,4 +1,4 @@
-package org.xbib.elasticsearch.index.analysis;
+package org.xbib.elasticsearch.index.analysis.standardnumber;
 
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenFilter;
@@ -7,6 +7,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.util.AttributeSource;
+import org.xbib.elasticsearch.index.analysis.standardnumber.Detector;
 
 import java.io.IOException;
 import java.nio.charset.CharacterCodingException;

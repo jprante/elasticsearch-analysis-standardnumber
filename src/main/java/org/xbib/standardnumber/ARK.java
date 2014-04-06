@@ -43,7 +43,12 @@ public class ARK implements Comparable<ARK>, StandardNumber {
 
     @Override
     public ARK set(CharSequence value) {
-        this.value = value != null ? URI.create(value.toString()) : null;
+        try {
+            this.value = value != null ? URI.create(value.toString()) : null;
+        } catch (IllegalArgumentException e) {
+            this.value = null;
+
+        }
         return this;
     }
 
@@ -82,7 +87,7 @@ public class ARK implements Comparable<ARK>, StandardNumber {
      */
     @Override
     public ARK verify() throws NumberFormatException {
-        if (!"ark".equals(value.getScheme())) {
+        if (value == null || !"ark".equals(value.getScheme())) {
             throw new NumberFormatException();
         }
         return this;

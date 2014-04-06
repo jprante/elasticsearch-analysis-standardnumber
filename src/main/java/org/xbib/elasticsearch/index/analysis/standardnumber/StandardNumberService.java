@@ -1,4 +1,4 @@
-package org.xbib.elasticsearch.index.analysis;
+package org.xbib.elasticsearch.index.analysis.standardnumber;
 
 import org.xbib.standardnumber.ARK;
 import org.xbib.standardnumber.DOI;

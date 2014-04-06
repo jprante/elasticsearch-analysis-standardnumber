@@ -29,8 +29,6 @@ import java.io.IOException;
 
 public class StandardNumberTokenFilterTest extends Assert {
 
-    private final static ESLogger logger = ESLoggerFactory.getLogger("test");
-
     NamedAnalyzer analyzer;
 
     @BeforeClass
