@@ -1,505 +1,510 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    <a name="line.1"></a>
-<FONT color="green">002</FONT>    package org.xbib.standardnumber;<a name="line.2"></a>
-<FONT color="green">003</FONT>    <a name="line.3"></a>
-<FONT color="green">004</FONT>    import javax.xml.stream.XMLEventReader;<a name="line.4"></a>
-<FONT color="green">005</FONT>    import javax.xml.stream.XMLInputFactory;<a name="line.5"></a>
-<FONT color="green">006</FONT>    import javax.xml.stream.XMLStreamException;<a name="line.6"></a>
-<FONT color="green">007</FONT>    import javax.xml.stream.events.Characters;<a name="line.7"></a>
-<FONT color="green">008</FONT>    import javax.xml.stream.events.EndElement;<a name="line.8"></a>
-<FONT color="green">009</FONT>    import javax.xml.stream.events.StartElement;<a name="line.9"></a>
-<FONT color="green">010</FONT>    import javax.xml.stream.events.XMLEvent;<a name="line.10"></a>
-<FONT color="green">011</FONT>    import java.io.InputStream;<a name="line.11"></a>
-<FONT color="green">012</FONT>    import java.util.ArrayList;<a name="line.12"></a>
-<FONT color="green">013</FONT>    import java.util.List;<a name="line.13"></a>
-<FONT color="green">014</FONT>    import java.util.Stack;<a name="line.14"></a>
-<FONT color="green">015</FONT>    import java.util.regex.Matcher;<a name="line.15"></a>
-<FONT color="green">016</FONT>    import java.util.regex.Pattern;<a name="line.16"></a>
-<FONT color="green">017</FONT>    <a name="line.17"></a>
-<FONT color="green">018</FONT>    /**<a name="line.18"></a>
-<FONT color="green">019</FONT>     * ISO 2108 International Standard Book Number (ISBN)<a name="line.19"></a>
-<FONT color="green">020</FONT>     *<a name="line.20"></a>
-<FONT color="green">021</FONT>     * Z39.50 BIB-1 Use Attribute 7<a name="line.21"></a>
-<FONT color="green">022</FONT>     *<a name="line.22"></a>
-<FONT color="green">023</FONT>     * The International Standard Book Number is a 13-digit number<a name="line.23"></a>
-<FONT color="green">024</FONT>     * that uniquely identifies books and book-like products published<a name="line.24"></a>
-<FONT color="green">025</FONT>     * internationally.<a name="line.25"></a>
-<FONT color="green">026</FONT>     *<a name="line.26"></a>
-<FONT color="green">027</FONT>     * The purpose of the ISBN is to establish and identify one title or<a name="line.27"></a>
-<FONT color="green">028</FONT>     * edition of a title from one specific publisher<a name="line.28"></a>
-<FONT color="green">029</FONT>     * and is unique to that edition, allowing for more efficient marketing of products by booksellers,<a name="line.29"></a>
-<FONT color="green">030</FONT>     * libraries, universities, wholesalers and distributors.<a name="line.30"></a>
-<FONT color="green">031</FONT>     *<a name="line.31"></a>
-<FONT color="green">032</FONT>     * Every ISBN consists of thirteen digits and whenever it is printed it is preceded by the letters ISBN.<a name="line.32"></a>
-<FONT color="green">033</FONT>     * The thirteen-digit number is divided into four parts of variable length, each part separated by a hyphen.<a name="line.33"></a>
-<FONT color="green">034</FONT>     *<a name="line.34"></a>
-<FONT color="green">035</FONT>     * This class is based upon the ISBN converter and formatter class<a name="line.35"></a>
-<FONT color="green">036</FONT>     * Copyright 2000-2005 by Openly Informatics, Inc. http://www.openly.com/<a name="line.36"></a>
-<FONT color="green">037</FONT>     *<a name="line.37"></a>
-<FONT color="green">038</FONT>     * @see &lt;a href="http://www.s.org/standards/home/s/international/html/usm12.htm"&gt;The ISBN Users' Manual&lt;/a&gt;<a name="line.38"></a>
-<FONT color="green">039</FONT>     * @see &lt;a href="http://www.ietf.org/html.charters/OLD/urn-charter.html"&gt;The IETF URN Charter&lt;/a&gt;<a name="line.39"></a>
-<FONT color="green">040</FONT>     * @see &lt;a href="http://www.iana.org/assignments/urn-namespaces"&gt;The IANA URN assignments&lt;/a&gt;<a name="line.40"></a>
-<FONT color="green">041</FONT>     * @see &lt;a href="http://www.isbn-international.org/download/List%20of%20Ranges.pdf"&gt;ISBN prefix list&lt;/a&gt;<a name="line.41"></a>
-<FONT color="green">042</FONT>     */<a name="line.42"></a>
-<FONT color="green">043</FONT>    public class ISBN implements Comparable&lt;ISBN&gt;, StandardNumber {<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>        private static final Pattern PATTERN = Pattern.compile("[\\p{Digit}xX\\-]{10,17}");<a name="line.45"></a>
-<FONT color="green">046</FONT>    <a name="line.46"></a>
-<FONT color="green">047</FONT>        private static final List&lt;String&gt; ranges = new ISBNRangeMessageConfigurator().getRanges();<a name="line.47"></a>
-<FONT color="green">048</FONT>    <a name="line.48"></a>
-<FONT color="green">049</FONT>        private String value;<a name="line.49"></a>
-<FONT color="green">050</FONT>    <a name="line.50"></a>
-<FONT color="green">051</FONT>        private boolean createWithChecksum;<a name="line.51"></a>
-<FONT color="green">052</FONT>    <a name="line.52"></a>
-<FONT color="green">053</FONT>        private String eanvalue;<a name="line.53"></a>
-<FONT color="green">054</FONT>    <a name="line.54"></a>
-<FONT color="green">055</FONT>        private boolean eanPreferred;<a name="line.55"></a>
-<FONT color="green">056</FONT>    <a name="line.56"></a>
-<FONT color="green">057</FONT>        private boolean valid;<a name="line.57"></a>
-<FONT color="green">058</FONT>    <a name="line.58"></a>
-<FONT color="green">059</FONT>        private boolean isEAN;<a name="line.59"></a>
-<FONT color="green">060</FONT>    <a name="line.60"></a>
-<FONT color="green">061</FONT>        @Override<a name="line.61"></a>
-<FONT color="green">062</FONT>        public String type() {<a name="line.62"></a>
-<FONT color="green">063</FONT>            return "isbn";<a name="line.63"></a>
-<FONT color="green">064</FONT>        }<a name="line.64"></a>
-<FONT color="green">065</FONT>    <a name="line.65"></a>
-<FONT color="green">066</FONT>        /**<a name="line.66"></a>
-<FONT color="green">067</FONT>         * Set ISBN value<a name="line.67"></a>
-<FONT color="green">068</FONT>         *<a name="line.68"></a>
-<FONT color="green">069</FONT>         * @param value the ISBN candidate string<a name="line.69"></a>
-<FONT color="green">070</FONT>         */<a name="line.70"></a>
-<FONT color="green">071</FONT>        @Override<a name="line.71"></a>
-<FONT color="green">072</FONT>        public ISBN set(CharSequence value) {<a name="line.72"></a>
-<FONT color="green">073</FONT>            this.value = value != null ? value.toString() : null;<a name="line.73"></a>
-<FONT color="green">074</FONT>            return this;<a name="line.74"></a>
-<FONT color="green">075</FONT>        }<a name="line.75"></a>
-<FONT color="green">076</FONT>    <a name="line.76"></a>
-<FONT color="green">077</FONT>        @Override<a name="line.77"></a>
-<FONT color="green">078</FONT>        public ISBN createChecksum(boolean createWithChecksum) {<a name="line.78"></a>
-<FONT color="green">079</FONT>            this.createWithChecksum = createWithChecksum;<a name="line.79"></a>
-<FONT color="green">080</FONT>            return this;<a name="line.80"></a>
-<FONT color="green">081</FONT>        }<a name="line.81"></a>
-<FONT color="green">082</FONT>    <a name="line.82"></a>
-<FONT color="green">083</FONT>        @Override<a name="line.83"></a>
-<FONT color="green">084</FONT>        public int compareTo(ISBN isbn) {<a name="line.84"></a>
-<FONT color="green">085</FONT>            return value != null ? value.compareTo(isbn.normalizedValue()): -1;<a name="line.85"></a>
-<FONT color="green">086</FONT>        }<a name="line.86"></a>
-<FONT color="green">087</FONT>    <a name="line.87"></a>
-<FONT color="green">088</FONT>        @Override<a name="line.88"></a>
-<FONT color="green">089</FONT>        public ISBN normalize() {<a name="line.89"></a>
-<FONT color="green">090</FONT>            Matcher m = PATTERN.matcher(value);<a name="line.90"></a>
-<FONT color="green">091</FONT>            this.value = m.find() ? dehyphenate(value.substring(m.start(), m.end())) : null;<a name="line.91"></a>
-<FONT color="green">092</FONT>            return this;<a name="line.92"></a>
-<FONT color="green">093</FONT>        }<a name="line.93"></a>
-<FONT color="green">094</FONT>    <a name="line.94"></a>
-<FONT color="green">095</FONT>        /**<a name="line.95"></a>
-<FONT color="green">096</FONT>         * Check for this ISBN number validity<a name="line.96"></a>
-<FONT color="green">097</FONT>         *<a name="line.97"></a>
-<FONT color="green">098</FONT>         * @return true if valid, false otherwise<a name="line.98"></a>
-<FONT color="green">099</FONT>         */<a name="line.99"></a>
-<FONT color="green">100</FONT>        @Override<a name="line.100"></a>
-<FONT color="green">101</FONT>        public boolean isValid() throws NumberFormatException {<a name="line.101"></a>
-<FONT color="green">102</FONT>            return value != null &amp;&amp; !value.isEmpty() &amp;&amp; check() &amp;&amp; (eanPreferred ? eanvalue != null : value != null);<a name="line.102"></a>
-<FONT color="green">103</FONT>        }<a name="line.103"></a>
-<FONT color="green">104</FONT>    <a name="line.104"></a>
-<FONT color="green">105</FONT>        @Override<a name="line.105"></a>
-<FONT color="green">106</FONT>        public ISBN verify() throws NumberFormatException {<a name="line.106"></a>
-<FONT color="green">107</FONT>            if (value == null || value.isEmpty()) {<a name="line.107"></a>
-<FONT color="green">108</FONT>                throw new NumberFormatException("must not be null");<a name="line.108"></a>
-<FONT color="green">109</FONT>            }<a name="line.109"></a>
-<FONT color="green">110</FONT>            check();<a name="line.110"></a>
-<FONT color="green">111</FONT>            this.valid = eanPreferred ? eanvalue != null : value != null;<a name="line.111"></a>
-<FONT color="green">112</FONT>            if (!valid) {<a name="line.112"></a>
-<FONT color="green">113</FONT>                throw new NumberFormatException("invalid number");<a name="line.113"></a>
-<FONT color="green">114</FONT>            }<a name="line.114"></a>
-<FONT color="green">115</FONT>            return this;<a name="line.115"></a>
-<FONT color="green">116</FONT>        }<a name="line.116"></a>
-<FONT color="green">117</FONT>    <a name="line.117"></a>
-<FONT color="green">118</FONT>        /**<a name="line.118"></a>
-<FONT color="green">119</FONT>         * Get the normalized value of this standard book number<a name="line.119"></a>
-<FONT color="green">120</FONT>         * <a name="line.120"></a>
-<FONT color="green">121</FONT>         * @return the value of this standard book number<a name="line.121"></a>
-<FONT color="green">122</FONT>         */<a name="line.122"></a>
-<FONT color="green">123</FONT>        @Override<a name="line.123"></a>
-<FONT color="green">124</FONT>        public String normalizedValue() {<a name="line.124"></a>
-<FONT color="green">125</FONT>            return eanPreferred ? eanvalue : value;<a name="line.125"></a>
-<FONT color="green">126</FONT>        }<a name="line.126"></a>
-<FONT color="green">127</FONT>    <a name="line.127"></a>
-<FONT color="green">128</FONT>        /**<a name="line.128"></a>
-<FONT color="green">129</FONT>         * Get printable representation of this standard book number<a name="line.129"></a>
-<FONT color="green">130</FONT>         *<a name="line.130"></a>
-<FONT color="green">131</FONT>         * @return ISBN-13, with (fixed) check digit<a name="line.131"></a>
-<FONT color="green">132</FONT>         */<a name="line.132"></a>
-<FONT color="green">133</FONT>        @Override<a name="line.133"></a>
-<FONT color="green">134</FONT>        public String format() {<a name="line.134"></a>
-<FONT color="green">135</FONT>            if ((!eanPreferred &amp;&amp; value == null) || eanvalue == null) {<a name="line.135"></a>
-<FONT color="green">136</FONT>                return null;<a name="line.136"></a>
-<FONT color="green">137</FONT>            }<a name="line.137"></a>
-<FONT color="green">138</FONT>            return eanPreferred ?<a name="line.138"></a>
-<FONT color="green">139</FONT>                            fix(eanvalue != null ? eanvalue : "978" + value) :<a name="line.139"></a>
-<FONT color="green">140</FONT>                            fix("978" + value).substring(4);<a name="line.140"></a>
-<FONT color="green">141</FONT>        }<a name="line.141"></a>
-<FONT color="green">142</FONT>    <a name="line.142"></a>
-<FONT color="green">143</FONT>        @Override<a name="line.143"></a>
-<FONT color="green">144</FONT>        public ISBN reset() {<a name="line.144"></a>
-<FONT color="green">145</FONT>            this.value = null;<a name="line.145"></a>
-<FONT color="green">146</FONT>            this.createWithChecksum = false;<a name="line.146"></a>
-<FONT color="green">147</FONT>            this.eanvalue = null;<a name="line.147"></a>
-<FONT color="green">148</FONT>            this.eanPreferred = false;<a name="line.148"></a>
-<FONT color="green">149</FONT>            this.valid = false;<a name="line.149"></a>
-<FONT color="green">150</FONT>            this.isEAN = false;<a name="line.150"></a>
-<FONT color="green">151</FONT>            return this;<a name="line.151"></a>
-<FONT color="green">152</FONT>        }<a name="line.152"></a>
-<FONT color="green">153</FONT>    <a name="line.153"></a>
-<FONT color="green">154</FONT>        public boolean isEAN() {<a name="line.154"></a>
-<FONT color="green">155</FONT>            return isEAN;<a name="line.155"></a>
-<FONT color="green">156</FONT>        }<a name="line.156"></a>
-<FONT color="green">157</FONT>    <a name="line.157"></a>
-<FONT color="green">158</FONT>        /**<a name="line.158"></a>
-<FONT color="green">159</FONT>         * Prefer European Article Number (EAN, ISBN-13)<a name="line.159"></a>
-<FONT color="green">160</FONT>         */<a name="line.160"></a>
-<FONT color="green">161</FONT>        public ISBN ean(boolean preferEAN) {<a name="line.161"></a>
-<FONT color="green">162</FONT>            this.eanPreferred = preferEAN;<a name="line.162"></a>
-<FONT color="green">163</FONT>            return this;<a name="line.163"></a>
-<FONT color="green">164</FONT>        }<a name="line.164"></a>
-<FONT color="green">165</FONT>    <a name="line.165"></a>
-<FONT color="green">166</FONT>        /**<a name="line.166"></a>
-<FONT color="green">167</FONT>         * Get country and publisher code<a name="line.167"></a>
-<FONT color="green">168</FONT>         *<a name="line.168"></a>
-<FONT color="green">169</FONT>         * @return the country/publisher code from ISBN<a name="line.169"></a>
-<FONT color="green">170</FONT>         */<a name="line.170"></a>
-<FONT color="green">171</FONT>        public String getCountryAndPublisherCode()  {<a name="line.171"></a>
-<FONT color="green">172</FONT>            // we don't care about the wrong createChecksum when we fix the value<a name="line.172"></a>
-<FONT color="green">173</FONT>            String code = eanvalue != null ? fix(eanvalue) : fix("978" + value);<a name="line.173"></a>
-<FONT color="green">174</FONT>            String s = code.substring(4);<a name="line.174"></a>
-<FONT color="green">175</FONT>            int pos1 = s.indexOf('-');<a name="line.175"></a>
-<FONT color="green">176</FONT>            if (pos1 &lt;= 0) {<a name="line.176"></a>
-<FONT color="green">177</FONT>                return null;<a name="line.177"></a>
-<FONT color="green">178</FONT>            }<a name="line.178"></a>
-<FONT color="green">179</FONT>            String pubCode = s.substring(pos1 + 1);<a name="line.179"></a>
-<FONT color="green">180</FONT>            int pos2 = pubCode.indexOf('-');<a name="line.180"></a>
-<FONT color="green">181</FONT>            if (pos2 &lt;= 0) {<a name="line.181"></a>
-<FONT color="green">182</FONT>                return null;<a name="line.182"></a>
-<FONT color="green">183</FONT>            }<a name="line.183"></a>
-<FONT color="green">184</FONT>            return code.substring(0, pos1 + pos2 + 5);<a name="line.184"></a>
-<FONT color="green">185</FONT>        }<a name="line.185"></a>
-<FONT color="green">186</FONT>    <a name="line.186"></a>
-<FONT color="green">187</FONT>        private String hyphenate(String prefix, String isbn) {<a name="line.187"></a>
-<FONT color="green">188</FONT>            StringBuilder sb = new StringBuilder(prefix.substring(0, 4)); // '978-', '979-'<a name="line.188"></a>
-<FONT color="green">189</FONT>            prefix = prefix.substring(4);<a name="line.189"></a>
-<FONT color="green">190</FONT>            isbn = isbn.substring(3); // 978, 979<a name="line.190"></a>
-<FONT color="green">191</FONT>            int i = 0;<a name="line.191"></a>
-<FONT color="green">192</FONT>            int j = 0;<a name="line.192"></a>
-<FONT color="green">193</FONT>            while (i &lt; prefix.length()) {<a name="line.193"></a>
-<FONT color="green">194</FONT>                char ch = prefix.charAt(i++);<a name="line.194"></a>
-<FONT color="green">195</FONT>                if (ch == '-') {<a name="line.195"></a>
-<FONT color="green">196</FONT>                    sb.append('-'); // set first hyphen<a name="line.196"></a>
-<FONT color="green">197</FONT>                } else {<a name="line.197"></a>
-<FONT color="green">198</FONT>                    sb.append(isbn.charAt(j++));<a name="line.198"></a>
-<FONT color="green">199</FONT>                }<a name="line.199"></a>
-<FONT color="green">200</FONT>            }<a name="line.200"></a>
-<FONT color="green">201</FONT>            sb.append('-'); // set second hyphen<a name="line.201"></a>
-<FONT color="green">202</FONT>            while (j &lt; (isbn.length() - 1)) {<a name="line.202"></a>
-<FONT color="green">203</FONT>                sb.append(isbn.charAt(j++));<a name="line.203"></a>
-<FONT color="green">204</FONT>            }<a name="line.204"></a>
-<FONT color="green">205</FONT>            sb.append('-'); // set third hyphen<a name="line.205"></a>
-<FONT color="green">206</FONT>            sb.append(isbn.charAt(isbn.length() - 1));<a name="line.206"></a>
-<FONT color="green">207</FONT>            return sb.toString();<a name="line.207"></a>
-<FONT color="green">208</FONT>        }<a name="line.208"></a>
-<FONT color="green">209</FONT>    <a name="line.209"></a>
-<FONT color="green">210</FONT>        private boolean check() {<a name="line.210"></a>
-<FONT color="green">211</FONT>            this.eanvalue = null;<a name="line.211"></a>
-<FONT color="green">212</FONT>            this.isEAN = false;<a name="line.212"></a>
-<FONT color="green">213</FONT>            int i;<a name="line.213"></a>
-<FONT color="green">214</FONT>            int val;<a name="line.214"></a>
-<FONT color="green">215</FONT>            if (value.length() &lt; 9) {<a name="line.215"></a>
-<FONT color="green">216</FONT>                return false;<a name="line.216"></a>
-<FONT color="green">217</FONT>            }<a name="line.217"></a>
-<FONT color="green">218</FONT>            if (value.length() == 10) {<a name="line.218"></a>
-<FONT color="green">219</FONT>                // ISBN-10<a name="line.219"></a>
-<FONT color="green">220</FONT>                int checksum = 0;<a name="line.220"></a>
-<FONT color="green">221</FONT>                int weight = 10;<a name="line.221"></a>
-<FONT color="green">222</FONT>                for (i = 0; weight &gt; 0; i++) {<a name="line.222"></a>
-<FONT color="green">223</FONT>                    val = value.charAt(i) == 'X' || value.charAt(i) == 'x' ? 10<a name="line.223"></a>
-<FONT color="green">224</FONT>                            : value.charAt(i) - '0';<a name="line.224"></a>
-<FONT color="green">225</FONT>                    if (val &gt;= 0) {<a name="line.225"></a>
-<FONT color="green">226</FONT>                        if (val == 10 &amp;&amp; weight != 1) {<a name="line.226"></a>
-<FONT color="green">227</FONT>                            return false;<a name="line.227"></a>
-<FONT color="green">228</FONT>                        }<a name="line.228"></a>
-<FONT color="green">229</FONT>                        checksum += weight * val;<a name="line.229"></a>
-<FONT color="green">230</FONT>                        weight--;<a name="line.230"></a>
-<FONT color="green">231</FONT>                    } else {<a name="line.231"></a>
-<FONT color="green">232</FONT>                        return false;<a name="line.232"></a>
-<FONT color="green">233</FONT>                    }<a name="line.233"></a>
-<FONT color="green">234</FONT>                }<a name="line.234"></a>
-<FONT color="green">235</FONT>                String s = value.substring(0, 9);<a name="line.235"></a>
-<FONT color="green">236</FONT>                if (checksum % 11 != 0) {<a name="line.236"></a>
-<FONT color="green">237</FONT>                    if (createWithChecksum) {<a name="line.237"></a>
-<FONT color="green">238</FONT>                        this.value = s + createCheckDigit10(s);<a name="line.238"></a>
-<FONT color="green">239</FONT>                    } else {<a name="line.239"></a>
-<FONT color="green">240</FONT>                        return false;<a name="line.240"></a>
-<FONT color="green">241</FONT>                    }<a name="line.241"></a>
-<FONT color="green">242</FONT>                }<a name="line.242"></a>
-<FONT color="green">243</FONT>                this.eanvalue = "978" + s + createCheckDigit13("978" + s);<a name="line.243"></a>
-<FONT color="green">244</FONT>            } else if (value.length() == 13) {<a name="line.244"></a>
-<FONT color="green">245</FONT>                // ISBN-13 "book land"<a name="line.245"></a>
-<FONT color="green">246</FONT>                if (!value.startsWith("978") &amp;&amp; !value.startsWith("979")) {<a name="line.246"></a>
-<FONT color="green">247</FONT>                    return false;<a name="line.247"></a>
-<FONT color="green">248</FONT>                }<a name="line.248"></a>
-<FONT color="green">249</FONT>                int checksum13 = 0;<a name="line.249"></a>
-<FONT color="green">250</FONT>                int weight13 = 1;<a name="line.250"></a>
-<FONT color="green">251</FONT>                for (i = 0; i &lt; 13; i++) {<a name="line.251"></a>
-<FONT color="green">252</FONT>                    val = value.charAt(i) == 'X' || value.charAt(i) == 'x' ? 10 : value.charAt(i) - '0';<a name="line.252"></a>
-<FONT color="green">253</FONT>                    if (val &gt;= 0) {<a name="line.253"></a>
-<FONT color="green">254</FONT>                        if (val == 10) {<a name="line.254"></a>
-<FONT color="green">255</FONT>                            return false;<a name="line.255"></a>
-<FONT color="green">256</FONT>                        }<a name="line.256"></a>
-<FONT color="green">257</FONT>                        checksum13 += (weight13 * val);<a name="line.257"></a>
-<FONT color="green">258</FONT>                        weight13 = (weight13 + 2) % 4;<a name="line.258"></a>
-<FONT color="green">259</FONT>                    } else {<a name="line.259"></a>
-<FONT color="green">260</FONT>                        return false;<a name="line.260"></a>
-<FONT color="green">261</FONT>                    }<a name="line.261"></a>
-<FONT color="green">262</FONT>                }<a name="line.262"></a>
-<FONT color="green">263</FONT>                // set value<a name="line.263"></a>
-<FONT color="green">264</FONT>                if ((checksum13 % 10) != 0) {<a name="line.264"></a>
-<FONT color="green">265</FONT>                    if (eanPreferred &amp;&amp; createWithChecksum) {<a name="line.265"></a>
-<FONT color="green">266</FONT>                        // with createChecksum<a name="line.266"></a>
-<FONT color="green">267</FONT>                        eanvalue = value.substring(0, 12) + createCheckDigit13(value.substring(0, 12));<a name="line.267"></a>
-<FONT color="green">268</FONT>                    } else {<a name="line.268"></a>
-<FONT color="green">269</FONT>                        return false;<a name="line.269"></a>
-<FONT color="green">270</FONT>                    }<a name="line.270"></a>
-<FONT color="green">271</FONT>                } else {<a name="line.271"></a>
-<FONT color="green">272</FONT>                    eanvalue = value;<a name="line.272"></a>
-<FONT color="green">273</FONT>                }<a name="line.273"></a>
-<FONT color="green">274</FONT>                if (!eanPreferred &amp;&amp; (eanvalue.startsWith("978") || eanvalue.startsWith("979"))) {<a name="line.274"></a>
-<FONT color="green">275</FONT>                    // create 10-digit from 13-digit<a name="line.275"></a>
-<FONT color="green">276</FONT>                    this.value = eanvalue.substring(3, 12) + createCheckDigit10(eanvalue.substring(3, 12));<a name="line.276"></a>
-<FONT color="green">277</FONT>                } else {<a name="line.277"></a>
-<FONT color="green">278</FONT>                    // 10 digit version not available - not an error<a name="line.278"></a>
-<FONT color="green">279</FONT>                    this.value = null;<a name="line.279"></a>
-<FONT color="green">280</FONT>                }<a name="line.280"></a>
-<FONT color="green">281</FONT>                this.isEAN = true;<a name="line.281"></a>
-<FONT color="green">282</FONT>            } else if (value.length() == 9) {<a name="line.282"></a>
-<FONT color="green">283</FONT>                String s = value.substring(0, 9);<a name="line.283"></a>
-<FONT color="green">284</FONT>                // repair ISBN-10 ?<a name="line.284"></a>
-<FONT color="green">285</FONT>                if (createWithChecksum) {<a name="line.285"></a>
-<FONT color="green">286</FONT>                    // create 978 from 10-digit without createChecksum<a name="line.286"></a>
-<FONT color="green">287</FONT>                    eanvalue = "978" + s + createCheckDigit13("978" + s);<a name="line.287"></a>
-<FONT color="green">288</FONT>                    value = s + createCheckDigit10(s);<a name="line.288"></a>
-<FONT color="green">289</FONT>                } else {<a name="line.289"></a>
-<FONT color="green">290</FONT>                    return false;<a name="line.290"></a>
-<FONT color="green">291</FONT>                }<a name="line.291"></a>
-<FONT color="green">292</FONT>            } else if (value.length() == 12) {<a name="line.292"></a>
-<FONT color="green">293</FONT>                // repair ISBN-13 ?<a name="line.293"></a>
-<FONT color="green">294</FONT>                if (!value.startsWith("978") &amp;&amp; !value.startsWith("979")) {<a name="line.294"></a>
-<FONT color="green">295</FONT>                    return false;<a name="line.295"></a>
-<FONT color="green">296</FONT>                }<a name="line.296"></a>
-<FONT color="green">297</FONT>                if (createWithChecksum) {<a name="line.297"></a>
-<FONT color="green">298</FONT>                    String s = value.substring(0, 9);<a name="line.298"></a>
-<FONT color="green">299</FONT>                    String t = value.substring(3, 12);<a name="line.299"></a>
-<FONT color="green">300</FONT>                    // create 978 from 10-digit<a name="line.300"></a>
-<FONT color="green">301</FONT>                    this.eanvalue = "978" + s + createCheckDigit13("978" + s);<a name="line.301"></a>
-<FONT color="green">302</FONT>                    this.value = t + createCheckDigit10(t);<a name="line.302"></a>
-<FONT color="green">303</FONT>                } else {<a name="line.303"></a>
-<FONT color="green">304</FONT>                    return false;<a name="line.304"></a>
-<FONT color="green">305</FONT>                }<a name="line.305"></a>
-<FONT color="green">306</FONT>                this.isEAN = true;<a name="line.306"></a>
-<FONT color="green">307</FONT>            } else {<a name="line.307"></a>
-<FONT color="green">308</FONT>                return false;<a name="line.308"></a>
-<FONT color="green">309</FONT>            }<a name="line.309"></a>
-<FONT color="green">310</FONT>            return true;<a name="line.310"></a>
-<FONT color="green">311</FONT>        }<a name="line.311"></a>
-<FONT color="green">312</FONT>    <a name="line.312"></a>
-<FONT color="green">313</FONT>        /**<a name="line.313"></a>
-<FONT color="green">314</FONT>         * Returns a ISBN check digit for the first 9 digits in a string<a name="line.314"></a>
-<FONT color="green">315</FONT>         *<a name="line.315"></a>
-<FONT color="green">316</FONT>         * @param value the value<a name="line.316"></a>
-<FONT color="green">317</FONT>         * @return check digit<a name="line.317"></a>
-<FONT color="green">318</FONT>         *<a name="line.318"></a>
-<FONT color="green">319</FONT>         * @throws NumberFormatException<a name="line.319"></a>
-<FONT color="green">320</FONT>         */<a name="line.320"></a>
-<FONT color="green">321</FONT>        private char createCheckDigit10(String value) throws NumberFormatException {<a name="line.321"></a>
-<FONT color="green">322</FONT>            int checksum = 0;<a name="line.322"></a>
-<FONT color="green">323</FONT>            int val;<a name="line.323"></a>
-<FONT color="green">324</FONT>            int l = value.length();<a name="line.324"></a>
-<FONT color="green">325</FONT>            for (int i = 0; i &lt; l; i++) {<a name="line.325"></a>
-<FONT color="green">326</FONT>                val = value.charAt(i) - '0';<a name="line.326"></a>
-<FONT color="green">327</FONT>                if (val &lt; 0 || val &gt; 9) {<a name="line.327"></a>
-<FONT color="green">328</FONT>                    throw new NumberFormatException("not a digit in " + value);<a name="line.328"></a>
-<FONT color="green">329</FONT>                }<a name="line.329"></a>
-<FONT color="green">330</FONT>                checksum += val * (10-i);<a name="line.330"></a>
-<FONT color="green">331</FONT>            }<a name="line.331"></a>
-<FONT color="green">332</FONT>            int mod = checksum % 11;<a name="line.332"></a>
-<FONT color="green">333</FONT>            return mod == 0 ? '0' : mod == 1 ? 'X' : (char)((11-mod) + '0');<a name="line.333"></a>
-<FONT color="green">334</FONT>        }<a name="line.334"></a>
-<FONT color="green">335</FONT>    <a name="line.335"></a>
-<FONT color="green">336</FONT>        /**<a name="line.336"></a>
-<FONT color="green">337</FONT>         * Returns an ISBN check digit for the first 12 digits in a string<a name="line.337"></a>
-<FONT color="green">338</FONT>         *<a name="line.338"></a>
-<FONT color="green">339</FONT>         * @param value the value<a name="line.339"></a>
-<FONT color="green">340</FONT>         * @return check digit<a name="line.340"></a>
-<FONT color="green">341</FONT>         *<a name="line.341"></a>
-<FONT color="green">342</FONT>         * @throws NumberFormatException<a name="line.342"></a>
-<FONT color="green">343</FONT>         */<a name="line.343"></a>
-<FONT color="green">344</FONT>        private char createCheckDigit13(String value) throws NumberFormatException {<a name="line.344"></a>
-<FONT color="green">345</FONT>            int checksum = 0;<a name="line.345"></a>
-<FONT color="green">346</FONT>            int weight;<a name="line.346"></a>
-<FONT color="green">347</FONT>            int val;<a name="line.347"></a>
-<FONT color="green">348</FONT>            int l = value.length();<a name="line.348"></a>
-<FONT color="green">349</FONT>            for (int i = 0; i &lt; l; i++) {<a name="line.349"></a>
-<FONT color="green">350</FONT>                val = value.charAt(i) - '0';<a name="line.350"></a>
-<FONT color="green">351</FONT>                if (val &lt; 0 || val &gt; 9) {<a name="line.351"></a>
-<FONT color="green">352</FONT>                    throw new NumberFormatException("not a digit in " + value);<a name="line.352"></a>
-<FONT color="green">353</FONT>                }<a name="line.353"></a>
-<FONT color="green">354</FONT>                weight = i % 2 == 0 ? 1 : 3;<a name="line.354"></a>
-<FONT color="green">355</FONT>                checksum += weight * val;<a name="line.355"></a>
-<FONT color="green">356</FONT>            }<a name="line.356"></a>
-<FONT color="green">357</FONT>            int mod = 10 - checksum % 10;<a name="line.357"></a>
-<FONT color="green">358</FONT>            return mod == 10 ? '0' : (char)(mod + '0');<a name="line.358"></a>
-<FONT color="green">359</FONT>        }<a name="line.359"></a>
-<FONT color="green">360</FONT>    <a name="line.360"></a>
-<FONT color="green">361</FONT>        private String fix(String isbn) {<a name="line.361"></a>
-<FONT color="green">362</FONT>            if (isbn == null) {<a name="line.362"></a>
-<FONT color="green">363</FONT>                return null;<a name="line.363"></a>
-<FONT color="green">364</FONT>            }<a name="line.364"></a>
-<FONT color="green">365</FONT>            for (int i = 0; i &lt; ranges.size(); i += 2) {<a name="line.365"></a>
-<FONT color="green">366</FONT>                if (isInRange(isbn, ranges.get(i), ranges.get(i + 1)) == 0) {<a name="line.366"></a>
-<FONT color="green">367</FONT>                    return hyphenate(ranges.get(i), isbn);<a name="line.367"></a>
-<FONT color="green">368</FONT>                }<a name="line.368"></a>
-<FONT color="green">369</FONT>            }<a name="line.369"></a>
-<FONT color="green">370</FONT>            return isbn;<a name="line.370"></a>
-<FONT color="green">371</FONT>        }<a name="line.371"></a>
-<FONT color="green">372</FONT>    <a name="line.372"></a>
-<FONT color="green">373</FONT>        /**<a name="line.373"></a>
-<FONT color="green">374</FONT>         * Check if ISBN is within a given value range<a name="line.374"></a>
-<FONT color="green">375</FONT>         * @param isbn ISBN to check<a name="line.375"></a>
-<FONT color="green">376</FONT>         * @param begin lower ISBN<a name="line.376"></a>
-<FONT color="green">377</FONT>         * @param end  higher ISBN<a name="line.377"></a>
-<FONT color="green">378</FONT>         * @return -1 if too low, 1 if too high, 0 if range matches<a name="line.378"></a>
-<FONT color="green">379</FONT>         */<a name="line.379"></a>
-<FONT color="green">380</FONT>        private int isInRange(String isbn, String begin, String end) {<a name="line.380"></a>
-<FONT color="green">381</FONT>            String b = dehyphenate(begin);<a name="line.381"></a>
-<FONT color="green">382</FONT>            int blen = b.length();<a name="line.382"></a>
-<FONT color="green">383</FONT>            int c = blen &lt;= isbn.length() ?<a name="line.383"></a>
-<FONT color="green">384</FONT>                    isbn.substring(0, blen).compareTo(b) :<a name="line.384"></a>
-<FONT color="green">385</FONT>                    isbn.compareTo(b);<a name="line.385"></a>
-<FONT color="green">386</FONT>            if (c &lt; 0) {<a name="line.386"></a>
-<FONT color="green">387</FONT>                return -1;<a name="line.387"></a>
-<FONT color="green">388</FONT>            }<a name="line.388"></a>
-<FONT color="green">389</FONT>            String e = dehyphenate(end);<a name="line.389"></a>
-<FONT color="green">390</FONT>            int elen = e.length();<a name="line.390"></a>
-<FONT color="green">391</FONT>            c = e.compareTo(isbn.substring(0, elen));<a name="line.391"></a>
-<FONT color="green">392</FONT>            if (c &lt; 0) {<a name="line.392"></a>
-<FONT color="green">393</FONT>                return 1;<a name="line.393"></a>
-<FONT color="green">394</FONT>            }<a name="line.394"></a>
-<FONT color="green">395</FONT>            return 0;<a name="line.395"></a>
-<FONT color="green">396</FONT>        }<a name="line.396"></a>
-<FONT color="green">397</FONT>    <a name="line.397"></a>
-<FONT color="green">398</FONT>        private String dehyphenate(String isbn) {<a name="line.398"></a>
-<FONT color="green">399</FONT>            StringBuilder sb = new StringBuilder(isbn);<a name="line.399"></a>
-<FONT color="green">400</FONT>            int i = sb.indexOf("-");<a name="line.400"></a>
-<FONT color="green">401</FONT>            while (i &gt;= 0) {<a name="line.401"></a>
-<FONT color="green">402</FONT>                sb.deleteCharAt(i);<a name="line.402"></a>
-<FONT color="green">403</FONT>                i = sb.indexOf("-");<a name="line.403"></a>
-<FONT color="green">404</FONT>            }<a name="line.404"></a>
-<FONT color="green">405</FONT>            return sb.toString();<a name="line.405"></a>
-<FONT color="green">406</FONT>        }<a name="line.406"></a>
-<FONT color="green">407</FONT>    <a name="line.407"></a>
-<FONT color="green">408</FONT>        private final static class ISBNRangeMessageConfigurator {<a name="line.408"></a>
-<FONT color="green">409</FONT>    <a name="line.409"></a>
-<FONT color="green">410</FONT>            private final Stack&lt;StringBuilder&gt; content;<a name="line.410"></a>
-<FONT color="green">411</FONT>    <a name="line.411"></a>
-<FONT color="green">412</FONT>            private final List&lt;String&gt; ranges;<a name="line.412"></a>
-<FONT color="green">413</FONT>    <a name="line.413"></a>
-<FONT color="green">414</FONT>            private String prefix;<a name="line.414"></a>
-<FONT color="green">415</FONT>    <a name="line.415"></a>
-<FONT color="green">416</FONT>            private String rangeBegin;<a name="line.416"></a>
-<FONT color="green">417</FONT>    <a name="line.417"></a>
-<FONT color="green">418</FONT>            private String rangeEnd;<a name="line.418"></a>
-<FONT color="green">419</FONT>    <a name="line.419"></a>
-<FONT color="green">420</FONT>            private int length;<a name="line.420"></a>
-<FONT color="green">421</FONT>    <a name="line.421"></a>
-<FONT color="green">422</FONT>            private boolean valid;<a name="line.422"></a>
-<FONT color="green">423</FONT>    <a name="line.423"></a>
-<FONT color="green">424</FONT>            public ISBNRangeMessageConfigurator() {<a name="line.424"></a>
-<FONT color="green">425</FONT>                content = new Stack&lt;StringBuilder&gt;();<a name="line.425"></a>
-<FONT color="green">426</FONT>                ranges = new ArrayList&lt;String&gt;();<a name="line.426"></a>
-<FONT color="green">427</FONT>                length = 0;<a name="line.427"></a>
-<FONT color="green">428</FONT>                try {<a name="line.428"></a>
-<FONT color="green">429</FONT>                    InputStream in = getClass().getResourceAsStream("/org/xbib/standardnumber/RangeMessage.xml");<a name="line.429"></a>
-<FONT color="green">430</FONT>                    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();<a name="line.430"></a>
-<FONT color="green">431</FONT>                    XMLEventReader xmlReader = xmlInputFactory.createXMLEventReader(in);<a name="line.431"></a>
-<FONT color="green">432</FONT>                    while (xmlReader.hasNext()) {<a name="line.432"></a>
-<FONT color="green">433</FONT>                        processEvent(xmlReader.peek());<a name="line.433"></a>
-<FONT color="green">434</FONT>                        xmlReader.nextEvent();<a name="line.434"></a>
-<FONT color="green">435</FONT>                    }<a name="line.435"></a>
-<FONT color="green">436</FONT>                } catch (XMLStreamException e) {<a name="line.436"></a>
-<FONT color="green">437</FONT>                    throw new RuntimeException(e.getMessage());<a name="line.437"></a>
-<FONT color="green">438</FONT>                }<a name="line.438"></a>
-<FONT color="green">439</FONT>            }<a name="line.439"></a>
-<FONT color="green">440</FONT>    <a name="line.440"></a>
-<FONT color="green">441</FONT>            private void processEvent(XMLEvent e) {<a name="line.441"></a>
-<FONT color="green">442</FONT>                switch (e.getEventType()) {<a name="line.442"></a>
-<FONT color="green">443</FONT>                    case XMLEvent.START_ELEMENT: {<a name="line.443"></a>
-<FONT color="green">444</FONT>                        StartElement element = e.asStartElement();<a name="line.444"></a>
-<FONT color="green">445</FONT>                        String name = element.getName().getLocalPart();<a name="line.445"></a>
-<FONT color="green">446</FONT>                        if ("RegistrationGroups".equals(name)) {<a name="line.446"></a>
-<FONT color="green">447</FONT>                            valid = true;<a name="line.447"></a>
-<FONT color="green">448</FONT>                        }<a name="line.448"></a>
-<FONT color="green">449</FONT>                        content.push(new StringBuilder());<a name="line.449"></a>
-<FONT color="green">450</FONT>                        break;<a name="line.450"></a>
-<FONT color="green">451</FONT>                    }<a name="line.451"></a>
-<FONT color="green">452</FONT>                    case XMLEvent.END_ELEMENT: {<a name="line.452"></a>
-<FONT color="green">453</FONT>                        EndElement element = e.asEndElement();<a name="line.453"></a>
-<FONT color="green">454</FONT>                        String name = element.getName().getLocalPart();<a name="line.454"></a>
-<FONT color="green">455</FONT>                        String v = content.pop().toString();<a name="line.455"></a>
-<FONT color="green">456</FONT>                        if ("Prefix".equals(name)) {<a name="line.456"></a>
-<FONT color="green">457</FONT>                            prefix = v;<a name="line.457"></a>
-<FONT color="green">458</FONT>                        }<a name="line.458"></a>
-<FONT color="green">459</FONT>                        if ("Range".equals(name)) {<a name="line.459"></a>
-<FONT color="green">460</FONT>                            int pos = v.indexOf('-');<a name="line.460"></a>
-<FONT color="green">461</FONT>                            if (pos &gt; 0) {<a name="line.461"></a>
-<FONT color="green">462</FONT>                                rangeBegin = v.substring(0, pos);<a name="line.462"></a>
-<FONT color="green">463</FONT>                                rangeEnd = v.substring(pos + 1);<a name="line.463"></a>
-<FONT color="green">464</FONT>                            }<a name="line.464"></a>
-<FONT color="green">465</FONT>                        }<a name="line.465"></a>
-<FONT color="green">466</FONT>                        if ("Length".equals(name)) {<a name="line.466"></a>
-<FONT color="green">467</FONT>                            length = Integer.parseInt(v);<a name="line.467"></a>
-<FONT color="green">468</FONT>                        }<a name="line.468"></a>
-<FONT color="green">469</FONT>                        if ("Rule".equals(name)) {<a name="line.469"></a>
-<FONT color="green">470</FONT>                            if (valid &amp;&amp; rangeBegin != null &amp;&amp; rangeEnd != null) {<a name="line.470"></a>
-<FONT color="green">471</FONT>                                if (length &gt; 0) {<a name="line.471"></a>
-<FONT color="green">472</FONT>                                    ranges.add(prefix + "-" + rangeBegin.substring(0, length));<a name="line.472"></a>
-<FONT color="green">473</FONT>                                    ranges.add(prefix + "-" + rangeEnd.substring(0, length));<a name="line.473"></a>
-<FONT color="green">474</FONT>                                }<a name="line.474"></a>
-<FONT color="green">475</FONT>                            }<a name="line.475"></a>
-<FONT color="green">476</FONT>                        }<a name="line.476"></a>
-<FONT color="green">477</FONT>                        break;<a name="line.477"></a>
-<FONT color="green">478</FONT>                    }<a name="line.478"></a>
-<FONT color="green">479</FONT>                    case XMLEvent.CHARACTERS: {<a name="line.479"></a>
-<FONT color="green">480</FONT>                        Characters c = (Characters) e;<a name="line.480"></a>
-<FONT color="green">481</FONT>                        if (!c.isIgnorableWhiteSpace()) {<a name="line.481"></a>
-<FONT color="green">482</FONT>                            String text = c.getData().trim();<a name="line.482"></a>
-<FONT color="green">483</FONT>                            if (text.length() &gt; 0 &amp;&amp; !content.empty()) {<a name="line.483"></a>
-<FONT color="green">484</FONT>                                content.peek().append(text);<a name="line.484"></a>
-<FONT color="green">485</FONT>                            }<a name="line.485"></a>
-<FONT color="green">486</FONT>                        }<a name="line.486"></a>
-<FONT color="green">487</FONT>                        break;<a name="line.487"></a>
-<FONT color="green">488</FONT>                    }<a name="line.488"></a>
-<FONT color="green">489</FONT>                }<a name="line.489"></a>
-<FONT color="green">490</FONT>            }<a name="line.490"></a>
-<FONT color="green">491</FONT>    <a name="line.491"></a>
-<FONT color="green">492</FONT>            public List&lt;String&gt; getRanges() {<a name="line.492"></a>
-<FONT color="green">493</FONT>                return ranges;<a name="line.493"></a>
-<FONT color="green">494</FONT>            }<a name="line.494"></a>
-<FONT color="green">495</FONT>        }<a name="line.495"></a>
-<FONT color="green">496</FONT>    <a name="line.496"></a>
-<FONT color="green">497</FONT>    }<a name="line.497"></a>
-<FONT color="green">498</FONT>    <a name="line.498"></a>
-<FONT color="green">499</FONT>    <a name="line.499"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a name="line.1"></a>
+<span class="sourceLineNo">002</span>package org.xbib.standardnumber;<a name="line.2"></a>
+<span class="sourceLineNo">003</span><a name="line.3"></a>
+<span class="sourceLineNo">004</span>import javax.xml.stream.XMLEventReader;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import javax.xml.stream.XMLInputFactory;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import javax.xml.stream.XMLStreamException;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import javax.xml.stream.events.Characters;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import javax.xml.stream.events.EndElement;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import javax.xml.stream.events.StartElement;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import javax.xml.stream.events.XMLEvent;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import java.io.InputStream;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import java.util.ArrayList;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import java.util.List;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import java.util.Stack;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import java.util.regex.Matcher;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import java.util.regex.Pattern;<a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>/**<a name="line.18"></a>
+<span class="sourceLineNo">019</span> * ISO 2108 International Standard Book Number (ISBN)<a name="line.19"></a>
+<span class="sourceLineNo">020</span> *<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * Z39.50 BIB-1 Use Attribute 7<a name="line.21"></a>
+<span class="sourceLineNo">022</span> *<a name="line.22"></a>
+<span class="sourceLineNo">023</span> * The International Standard Book Number is a 13-digit number<a name="line.23"></a>
+<span class="sourceLineNo">024</span> * that uniquely identifies books and book-like products published<a name="line.24"></a>
+<span class="sourceLineNo">025</span> * internationally.<a name="line.25"></a>
+<span class="sourceLineNo">026</span> *<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * The purpose of the ISBN is to establish and identify one title or<a name="line.27"></a>
+<span class="sourceLineNo">028</span> * edition of a title from one specific publisher<a name="line.28"></a>
+<span class="sourceLineNo">029</span> * and is unique to that edition, allowing for more efficient marketing of products by booksellers,<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * libraries, universities, wholesalers and distributors.<a name="line.30"></a>
+<span class="sourceLineNo">031</span> *<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * Every ISBN consists of thirteen digits and whenever it is printed it is preceded by the letters ISBN.<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * The thirteen-digit number is divided into four parts of variable length, each part separated by a hyphen.<a name="line.33"></a>
+<span class="sourceLineNo">034</span> *<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * This class is based upon the ISBN converter and formatter class<a name="line.35"></a>
+<span class="sourceLineNo">036</span> * Copyright 2000-2005 by Openly Informatics, Inc. http://www.openly.com/<a name="line.36"></a>
+<span class="sourceLineNo">037</span> *<a name="line.37"></a>
+<span class="sourceLineNo">038</span> * @see &lt;a href="http://www.s.org/standards/home/s/international/html/usm12.htm"&gt;The ISBN Users' Manual&lt;/a&gt;<a name="line.38"></a>
+<span class="sourceLineNo">039</span> * @see &lt;a href="http://www.ietf.org/html.charters/OLD/urn-charter.html"&gt;The IETF URN Charter&lt;/a&gt;<a name="line.39"></a>
+<span class="sourceLineNo">040</span> * @see &lt;a href="http://www.iana.org/assignments/urn-namespaces"&gt;The IANA URN assignments&lt;/a&gt;<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * @see &lt;a href="http://www.isbn-international.org/download/List%20of%20Ranges.pdf"&gt;ISBN prefix list&lt;/a&gt;<a name="line.41"></a>
+<span class="sourceLineNo">042</span> */<a name="line.42"></a>
+<span class="sourceLineNo">043</span>public class ISBN implements Comparable&lt;ISBN&gt;, StandardNumber {<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>    private static final Pattern PATTERN = Pattern.compile("[\\p{Digit}xX\\-]{10,17}");<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>    private static final List&lt;String&gt; ranges = new ISBNRangeMessageConfigurator().getRanges();<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>    private String value;<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>    private boolean createWithChecksum;<a name="line.51"></a>
+<span class="sourceLineNo">052</span><a name="line.52"></a>
+<span class="sourceLineNo">053</span>    private String eanvalue;<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>    private boolean eanPreferred;<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>    private boolean valid;<a name="line.57"></a>
+<span class="sourceLineNo">058</span><a name="line.58"></a>
+<span class="sourceLineNo">059</span>    private boolean isEAN;<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>    @Override<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    public String type() {<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        return "isbn";<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    }<a name="line.64"></a>
+<span class="sourceLineNo">065</span><a name="line.65"></a>
+<span class="sourceLineNo">066</span>    /**<a name="line.66"></a>
+<span class="sourceLineNo">067</span>     * Set ISBN value<a name="line.67"></a>
+<span class="sourceLineNo">068</span>     *<a name="line.68"></a>
+<span class="sourceLineNo">069</span>     * @param value the ISBN candidate string<a name="line.69"></a>
+<span class="sourceLineNo">070</span>     */<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    @Override<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    public ISBN set(CharSequence value) {<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        this.value = value != null ? value.toString() : null;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        return this;<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    }<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>    @Override<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    public ISBN createChecksum(boolean createWithChecksum) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        this.createWithChecksum = createWithChecksum;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        return this;<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    }<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>    @Override<a name="line.83"></a>
+<span class="sourceLineNo">084</span>    public int compareTo(ISBN isbn) {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>        return value != null ? value.compareTo(isbn.normalizedValue()): -1;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>    }<a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87"></a>
+<span class="sourceLineNo">088</span>    @Override<a name="line.88"></a>
+<span class="sourceLineNo">089</span>    public ISBN normalize() {<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        Matcher m = PATTERN.matcher(value);<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        this.value = m.find() ? dehyphenate(value.substring(m.start(), m.end())) : null;<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        return this;<a name="line.92"></a>
+<span class="sourceLineNo">093</span>    }<a name="line.93"></a>
+<span class="sourceLineNo">094</span><a name="line.94"></a>
+<span class="sourceLineNo">095</span>    /**<a name="line.95"></a>
+<span class="sourceLineNo">096</span>     * Check for this ISBN number validity<a name="line.96"></a>
+<span class="sourceLineNo">097</span>     *<a name="line.97"></a>
+<span class="sourceLineNo">098</span>     * @return true if valid, false otherwise<a name="line.98"></a>
+<span class="sourceLineNo">099</span>     */<a name="line.99"></a>
+<span class="sourceLineNo">100</span>    @Override<a name="line.100"></a>
+<span class="sourceLineNo">101</span>    public boolean isValid() throws NumberFormatException {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        return value != null &amp;&amp; !value.isEmpty() &amp;&amp; check() &amp;&amp; (eanPreferred ? eanvalue != null : value != null);<a name="line.102"></a>
+<span class="sourceLineNo">103</span>    }<a name="line.103"></a>
+<span class="sourceLineNo">104</span><a name="line.104"></a>
+<span class="sourceLineNo">105</span>    @Override<a name="line.105"></a>
+<span class="sourceLineNo">106</span>    public ISBN verify() throws NumberFormatException {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        if (value == null || value.isEmpty()) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            throw new NumberFormatException("must not be null");<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        check();<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        this.valid = eanPreferred ? eanvalue != null : value != null;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        if (!valid) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            throw new NumberFormatException("invalid number");<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        return this;<a name="line.115"></a>
+<span class="sourceLineNo">116</span>    }<a name="line.116"></a>
+<span class="sourceLineNo">117</span><a name="line.117"></a>
+<span class="sourceLineNo">118</span>    /**<a name="line.118"></a>
+<span class="sourceLineNo">119</span>     * Get the normalized value of this standard book number<a name="line.119"></a>
+<span class="sourceLineNo">120</span>     * <a name="line.120"></a>
+<span class="sourceLineNo">121</span>     * @return the value of this standard book number<a name="line.121"></a>
+<span class="sourceLineNo">122</span>     */<a name="line.122"></a>
+<span class="sourceLineNo">123</span>    @Override<a name="line.123"></a>
+<span class="sourceLineNo">124</span>    public String normalizedValue() {<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        return eanPreferred ? eanvalue : value;<a name="line.125"></a>
+<span class="sourceLineNo">126</span>    }<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>    /**<a name="line.128"></a>
+<span class="sourceLineNo">129</span>     * Get printable representation of this standard book number<a name="line.129"></a>
+<span class="sourceLineNo">130</span>     *<a name="line.130"></a>
+<span class="sourceLineNo">131</span>     * @return ISBN-13, with (fixed) check digit<a name="line.131"></a>
+<span class="sourceLineNo">132</span>     */<a name="line.132"></a>
+<span class="sourceLineNo">133</span>    @Override<a name="line.133"></a>
+<span class="sourceLineNo">134</span>    public String format() {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>        if ((!eanPreferred &amp;&amp; value == null) || eanvalue == null) {<a name="line.135"></a>
+<span class="sourceLineNo">136</span>            return null;<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        }<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        return eanPreferred ?<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                        fix(eanvalue != null ? eanvalue : "978" + value) :<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                        fix("978" + value).substring(4);<a name="line.140"></a>
+<span class="sourceLineNo">141</span>    }<a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>    @Override<a name="line.143"></a>
+<span class="sourceLineNo">144</span>    public ISBN reset() {<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        this.value = null;<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        this.createWithChecksum = false;<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        this.eanvalue = null;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        this.eanPreferred = false;<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        this.valid = false;<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        this.isEAN = false;<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        return this;<a name="line.151"></a>
+<span class="sourceLineNo">152</span>    }<a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>    public boolean isEAN() {<a name="line.154"></a>
+<span class="sourceLineNo">155</span>        return isEAN;<a name="line.155"></a>
+<span class="sourceLineNo">156</span>    }<a name="line.156"></a>
+<span class="sourceLineNo">157</span><a name="line.157"></a>
+<span class="sourceLineNo">158</span>    /**<a name="line.158"></a>
+<span class="sourceLineNo">159</span>     * Prefer European Article Number (EAN, ISBN-13)<a name="line.159"></a>
+<span class="sourceLineNo">160</span>     */<a name="line.160"></a>
+<span class="sourceLineNo">161</span>    public ISBN ean(boolean preferEAN) {<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        this.eanPreferred = preferEAN;<a name="line.162"></a>
+<span class="sourceLineNo">163</span>        return this;<a name="line.163"></a>
+<span class="sourceLineNo">164</span>    }<a name="line.164"></a>
+<span class="sourceLineNo">165</span><a name="line.165"></a>
+<span class="sourceLineNo">166</span>    /**<a name="line.166"></a>
+<span class="sourceLineNo">167</span>     * Get country and publisher code<a name="line.167"></a>
+<span class="sourceLineNo">168</span>     *<a name="line.168"></a>
+<span class="sourceLineNo">169</span>     * @return the country/publisher code from ISBN<a name="line.169"></a>
+<span class="sourceLineNo">170</span>     */<a name="line.170"></a>
+<span class="sourceLineNo">171</span>    public String getCountryAndPublisherCode()  {<a name="line.171"></a>
+<span class="sourceLineNo">172</span>        // we don't care about the wrong createChecksum when we fix the value<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        String code = eanvalue != null ? fix(eanvalue) : fix("978" + value);<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        String s = code.substring(4);<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        int pos1 = s.indexOf('-');<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        if (pos1 &lt;= 0) {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>            return null;<a name="line.177"></a>
+<span class="sourceLineNo">178</span>        }<a name="line.178"></a>
+<span class="sourceLineNo">179</span>        String pubCode = s.substring(pos1 + 1);<a name="line.179"></a>
+<span class="sourceLineNo">180</span>        int pos2 = pubCode.indexOf('-');<a name="line.180"></a>
+<span class="sourceLineNo">181</span>        if (pos2 &lt;= 0) {<a name="line.181"></a>
+<span class="sourceLineNo">182</span>            return null;<a name="line.182"></a>
+<span class="sourceLineNo">183</span>        }<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        return code.substring(0, pos1 + pos2 + 5);<a name="line.184"></a>
+<span class="sourceLineNo">185</span>    }<a name="line.185"></a>
+<span class="sourceLineNo">186</span><a name="line.186"></a>
+<span class="sourceLineNo">187</span>    private String hyphenate(String prefix, String isbn) {<a name="line.187"></a>
+<span class="sourceLineNo">188</span>        StringBuilder sb = new StringBuilder(prefix.substring(0, 4)); // '978-', '979-'<a name="line.188"></a>
+<span class="sourceLineNo">189</span>        prefix = prefix.substring(4);<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        isbn = isbn.substring(3); // 978, 979<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        int i = 0;<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        int j = 0;<a name="line.192"></a>
+<span class="sourceLineNo">193</span>        while (i &lt; prefix.length()) {<a name="line.193"></a>
+<span class="sourceLineNo">194</span>            char ch = prefix.charAt(i++);<a name="line.194"></a>
+<span class="sourceLineNo">195</span>            if (ch == '-') {<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                sb.append('-'); // set first hyphen<a name="line.196"></a>
+<span class="sourceLineNo">197</span>            } else {<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                sb.append(isbn.charAt(j++));<a name="line.198"></a>
+<span class="sourceLineNo">199</span>            }<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        }<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        sb.append('-'); // set second hyphen<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        while (j &lt; (isbn.length() - 1)) {<a name="line.202"></a>
+<span class="sourceLineNo">203</span>            sb.append(isbn.charAt(j++));<a name="line.203"></a>
+<span class="sourceLineNo">204</span>        }<a name="line.204"></a>
+<span class="sourceLineNo">205</span>        sb.append('-'); // set third hyphen<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        sb.append(isbn.charAt(isbn.length() - 1));<a name="line.206"></a>
+<span class="sourceLineNo">207</span>        return sb.toString();<a name="line.207"></a>
+<span class="sourceLineNo">208</span>    }<a name="line.208"></a>
+<span class="sourceLineNo">209</span><a name="line.209"></a>
+<span class="sourceLineNo">210</span>    private boolean check() {<a name="line.210"></a>
+<span class="sourceLineNo">211</span>        this.eanvalue = null;<a name="line.211"></a>
+<span class="sourceLineNo">212</span>        this.isEAN = false;<a name="line.212"></a>
+<span class="sourceLineNo">213</span>        int i;<a name="line.213"></a>
+<span class="sourceLineNo">214</span>        int val;<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        if (value.length() &lt; 9) {<a name="line.215"></a>
+<span class="sourceLineNo">216</span>            return false;<a name="line.216"></a>
+<span class="sourceLineNo">217</span>        }<a name="line.217"></a>
+<span class="sourceLineNo">218</span>        if (value.length() == 10) {<a name="line.218"></a>
+<span class="sourceLineNo">219</span>            // ISBN-10<a name="line.219"></a>
+<span class="sourceLineNo">220</span>            int checksum = 0;<a name="line.220"></a>
+<span class="sourceLineNo">221</span>            int weight = 10;<a name="line.221"></a>
+<span class="sourceLineNo">222</span>            for (i = 0; weight &gt; 0; i++) {<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                val = value.charAt(i) == 'X' || value.charAt(i) == 'x' ? 10<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                        : value.charAt(i) - '0';<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                if (val &gt;= 0) {<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                    if (val == 10 &amp;&amp; weight != 1) {<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                        return false;<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                    }<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                    checksum += weight * val;<a name="line.229"></a>
+<span class="sourceLineNo">230</span>                    weight--;<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                } else {<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                    return false;<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                }<a name="line.233"></a>
+<span class="sourceLineNo">234</span>            }<a name="line.234"></a>
+<span class="sourceLineNo">235</span>            String s = value.substring(0, 9);<a name="line.235"></a>
+<span class="sourceLineNo">236</span>            if (checksum % 11 != 0) {<a name="line.236"></a>
+<span class="sourceLineNo">237</span>                if (createWithChecksum) {<a name="line.237"></a>
+<span class="sourceLineNo">238</span>                    this.value = s + createCheckDigit10(s);<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                } else {<a name="line.239"></a>
+<span class="sourceLineNo">240</span>                    return false;<a name="line.240"></a>
+<span class="sourceLineNo">241</span>                }<a name="line.241"></a>
+<span class="sourceLineNo">242</span>            }<a name="line.242"></a>
+<span class="sourceLineNo">243</span>            this.eanvalue = "978" + s + createCheckDigit13("978" + s);<a name="line.243"></a>
+<span class="sourceLineNo">244</span>        } else if (value.length() == 13) {<a name="line.244"></a>
+<span class="sourceLineNo">245</span>            // ISBN-13 "book land"<a name="line.245"></a>
+<span class="sourceLineNo">246</span>            if (!value.startsWith("978") &amp;&amp; !value.startsWith("979")) {<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                return false;<a name="line.247"></a>
+<span class="sourceLineNo">248</span>            }<a name="line.248"></a>
+<span class="sourceLineNo">249</span>            int checksum13 = 0;<a name="line.249"></a>
+<span class="sourceLineNo">250</span>            int weight13 = 1;<a name="line.250"></a>
+<span class="sourceLineNo">251</span>            for (i = 0; i &lt; 13; i++) {<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                val = value.charAt(i) == 'X' || value.charAt(i) == 'x' ? 10 : value.charAt(i) - '0';<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                if (val &gt;= 0) {<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                    if (val == 10) {<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                        return false;<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                    }<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                    checksum13 += (weight13 * val);<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                    weight13 = (weight13 + 2) % 4;<a name="line.258"></a>
+<span class="sourceLineNo">259</span>                } else {<a name="line.259"></a>
+<span class="sourceLineNo">260</span>                    return false;<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                }<a name="line.261"></a>
+<span class="sourceLineNo">262</span>            }<a name="line.262"></a>
+<span class="sourceLineNo">263</span>            // set value<a name="line.263"></a>
+<span class="sourceLineNo">264</span>            if ((checksum13 % 10) != 0) {<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                if (eanPreferred &amp;&amp; createWithChecksum) {<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                    // with createChecksum<a name="line.266"></a>
+<span class="sourceLineNo">267</span>                    eanvalue = value.substring(0, 12) + createCheckDigit13(value.substring(0, 12));<a name="line.267"></a>
+<span class="sourceLineNo">268</span>                } else {<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                    return false;<a name="line.269"></a>
+<span class="sourceLineNo">270</span>                }<a name="line.270"></a>
+<span class="sourceLineNo">271</span>            } else {<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                eanvalue = value;<a name="line.272"></a>
+<span class="sourceLineNo">273</span>            }<a name="line.273"></a>
+<span class="sourceLineNo">274</span>            if (!eanPreferred &amp;&amp; (eanvalue.startsWith("978") || eanvalue.startsWith("979"))) {<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                // create 10-digit from 13-digit<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                this.value = eanvalue.substring(3, 12) + createCheckDigit10(eanvalue.substring(3, 12));<a name="line.276"></a>
+<span class="sourceLineNo">277</span>            } else {<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                // 10 digit version not available - not an error<a name="line.278"></a>
+<span class="sourceLineNo">279</span>                this.value = null;<a name="line.279"></a>
+<span class="sourceLineNo">280</span>            }<a name="line.280"></a>
+<span class="sourceLineNo">281</span>            this.isEAN = true;<a name="line.281"></a>
+<span class="sourceLineNo">282</span>        } else if (value.length() == 9) {<a name="line.282"></a>
+<span class="sourceLineNo">283</span>            String s = value.substring(0, 9);<a name="line.283"></a>
+<span class="sourceLineNo">284</span>            // repair ISBN-10 ?<a name="line.284"></a>
+<span class="sourceLineNo">285</span>            if (createWithChecksum) {<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                // create 978 from 10-digit without createChecksum<a name="line.286"></a>
+<span class="sourceLineNo">287</span>                eanvalue = "978" + s + createCheckDigit13("978" + s);<a name="line.287"></a>
+<span class="sourceLineNo">288</span>                value = s + createCheckDigit10(s);<a name="line.288"></a>
+<span class="sourceLineNo">289</span>            } else {<a name="line.289"></a>
+<span class="sourceLineNo">290</span>                return false;<a name="line.290"></a>
+<span class="sourceLineNo">291</span>            }<a name="line.291"></a>
+<span class="sourceLineNo">292</span>        } else if (value.length() == 12) {<a name="line.292"></a>
+<span class="sourceLineNo">293</span>            // repair ISBN-13 ?<a name="line.293"></a>
+<span class="sourceLineNo">294</span>            if (!value.startsWith("978") &amp;&amp; !value.startsWith("979")) {<a name="line.294"></a>
+<span class="sourceLineNo">295</span>                return false;<a name="line.295"></a>
+<span class="sourceLineNo">296</span>            }<a name="line.296"></a>
+<span class="sourceLineNo">297</span>            if (createWithChecksum) {<a name="line.297"></a>
+<span class="sourceLineNo">298</span>                String s = value.substring(0, 9);<a name="line.298"></a>
+<span class="sourceLineNo">299</span>                String t = value.substring(3, 12);<a name="line.299"></a>
+<span class="sourceLineNo">300</span>                // create 978 from 10-digit<a name="line.300"></a>
+<span class="sourceLineNo">301</span>                this.eanvalue = "978" + s + createCheckDigit13("978" + s);<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                this.value = t + createCheckDigit10(t);<a name="line.302"></a>
+<span class="sourceLineNo">303</span>            } else {<a name="line.303"></a>
+<span class="sourceLineNo">304</span>                return false;<a name="line.304"></a>
+<span class="sourceLineNo">305</span>            }<a name="line.305"></a>
+<span class="sourceLineNo">306</span>            this.isEAN = true;<a name="line.306"></a>
+<span class="sourceLineNo">307</span>        } else {<a name="line.307"></a>
+<span class="sourceLineNo">308</span>            return false;<a name="line.308"></a>
+<span class="sourceLineNo">309</span>        }<a name="line.309"></a>
+<span class="sourceLineNo">310</span>        return true;<a name="line.310"></a>
+<span class="sourceLineNo">311</span>    }<a name="line.311"></a>
+<span class="sourceLineNo">312</span><a name="line.312"></a>
+<span class="sourceLineNo">313</span>    /**<a name="line.313"></a>
+<span class="sourceLineNo">314</span>     * Returns a ISBN check digit for the first 9 digits in a string<a name="line.314"></a>
+<span class="sourceLineNo">315</span>     *<a name="line.315"></a>
+<span class="sourceLineNo">316</span>     * @param value the value<a name="line.316"></a>
+<span class="sourceLineNo">317</span>     * @return check digit<a name="line.317"></a>
+<span class="sourceLineNo">318</span>     *<a name="line.318"></a>
+<span class="sourceLineNo">319</span>     * @throws NumberFormatException<a name="line.319"></a>
+<span class="sourceLineNo">320</span>     */<a name="line.320"></a>
+<span class="sourceLineNo">321</span>    private char createCheckDigit10(String value) throws NumberFormatException {<a name="line.321"></a>
+<span class="sourceLineNo">322</span>        int checksum = 0;<a name="line.322"></a>
+<span class="sourceLineNo">323</span>        int val;<a name="line.323"></a>
+<span class="sourceLineNo">324</span>        int l = value.length();<a name="line.324"></a>
+<span class="sourceLineNo">325</span>        for (int i = 0; i &lt; l; i++) {<a name="line.325"></a>
+<span class="sourceLineNo">326</span>            val = value.charAt(i) - '0';<a name="line.326"></a>
+<span class="sourceLineNo">327</span>            if (val &lt; 0 || val &gt; 9) {<a name="line.327"></a>
+<span class="sourceLineNo">328</span>                throw new NumberFormatException("not a digit in " + value);<a name="line.328"></a>
+<span class="sourceLineNo">329</span>            }<a name="line.329"></a>
+<span class="sourceLineNo">330</span>            checksum += val * (10-i);<a name="line.330"></a>
+<span class="sourceLineNo">331</span>        }<a name="line.331"></a>
+<span class="sourceLineNo">332</span>        int mod = checksum % 11;<a name="line.332"></a>
+<span class="sourceLineNo">333</span>        return mod == 0 ? '0' : mod == 1 ? 'X' : (char)((11-mod) + '0');<a name="line.333"></a>
+<span class="sourceLineNo">334</span>    }<a name="line.334"></a>
+<span class="sourceLineNo">335</span><a name="line.335"></a>
+<span class="sourceLineNo">336</span>    /**<a name="line.336"></a>
+<span class="sourceLineNo">337</span>     * Returns an ISBN check digit for the first 12 digits in a string<a name="line.337"></a>
+<span class="sourceLineNo">338</span>     *<a name="line.338"></a>
+<span class="sourceLineNo">339</span>     * @param value the value<a name="line.339"></a>
+<span class="sourceLineNo">340</span>     * @return check digit<a name="line.340"></a>
+<span class="sourceLineNo">341</span>     *<a name="line.341"></a>
+<span class="sourceLineNo">342</span>     * @throws NumberFormatException<a name="line.342"></a>
+<span class="sourceLineNo">343</span>     */<a name="line.343"></a>
+<span class="sourceLineNo">344</span>    private char createCheckDigit13(String value) throws NumberFormatException {<a name="line.344"></a>
+<span class="sourceLineNo">345</span>        int checksum = 0;<a name="line.345"></a>
+<span class="sourceLineNo">346</span>        int weight;<a name="line.346"></a>
+<span class="sourceLineNo">347</span>        int val;<a name="line.347"></a>
+<span class="sourceLineNo">348</span>        int l = value.length();<a name="line.348"></a>
+<span class="sourceLineNo">349</span>        for (int i = 0; i &lt; l; i++) {<a name="line.349"></a>
+<span class="sourceLineNo">350</span>            val = value.charAt(i) - '0';<a name="line.350"></a>
+<span class="sourceLineNo">351</span>            if (val &lt; 0 || val &gt; 9) {<a name="line.351"></a>
+<span class="sourceLineNo">352</span>                throw new NumberFormatException("not a digit in " + value);<a name="line.352"></a>
+<span class="sourceLineNo">353</span>            }<a name="line.353"></a>
+<span class="sourceLineNo">354</span>            weight = i % 2 == 0 ? 1 : 3;<a name="line.354"></a>
+<span class="sourceLineNo">355</span>            checksum += weight * val;<a name="line.355"></a>
+<span class="sourceLineNo">356</span>        }<a name="line.356"></a>
+<span class="sourceLineNo">357</span>        int mod = 10 - checksum % 10;<a name="line.357"></a>
+<span class="sourceLineNo">358</span>        return mod == 10 ? '0' : (char)(mod + '0');<a name="line.358"></a>
+<span class="sourceLineNo">359</span>    }<a name="line.359"></a>
+<span class="sourceLineNo">360</span><a name="line.360"></a>
+<span class="sourceLineNo">361</span>    private String fix(String isbn) {<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        if (isbn == null) {<a name="line.362"></a>
+<span class="sourceLineNo">363</span>            return null;<a name="line.363"></a>
+<span class="sourceLineNo">364</span>        }<a name="line.364"></a>
+<span class="sourceLineNo">365</span>        for (int i = 0; i &lt; ranges.size(); i += 2) {<a name="line.365"></a>
+<span class="sourceLineNo">366</span>            if (isInRange(isbn, ranges.get(i), ranges.get(i + 1)) == 0) {<a name="line.366"></a>
+<span class="sourceLineNo">367</span>                return hyphenate(ranges.get(i), isbn);<a name="line.367"></a>
+<span class="sourceLineNo">368</span>            }<a name="line.368"></a>
+<span class="sourceLineNo">369</span>        }<a name="line.369"></a>
+<span class="sourceLineNo">370</span>        return isbn;<a name="line.370"></a>
+<span class="sourceLineNo">371</span>    }<a name="line.371"></a>
+<span class="sourceLineNo">372</span><a name="line.372"></a>
+<span class="sourceLineNo">373</span>    /**<a name="line.373"></a>
+<span class="sourceLineNo">374</span>     * Check if ISBN is within a given value range<a name="line.374"></a>
+<span class="sourceLineNo">375</span>     * @param isbn ISBN to check<a name="line.375"></a>
+<span class="sourceLineNo">376</span>     * @param begin lower ISBN<a name="line.376"></a>
+<span class="sourceLineNo">377</span>     * @param end  higher ISBN<a name="line.377"></a>
+<span class="sourceLineNo">378</span>     * @return -1 if too low, 1 if too high, 0 if range matches<a name="line.378"></a>
+<span class="sourceLineNo">379</span>     */<a name="line.379"></a>
+<span class="sourceLineNo">380</span>    private int isInRange(String isbn, String begin, String end) {<a name="line.380"></a>
+<span class="sourceLineNo">381</span>        String b = dehyphenate(begin);<a name="line.381"></a>
+<span class="sourceLineNo">382</span>        int blen = b.length();<a name="line.382"></a>
+<span class="sourceLineNo">383</span>        int c = blen &lt;= isbn.length() ?<a name="line.383"></a>
+<span class="sourceLineNo">384</span>                isbn.substring(0, blen).compareTo(b) :<a name="line.384"></a>
+<span class="sourceLineNo">385</span>                isbn.compareTo(b);<a name="line.385"></a>
+<span class="sourceLineNo">386</span>        if (c &lt; 0) {<a name="line.386"></a>
+<span class="sourceLineNo">387</span>            return -1;<a name="line.387"></a>
+<span class="sourceLineNo">388</span>        }<a name="line.388"></a>
+<span class="sourceLineNo">389</span>        String e = dehyphenate(end);<a name="line.389"></a>
+<span class="sourceLineNo">390</span>        int elen = e.length();<a name="line.390"></a>
+<span class="sourceLineNo">391</span>        c = e.compareTo(isbn.substring(0, elen));<a name="line.391"></a>
+<span class="sourceLineNo">392</span>        if (c &lt; 0) {<a name="line.392"></a>
+<span class="sourceLineNo">393</span>            return 1;<a name="line.393"></a>
+<span class="sourceLineNo">394</span>        }<a name="line.394"></a>
+<span class="sourceLineNo">395</span>        return 0;<a name="line.395"></a>
+<span class="sourceLineNo">396</span>    }<a name="line.396"></a>
+<span class="sourceLineNo">397</span><a name="line.397"></a>
+<span class="sourceLineNo">398</span>    private String dehyphenate(String isbn) {<a name="line.398"></a>
+<span class="sourceLineNo">399</span>        StringBuilder sb = new StringBuilder(isbn);<a name="line.399"></a>
+<span class="sourceLineNo">400</span>        int i = sb.indexOf("-");<a name="line.400"></a>
+<span class="sourceLineNo">401</span>        while (i &gt;= 0) {<a name="line.401"></a>
+<span class="sourceLineNo">402</span>            sb.deleteCharAt(i);<a name="line.402"></a>
+<span class="sourceLineNo">403</span>            i = sb.indexOf("-");<a name="line.403"></a>
+<span class="sourceLineNo">404</span>        }<a name="line.404"></a>
+<span class="sourceLineNo">405</span>        return sb.toString();<a name="line.405"></a>
+<span class="sourceLineNo">406</span>    }<a name="line.406"></a>
+<span class="sourceLineNo">407</span><a name="line.407"></a>
+<span class="sourceLineNo">408</span>    private final static class ISBNRangeMessageConfigurator {<a name="line.408"></a>
+<span class="sourceLineNo">409</span><a name="line.409"></a>
+<span class="sourceLineNo">410</span>        private final Stack&lt;StringBuilder&gt; content;<a name="line.410"></a>
+<span class="sourceLineNo">411</span><a name="line.411"></a>
+<span class="sourceLineNo">412</span>        private final List&lt;String&gt; ranges;<a name="line.412"></a>
+<span class="sourceLineNo">413</span><a name="line.413"></a>
+<span class="sourceLineNo">414</span>        private String prefix;<a name="line.414"></a>
+<span class="sourceLineNo">415</span><a name="line.415"></a>
+<span class="sourceLineNo">416</span>        private String rangeBegin;<a name="line.416"></a>
+<span class="sourceLineNo">417</span><a name="line.417"></a>
+<span class="sourceLineNo">418</span>        private String rangeEnd;<a name="line.418"></a>
+<span class="sourceLineNo">419</span><a name="line.419"></a>
+<span class="sourceLineNo">420</span>        private int length;<a name="line.420"></a>
+<span class="sourceLineNo">421</span><a name="line.421"></a>
+<span class="sourceLineNo">422</span>        private boolean valid;<a name="line.422"></a>
+<span class="sourceLineNo">423</span><a name="line.423"></a>
+<span class="sourceLineNo">424</span>        public ISBNRangeMessageConfigurator() {<a name="line.424"></a>
+<span class="sourceLineNo">425</span>            content = new Stack&lt;StringBuilder&gt;();<a name="line.425"></a>
+<span class="sourceLineNo">426</span>            ranges = new ArrayList&lt;String&gt;();<a name="line.426"></a>
+<span class="sourceLineNo">427</span>            length = 0;<a name="line.427"></a>
+<span class="sourceLineNo">428</span>            try {<a name="line.428"></a>
+<span class="sourceLineNo">429</span>                InputStream in = getClass().getResourceAsStream("/org/xbib/standardnumber/RangeMessage.xml");<a name="line.429"></a>
+<span class="sourceLineNo">430</span>                XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();<a name="line.430"></a>
+<span class="sourceLineNo">431</span>                XMLEventReader xmlReader = xmlInputFactory.createXMLEventReader(in);<a name="line.431"></a>
+<span class="sourceLineNo">432</span>                while (xmlReader.hasNext()) {<a name="line.432"></a>
+<span class="sourceLineNo">433</span>                    processEvent(xmlReader.peek());<a name="line.433"></a>
+<span class="sourceLineNo">434</span>                    xmlReader.nextEvent();<a name="line.434"></a>
+<span class="sourceLineNo">435</span>                }<a name="line.435"></a>
+<span class="sourceLineNo">436</span>            } catch (XMLStreamException e) {<a name="line.436"></a>
+<span class="sourceLineNo">437</span>                throw new RuntimeException(e.getMessage());<a name="line.437"></a>
+<span class="sourceLineNo">438</span>            }<a name="line.438"></a>
+<span class="sourceLineNo">439</span>        }<a name="line.439"></a>
+<span class="sourceLineNo">440</span><a name="line.440"></a>
+<span class="sourceLineNo">441</span>        private void processEvent(XMLEvent e) {<a name="line.441"></a>
+<span class="sourceLineNo">442</span>            switch (e.getEventType()) {<a name="line.442"></a>
+<span class="sourceLineNo">443</span>                case XMLEvent.START_ELEMENT: {<a name="line.443"></a>
+<span class="sourceLineNo">444</span>                    StartElement element = e.asStartElement();<a name="line.444"></a>
+<span class="sourceLineNo">445</span>                    String name = element.getName().getLocalPart();<a name="line.445"></a>
+<span class="sourceLineNo">446</span>                    if ("RegistrationGroups".equals(name)) {<a name="line.446"></a>
+<span class="sourceLineNo">447</span>                        valid = true;<a name="line.447"></a>
+<span class="sourceLineNo">448</span>                    }<a name="line.448"></a>
+<span class="sourceLineNo">449</span>                    content.push(new StringBuilder());<a name="line.449"></a>
+<span class="sourceLineNo">450</span>                    break;<a name="line.450"></a>
+<span class="sourceLineNo">451</span>                }<a name="line.451"></a>
+<span class="sourceLineNo">452</span>                case XMLEvent.END_ELEMENT: {<a name="line.452"></a>
+<span class="sourceLineNo">453</span>                    EndElement element = e.asEndElement();<a name="line.453"></a>
+<span class="sourceLineNo">454</span>                    String name = element.getName().getLocalPart();<a name="line.454"></a>
+<span class="sourceLineNo">455</span>                    String v = content.pop().toString();<a name="line.455"></a>
+<span class="sourceLineNo">456</span>                    if ("Prefix".equals(name)) {<a name="line.456"></a>
+<span class="sourceLineNo">457</span>                        prefix = v;<a name="line.457"></a>
+<span class="sourceLineNo">458</span>                    }<a name="line.458"></a>
+<span class="sourceLineNo">459</span>                    if ("Range".equals(name)) {<a name="line.459"></a>
+<span class="sourceLineNo">460</span>                        int pos = v.indexOf('-');<a name="line.460"></a>
+<span class="sourceLineNo">461</span>                        if (pos &gt; 0) {<a name="line.461"></a>
+<span class="sourceLineNo">462</span>                            rangeBegin = v.substring(0, pos);<a name="line.462"></a>
+<span class="sourceLineNo">463</span>                            rangeEnd = v.substring(pos + 1);<a name="line.463"></a>
+<span class="sourceLineNo">464</span>                        }<a name="line.464"></a>
+<span class="sourceLineNo">465</span>                    }<a name="line.465"></a>
+<span class="sourceLineNo">466</span>                    if ("Length".equals(name)) {<a name="line.466"></a>
+<span class="sourceLineNo">467</span>                        length = Integer.parseInt(v);<a name="line.467"></a>
+<span class="sourceLineNo">468</span>                    }<a name="line.468"></a>
+<span class="sourceLineNo">469</span>                    if ("Rule".equals(name)) {<a name="line.469"></a>
+<span class="sourceLineNo">470</span>                        if (valid &amp;&amp; rangeBegin != null &amp;&amp; rangeEnd != null) {<a name="line.470"></a>
+<span class="sourceLineNo">471</span>                            if (length &gt; 0) {<a name="line.471"></a>
+<span class="sourceLineNo">472</span>                                ranges.add(prefix + "-" + rangeBegin.substring(0, length));<a name="line.472"></a>
+<span class="sourceLineNo">473</span>                                ranges.add(prefix + "-" + rangeEnd.substring(0, length));<a name="line.473"></a>
+<span class="sourceLineNo">474</span>                            }<a name="line.474"></a>
+<span class="sourceLineNo">475</span>                        }<a name="line.475"></a>
+<span class="sourceLineNo">476</span>                    }<a name="line.476"></a>
+<span class="sourceLineNo">477</span>                    break;<a name="line.477"></a>
+<span class="sourceLineNo">478</span>                }<a name="line.478"></a>
+<span class="sourceLineNo">479</span>                case XMLEvent.CHARACTERS: {<a name="line.479"></a>
+<span class="sourceLineNo">480</span>                    Characters c = (Characters) e;<a name="line.480"></a>
+<span class="sourceLineNo">481</span>                    if (!c.isIgnorableWhiteSpace()) {<a name="line.481"></a>
+<span class="sourceLineNo">482</span>                        String text = c.getData().trim();<a name="line.482"></a>
+<span class="sourceLineNo">483</span>                        if (text.length() &gt; 0 &amp;&amp; !content.empty()) {<a name="line.483"></a>
+<span class="sourceLineNo">484</span>                            content.peek().append(text);<a name="line.484"></a>
+<span class="sourceLineNo">485</span>                        }<a name="line.485"></a>
+<span class="sourceLineNo">486</span>                    }<a name="line.486"></a>
+<span class="sourceLineNo">487</span>                    break;<a name="line.487"></a>
+<span class="sourceLineNo">488</span>                }<a name="line.488"></a>
+<span class="sourceLineNo">489</span>            }<a name="line.489"></a>
+<span class="sourceLineNo">490</span>        }<a name="line.490"></a>
+<span class="sourceLineNo">491</span><a name="line.491"></a>
+<span class="sourceLineNo">492</span>        public List&lt;String&gt; getRanges() {<a name="line.492"></a>
+<span class="sourceLineNo">493</span>            return ranges;<a name="line.493"></a>
+<span class="sourceLineNo">494</span>        }<a name="line.494"></a>
+<span class="sourceLineNo">495</span>    }<a name="line.495"></a>
+<span class="sourceLineNo">496</span><a name="line.496"></a>
+<span class="sourceLineNo">497</span>}<a name="line.497"></a>
+<span class="sourceLineNo">498</span><a name="line.498"></a>
+<span class="sourceLineNo">499</span><a name="line.499"></a>
 
 
 
@@ -560,6 +565,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>

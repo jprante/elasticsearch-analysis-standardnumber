@@ -1,23 +1,28 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    package org.xbib.standardnumber;<a name="line.1"></a>
-<FONT color="green">002</FONT>    <a name="line.2"></a>
-<FONT color="green">003</FONT>    import org.testng.Assert;<a name="line.3"></a>
-<FONT color="green">004</FONT>    import org.testng.annotations.Test;<a name="line.4"></a>
-<FONT color="green">005</FONT>    <a name="line.5"></a>
-<FONT color="green">006</FONT>    public class ISSNTest extends Assert {<a name="line.6"></a>
-<FONT color="green">007</FONT>    <a name="line.7"></a>
-<FONT color="green">008</FONT>        @Test<a name="line.8"></a>
-<FONT color="green">009</FONT>        public void testISSN() throws Exception {<a name="line.9"></a>
-<FONT color="green">010</FONT>            ISSN issn = new ISSN().set("1869-7127").normalize().verify();<a name="line.10"></a>
-<FONT color="green">011</FONT>            assertEquals(issn.normalizedValue(), "18697127");<a name="line.11"></a>
-<FONT color="green">012</FONT>            assertEquals(issn.format(), "1869-7127");<a name="line.12"></a>
-<FONT color="green">013</FONT>            assertEquals(issn.createChecksum(true).toGTIN("03").normalizedValue(), "9771869712038");<a name="line.13"></a>
-<FONT color="green">014</FONT>        }<a name="line.14"></a>
-<FONT color="green">015</FONT>    <a name="line.15"></a>
-<FONT color="green">016</FONT>    <a name="line.16"></a>
-<FONT color="green">017</FONT>    }<a name="line.17"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.xbib.standardnumber;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import org.testng.Assert;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import org.testng.annotations.Test;<a name="line.4"></a>
+<span class="sourceLineNo">005</span><a name="line.5"></a>
+<span class="sourceLineNo">006</span>public class ISSNTest extends Assert {<a name="line.6"></a>
+<span class="sourceLineNo">007</span><a name="line.7"></a>
+<span class="sourceLineNo">008</span>    @Test<a name="line.8"></a>
+<span class="sourceLineNo">009</span>    public void testISSN() throws Exception {<a name="line.9"></a>
+<span class="sourceLineNo">010</span>        ISSN issn = new ISSN().set("1869-7127").normalize().verify();<a name="line.10"></a>
+<span class="sourceLineNo">011</span>        assertEquals(issn.normalizedValue(), "18697127");<a name="line.11"></a>
+<span class="sourceLineNo">012</span>        assertEquals(issn.format(), "1869-7127");<a name="line.12"></a>
+<span class="sourceLineNo">013</span>        assertEquals(issn.createChecksum(true).toGTIN("03").normalizedValue(), "9771869712038");<a name="line.13"></a>
+<span class="sourceLineNo">014</span>    }<a name="line.14"></a>
+<span class="sourceLineNo">015</span><a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span>}<a name="line.17"></a>
 
 
 
@@ -78,6 +83,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>

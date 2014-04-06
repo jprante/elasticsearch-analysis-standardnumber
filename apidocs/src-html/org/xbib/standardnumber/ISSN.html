@@ -1,186 +1,191 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    <a name="line.1"></a>
-<FONT color="green">002</FONT>    package org.xbib.standardnumber;<a name="line.2"></a>
-<FONT color="green">003</FONT>    <a name="line.3"></a>
-<FONT color="green">004</FONT>    import java.util.regex.Matcher;<a name="line.4"></a>
-<FONT color="green">005</FONT>    import java.util.regex.Pattern;<a name="line.5"></a>
-<FONT color="green">006</FONT>    <a name="line.6"></a>
-<FONT color="green">007</FONT>    /**<a name="line.7"></a>
-<FONT color="green">008</FONT>     * ISO 3297 International Standard Serial Number (ISSN)<a name="line.8"></a>
-<FONT color="green">009</FONT>     *<a name="line.9"></a>
-<FONT color="green">010</FONT>     * Z39.50 BIB-1 Use Attribute 8<a name="line.10"></a>
-<FONT color="green">011</FONT>     *<a name="line.11"></a>
-<FONT color="green">012</FONT>     * The International Standard Serial Number (ISSN) is a unique<a name="line.12"></a>
-<FONT color="green">013</FONT>     * eight-digit number used to identify a print or electronic periodical<a name="line.13"></a>
-<FONT color="green">014</FONT>     * publication. The ISSN system was adopted as international standard<a name="line.14"></a>
-<FONT color="green">015</FONT>     * ISO 3297 in 1975. The ISO subcommittee TC 46/SC 9 is responsible<a name="line.15"></a>
-<FONT color="green">016</FONT>     * for the standard.<a name="line.16"></a>
-<FONT color="green">017</FONT>     *<a name="line.17"></a>
-<FONT color="green">018</FONT>     * Quoted from http://www.issn.org/2-22636-All-about-ISSN.php<a name="line.18"></a>
-<FONT color="green">019</FONT>     *<a name="line.19"></a>
-<FONT color="green">020</FONT>     * The ISSN (International Standard Serial Number) is an eight-digit number<a name="line.20"></a>
-<FONT color="green">021</FONT>     * which identifies periodical publications as such, including electronic<a name="line.21"></a>
-<FONT color="green">022</FONT>     * serials.<a name="line.22"></a>
-<FONT color="green">023</FONT>     *<a name="line.23"></a>
-<FONT color="green">024</FONT>     * The ISSN is a numeric code which is used as an identifier: it has no<a name="line.24"></a>
-<FONT color="green">025</FONT>     * signification in itself and does not contain in itself any information<a name="line.25"></a>
-<FONT color="green">026</FONT>     * referring to the origin or contents of the publication.<a name="line.26"></a>
-<FONT color="green">027</FONT>     *<a name="line.27"></a>
-<FONT color="green">028</FONT>     * The ISSN takes the form of the acronym ISSN followed by two groups<a name="line.28"></a>
-<FONT color="green">029</FONT>     * of four digits, separated by a hyphen. The eighth character is a<a name="line.29"></a>
-<FONT color="green">030</FONT>     * control digit calculated according to a modulo 11 algorithm on<a name="line.30"></a>
-<FONT color="green">031</FONT>     * the basis of the 7 preceding digits; this eighth control character<a name="line.31"></a>
-<FONT color="green">032</FONT>     * may be an "X" if the result of the computing is equal to "10",<a name="line.32"></a>
-<FONT color="green">033</FONT>     * in order to avoid any ambiguity.<a name="line.33"></a>
-<FONT color="green">034</FONT>     *<a name="line.34"></a>
-<FONT color="green">035</FONT>     *  The ISSN is linked to a standardized form of the title of the<a name="line.35"></a>
-<FONT color="green">036</FONT>     *  identified serial, known as the "key title", which repeats<a name="line.36"></a>
-<FONT color="green">037</FONT>     *  the title of the publication, qualifying it with additional elements<a name="line.37"></a>
-<FONT color="green">038</FONT>     *  in order to distinguish it from other publications having identical<a name="line.38"></a>
-<FONT color="green">039</FONT>     *  titles.<a name="line.39"></a>
-<FONT color="green">040</FONT>     *<a name="line.40"></a>
-<FONT color="green">041</FONT>     *  If the title of the publication changes in any significant way,<a name="line.41"></a>
-<FONT color="green">042</FONT>     *  a new ISSN must be assigned in order to correspond to this new form<a name="line.42"></a>
-<FONT color="green">043</FONT>     *  of title and avoid any confusion. A serial publication whose<a name="line.43"></a>
-<FONT color="green">044</FONT>     *  title is modified several times in the course of its existence<a name="line.44"></a>
-<FONT color="green">045</FONT>     *  will be assigned each time a new ISSN, thus allowing precise<a name="line.45"></a>
-<FONT color="green">046</FONT>     *  identification of each form of the title : in fact it is then<a name="line.46"></a>
-<FONT color="green">047</FONT>     *  considered that they are different publications even if there<a name="line.47"></a>
-<FONT color="green">048</FONT>     *  is a logical link between them.<a name="line.48"></a>
-<FONT color="green">049</FONT>     *<a name="line.49"></a>
-<FONT color="green">050</FONT>     *  Contrary to other types of publications, the world of serial<a name="line.50"></a>
-<FONT color="green">051</FONT>     *  publications is particularly changeable and complex :<a name="line.51"></a>
-<FONT color="green">052</FONT>     *  the lifetime of a title may be extremely short; many publications<a name="line.52"></a>
-<FONT color="green">053</FONT>     *  may be part of a complex set of relationships, etc.<a name="line.53"></a>
-<FONT color="green">054</FONT>     *  These particularities themselves necessitated the introduction<a name="line.54"></a>
-<FONT color="green">055</FONT>     *  of the ISSN.<a name="line.55"></a>
-<FONT color="green">056</FONT>     *<a name="line.56"></a>
-<FONT color="green">057</FONT>     */<a name="line.57"></a>
-<FONT color="green">058</FONT>    public class ISSN implements Comparable&lt;ISSN&gt;, StandardNumber {<a name="line.58"></a>
-<FONT color="green">059</FONT>    <a name="line.59"></a>
-<FONT color="green">060</FONT>        private final static Pattern PATTERN = Pattern.compile("[0-9xX\\-]{8,9}");<a name="line.60"></a>
-<FONT color="green">061</FONT>    <a name="line.61"></a>
-<FONT color="green">062</FONT>        private String value;<a name="line.62"></a>
-<FONT color="green">063</FONT>    <a name="line.63"></a>
-<FONT color="green">064</FONT>        private String formatted;<a name="line.64"></a>
-<FONT color="green">065</FONT>    <a name="line.65"></a>
-<FONT color="green">066</FONT>        private boolean createWithChecksum;<a name="line.66"></a>
-<FONT color="green">067</FONT>    <a name="line.67"></a>
-<FONT color="green">068</FONT>        @Override<a name="line.68"></a>
-<FONT color="green">069</FONT>        public String type() {<a name="line.69"></a>
-<FONT color="green">070</FONT>            return "issn";<a name="line.70"></a>
-<FONT color="green">071</FONT>        }<a name="line.71"></a>
-<FONT color="green">072</FONT>    <a name="line.72"></a>
-<FONT color="green">073</FONT>        @Override<a name="line.73"></a>
-<FONT color="green">074</FONT>        public int compareTo(ISSN issn) {<a name="line.74"></a>
-<FONT color="green">075</FONT>            return value != null ? normalizedValue().compareTo(issn.normalizedValue()) : -1;<a name="line.75"></a>
-<FONT color="green">076</FONT>        }<a name="line.76"></a>
-<FONT color="green">077</FONT>    <a name="line.77"></a>
-<FONT color="green">078</FONT>        @Override<a name="line.78"></a>
-<FONT color="green">079</FONT>        public ISSN set(CharSequence value) {<a name="line.79"></a>
-<FONT color="green">080</FONT>            this.value = value != null ? value.toString() : null;<a name="line.80"></a>
-<FONT color="green">081</FONT>            return this;<a name="line.81"></a>
-<FONT color="green">082</FONT>        }<a name="line.82"></a>
-<FONT color="green">083</FONT>    <a name="line.83"></a>
-<FONT color="green">084</FONT>        @Override<a name="line.84"></a>
-<FONT color="green">085</FONT>        public ISSN createChecksum(boolean createWithChecksum) {<a name="line.85"></a>
-<FONT color="green">086</FONT>            this.createWithChecksum = createWithChecksum;<a name="line.86"></a>
-<FONT color="green">087</FONT>            return this;<a name="line.87"></a>
-<FONT color="green">088</FONT>        }<a name="line.88"></a>
-<FONT color="green">089</FONT>    <a name="line.89"></a>
-<FONT color="green">090</FONT>    <a name="line.90"></a>
-<FONT color="green">091</FONT>        @Override<a name="line.91"></a>
-<FONT color="green">092</FONT>        public ISSN normalize() {<a name="line.92"></a>
-<FONT color="green">093</FONT>            Matcher m = PATTERN.matcher(value);<a name="line.93"></a>
-<FONT color="green">094</FONT>            if (m.find()) {<a name="line.94"></a>
-<FONT color="green">095</FONT>                this.value = dehyphenate(value.substring(m.start(), m.end()));<a name="line.95"></a>
-<FONT color="green">096</FONT>            }<a name="line.96"></a>
-<FONT color="green">097</FONT>            return this;<a name="line.97"></a>
-<FONT color="green">098</FONT>        }<a name="line.98"></a>
-<FONT color="green">099</FONT>    <a name="line.99"></a>
-<FONT color="green">100</FONT>        @Override<a name="line.100"></a>
-<FONT color="green">101</FONT>        public boolean isValid() {<a name="line.101"></a>
-<FONT color="green">102</FONT>            return value != null &amp;&amp; !value.isEmpty() &amp;&amp; check();<a name="line.102"></a>
-<FONT color="green">103</FONT>        }<a name="line.103"></a>
-<FONT color="green">104</FONT>    <a name="line.104"></a>
-<FONT color="green">105</FONT>        @Override<a name="line.105"></a>
-<FONT color="green">106</FONT>        public ISSN verify() throws NumberFormatException {<a name="line.106"></a>
-<FONT color="green">107</FONT>            if (value == null || value.isEmpty()) {<a name="line.107"></a>
-<FONT color="green">108</FONT>                throw new NumberFormatException("invalid");<a name="line.108"></a>
-<FONT color="green">109</FONT>            }<a name="line.109"></a>
-<FONT color="green">110</FONT>            if (!check()) {<a name="line.110"></a>
-<FONT color="green">111</FONT>                throw new NumberFormatException("bad createChecksum");<a name="line.111"></a>
-<FONT color="green">112</FONT>            }<a name="line.112"></a>
-<FONT color="green">113</FONT>            return this;<a name="line.113"></a>
-<FONT color="green">114</FONT>        }<a name="line.114"></a>
-<FONT color="green">115</FONT>    <a name="line.115"></a>
-<FONT color="green">116</FONT>        /**<a name="line.116"></a>
-<FONT color="green">117</FONT>         * Returns the value representation of the standard number<a name="line.117"></a>
-<FONT color="green">118</FONT>         * @return value<a name="line.118"></a>
-<FONT color="green">119</FONT>         */<a name="line.119"></a>
-<FONT color="green">120</FONT>        @Override<a name="line.120"></a>
-<FONT color="green">121</FONT>        public String normalizedValue() {<a name="line.121"></a>
-<FONT color="green">122</FONT>            return value;<a name="line.122"></a>
-<FONT color="green">123</FONT>        }<a name="line.123"></a>
-<FONT color="green">124</FONT>    <a name="line.124"></a>
-<FONT color="green">125</FONT>        /**<a name="line.125"></a>
-<FONT color="green">126</FONT>         * Format this number<a name="line.126"></a>
-<FONT color="green">127</FONT>         *<a name="line.127"></a>
-<FONT color="green">128</FONT>         * @return the formatted number<a name="line.128"></a>
-<FONT color="green">129</FONT>         */<a name="line.129"></a>
-<FONT color="green">130</FONT>        @Override<a name="line.130"></a>
-<FONT color="green">131</FONT>        public String format() {<a name="line.131"></a>
-<FONT color="green">132</FONT>            return formatted;<a name="line.132"></a>
-<FONT color="green">133</FONT>        }<a name="line.133"></a>
-<FONT color="green">134</FONT>    <a name="line.134"></a>
-<FONT color="green">135</FONT>        @Override<a name="line.135"></a>
-<FONT color="green">136</FONT>        public ISSN reset() {<a name="line.136"></a>
-<FONT color="green">137</FONT>            this.value = null;<a name="line.137"></a>
-<FONT color="green">138</FONT>            this.formatted = null;<a name="line.138"></a>
-<FONT color="green">139</FONT>            this.createWithChecksum = false;<a name="line.139"></a>
-<FONT color="green">140</FONT>            return this;<a name="line.140"></a>
-<FONT color="green">141</FONT>        }<a name="line.141"></a>
-<FONT color="green">142</FONT>    <a name="line.142"></a>
-<FONT color="green">143</FONT>        public GTIN toGTIN() throws NumberFormatException {<a name="line.143"></a>
-<FONT color="green">144</FONT>            return new GTIN().set("977" + value.substring(0, 7) + "000").createChecksum(true).normalize().verify();<a name="line.144"></a>
-<FONT color="green">145</FONT>        }<a name="line.145"></a>
-<FONT color="green">146</FONT>    <a name="line.146"></a>
-<FONT color="green">147</FONT>        public GTIN toGTIN(String additionalCode) throws NumberFormatException {<a name="line.147"></a>
-<FONT color="green">148</FONT>            // "977" + ISSN + add-on + placeholder for createChecksum<a name="line.148"></a>
-<FONT color="green">149</FONT>            return new GTIN().set("977" + value.substring(0, 7) + additionalCode + "0").createChecksum(true).normalize().verify();<a name="line.149"></a>
-<FONT color="green">150</FONT>        }<a name="line.150"></a>
-<FONT color="green">151</FONT>    <a name="line.151"></a>
-<FONT color="green">152</FONT>        private boolean check() {<a name="line.152"></a>
-<FONT color="green">153</FONT>            int l = createWithChecksum ? value.length() : value.length() - 1;<a name="line.153"></a>
-<FONT color="green">154</FONT>            int checksum = 0;<a name="line.154"></a>
-<FONT color="green">155</FONT>            int weight;<a name="line.155"></a>
-<FONT color="green">156</FONT>            int val;<a name="line.156"></a>
-<FONT color="green">157</FONT>            for (int i = 0; i &lt; l; i++) {<a name="line.157"></a>
-<FONT color="green">158</FONT>                val = value.charAt(i) - '0';<a name="line.158"></a>
-<FONT color="green">159</FONT>                weight = 8 - i;<a name="line.159"></a>
-<FONT color="green">160</FONT>                checksum += weight * val;<a name="line.160"></a>
-<FONT color="green">161</FONT>            }<a name="line.161"></a>
-<FONT color="green">162</FONT>            int chk = checksum % 11;<a name="line.162"></a>
-<FONT color="green">163</FONT>            char p = chk == 0 ? '0' : chk == 1 ? 'X' : (char)((11-chk) + '0');<a name="line.163"></a>
-<FONT color="green">164</FONT>            return p == Character.toUpperCase(value.charAt(l));<a name="line.164"></a>
-<FONT color="green">165</FONT>        }<a name="line.165"></a>
-<FONT color="green">166</FONT>    <a name="line.166"></a>
-<FONT color="green">167</FONT>        private String dehyphenate(String isbn) {<a name="line.167"></a>
-<FONT color="green">168</FONT>            StringBuilder sb = new StringBuilder(isbn);<a name="line.168"></a>
-<FONT color="green">169</FONT>            int i = sb.indexOf("-");<a name="line.169"></a>
-<FONT color="green">170</FONT>            while (i &gt; 0) {<a name="line.170"></a>
-<FONT color="green">171</FONT>                sb.deleteCharAt(i);<a name="line.171"></a>
-<FONT color="green">172</FONT>                i = sb.indexOf("-");<a name="line.172"></a>
-<FONT color="green">173</FONT>            }<a name="line.173"></a>
-<FONT color="green">174</FONT>            if (sb.length() &gt; 7) {<a name="line.174"></a>
-<FONT color="green">175</FONT>                this.formatted = sb.substring(0, 4) + "-" + sb.substring(4, 8);<a name="line.175"></a>
-<FONT color="green">176</FONT>            }<a name="line.176"></a>
-<FONT color="green">177</FONT>            return sb.toString();<a name="line.177"></a>
-<FONT color="green">178</FONT>        }<a name="line.178"></a>
-<FONT color="green">179</FONT>    <a name="line.179"></a>
-<FONT color="green">180</FONT>    }<a name="line.180"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a name="line.1"></a>
+<span class="sourceLineNo">002</span>package org.xbib.standardnumber;<a name="line.2"></a>
+<span class="sourceLineNo">003</span><a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.util.regex.Matcher;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.util.regex.Pattern;<a name="line.5"></a>
+<span class="sourceLineNo">006</span><a name="line.6"></a>
+<span class="sourceLineNo">007</span>/**<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * ISO 3297 International Standard Serial Number (ISSN)<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *<a name="line.9"></a>
+<span class="sourceLineNo">010</span> * Z39.50 BIB-1 Use Attribute 8<a name="line.10"></a>
+<span class="sourceLineNo">011</span> *<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * The International Standard Serial Number (ISSN) is a unique<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * eight-digit number used to identify a print or electronic periodical<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * publication. The ISSN system was adopted as international standard<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * ISO 3297 in 1975. The ISO subcommittee TC 46/SC 9 is responsible<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * for the standard.<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * Quoted from http://www.issn.org/2-22636-All-about-ISSN.php<a name="line.18"></a>
+<span class="sourceLineNo">019</span> *<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * The ISSN (International Standard Serial Number) is an eight-digit number<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * which identifies periodical publications as such, including electronic<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * serials.<a name="line.22"></a>
+<span class="sourceLineNo">023</span> *<a name="line.23"></a>
+<span class="sourceLineNo">024</span> * The ISSN is a numeric code which is used as an identifier: it has no<a name="line.24"></a>
+<span class="sourceLineNo">025</span> * signification in itself and does not contain in itself any information<a name="line.25"></a>
+<span class="sourceLineNo">026</span> * referring to the origin or contents of the publication.<a name="line.26"></a>
+<span class="sourceLineNo">027</span> *<a name="line.27"></a>
+<span class="sourceLineNo">028</span> * The ISSN takes the form of the acronym ISSN followed by two groups<a name="line.28"></a>
+<span class="sourceLineNo">029</span> * of four digits, separated by a hyphen. The eighth character is a<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * control digit calculated according to a modulo 11 algorithm on<a name="line.30"></a>
+<span class="sourceLineNo">031</span> * the basis of the 7 preceding digits; this eighth control character<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * may be an "X" if the result of the computing is equal to "10",<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * in order to avoid any ambiguity.<a name="line.33"></a>
+<span class="sourceLineNo">034</span> *<a name="line.34"></a>
+<span class="sourceLineNo">035</span> *  The ISSN is linked to a standardized form of the title of the<a name="line.35"></a>
+<span class="sourceLineNo">036</span> *  identified serial, known as the "key title", which repeats<a name="line.36"></a>
+<span class="sourceLineNo">037</span> *  the title of the publication, qualifying it with additional elements<a name="line.37"></a>
+<span class="sourceLineNo">038</span> *  in order to distinguish it from other publications having identical<a name="line.38"></a>
+<span class="sourceLineNo">039</span> *  titles.<a name="line.39"></a>
+<span class="sourceLineNo">040</span> *<a name="line.40"></a>
+<span class="sourceLineNo">041</span> *  If the title of the publication changes in any significant way,<a name="line.41"></a>
+<span class="sourceLineNo">042</span> *  a new ISSN must be assigned in order to correspond to this new form<a name="line.42"></a>
+<span class="sourceLineNo">043</span> *  of title and avoid any confusion. A serial publication whose<a name="line.43"></a>
+<span class="sourceLineNo">044</span> *  title is modified several times in the course of its existence<a name="line.44"></a>
+<span class="sourceLineNo">045</span> *  will be assigned each time a new ISSN, thus allowing precise<a name="line.45"></a>
+<span class="sourceLineNo">046</span> *  identification of each form of the title : in fact it is then<a name="line.46"></a>
+<span class="sourceLineNo">047</span> *  considered that they are different publications even if there<a name="line.47"></a>
+<span class="sourceLineNo">048</span> *  is a logical link between them.<a name="line.48"></a>
+<span class="sourceLineNo">049</span> *<a name="line.49"></a>
+<span class="sourceLineNo">050</span> *  Contrary to other types of publications, the world of serial<a name="line.50"></a>
+<span class="sourceLineNo">051</span> *  publications is particularly changeable and complex :<a name="line.51"></a>
+<span class="sourceLineNo">052</span> *  the lifetime of a title may be extremely short; many publications<a name="line.52"></a>
+<span class="sourceLineNo">053</span> *  may be part of a complex set of relationships, etc.<a name="line.53"></a>
+<span class="sourceLineNo">054</span> *  These particularities themselves necessitated the introduction<a name="line.54"></a>
+<span class="sourceLineNo">055</span> *  of the ISSN.<a name="line.55"></a>
+<span class="sourceLineNo">056</span> *<a name="line.56"></a>
+<span class="sourceLineNo">057</span> */<a name="line.57"></a>
+<span class="sourceLineNo">058</span>public class ISSN implements Comparable&lt;ISSN&gt;, StandardNumber {<a name="line.58"></a>
+<span class="sourceLineNo">059</span><a name="line.59"></a>
+<span class="sourceLineNo">060</span>    private final static Pattern PATTERN = Pattern.compile("[0-9xX\\-]{8,9}");<a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span>    private String value;<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span>    private String formatted;<a name="line.64"></a>
+<span class="sourceLineNo">065</span><a name="line.65"></a>
+<span class="sourceLineNo">066</span>    private boolean createWithChecksum;<a name="line.66"></a>
+<span class="sourceLineNo">067</span><a name="line.67"></a>
+<span class="sourceLineNo">068</span>    @Override<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    public String type() {<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        return "issn";<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    }<a name="line.71"></a>
+<span class="sourceLineNo">072</span><a name="line.72"></a>
+<span class="sourceLineNo">073</span>    @Override<a name="line.73"></a>
+<span class="sourceLineNo">074</span>    public int compareTo(ISSN issn) {<a name="line.74"></a>
+<span class="sourceLineNo">075</span>        return value != null ? normalizedValue().compareTo(issn.normalizedValue()) : -1;<a name="line.75"></a>
+<span class="sourceLineNo">076</span>    }<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>    @Override<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    public ISSN set(CharSequence value) {<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        this.value = value != null ? value.toString() : null;<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        return this;<a name="line.81"></a>
+<span class="sourceLineNo">082</span>    }<a name="line.82"></a>
+<span class="sourceLineNo">083</span><a name="line.83"></a>
+<span class="sourceLineNo">084</span>    @Override<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    public ISSN createChecksum(boolean createWithChecksum) {<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        this.createWithChecksum = createWithChecksum;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        return this;<a name="line.87"></a>
+<span class="sourceLineNo">088</span>    }<a name="line.88"></a>
+<span class="sourceLineNo">089</span><a name="line.89"></a>
+<span class="sourceLineNo">090</span><a name="line.90"></a>
+<span class="sourceLineNo">091</span>    @Override<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    public ISSN normalize() {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        Matcher m = PATTERN.matcher(value);<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        if (m.find()) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>            this.value = dehyphenate(value.substring(m.start(), m.end()));<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        }<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        return this;<a name="line.97"></a>
+<span class="sourceLineNo">098</span>    }<a name="line.98"></a>
+<span class="sourceLineNo">099</span><a name="line.99"></a>
+<span class="sourceLineNo">100</span>    @Override<a name="line.100"></a>
+<span class="sourceLineNo">101</span>    public boolean isValid() {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        return value != null &amp;&amp; !value.isEmpty() &amp;&amp; check();<a name="line.102"></a>
+<span class="sourceLineNo">103</span>    }<a name="line.103"></a>
+<span class="sourceLineNo">104</span><a name="line.104"></a>
+<span class="sourceLineNo">105</span>    @Override<a name="line.105"></a>
+<span class="sourceLineNo">106</span>    public ISSN verify() throws NumberFormatException {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        if (value == null || value.isEmpty()) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            throw new NumberFormatException("invalid");<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        if (!check()) {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>            throw new NumberFormatException("bad createChecksum");<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>        return this;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>    }<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>    /**<a name="line.116"></a>
+<span class="sourceLineNo">117</span>     * Returns the value representation of the standard number<a name="line.117"></a>
+<span class="sourceLineNo">118</span>     * @return value<a name="line.118"></a>
+<span class="sourceLineNo">119</span>     */<a name="line.119"></a>
+<span class="sourceLineNo">120</span>    @Override<a name="line.120"></a>
+<span class="sourceLineNo">121</span>    public String normalizedValue() {<a name="line.121"></a>
+<span class="sourceLineNo">122</span>        return value;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>    }<a name="line.123"></a>
+<span class="sourceLineNo">124</span><a name="line.124"></a>
+<span class="sourceLineNo">125</span>    /**<a name="line.125"></a>
+<span class="sourceLineNo">126</span>     * Format this number<a name="line.126"></a>
+<span class="sourceLineNo">127</span>     *<a name="line.127"></a>
+<span class="sourceLineNo">128</span>     * @return the formatted number<a name="line.128"></a>
+<span class="sourceLineNo">129</span>     */<a name="line.129"></a>
+<span class="sourceLineNo">130</span>    @Override<a name="line.130"></a>
+<span class="sourceLineNo">131</span>    public String format() {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        return formatted;<a name="line.132"></a>
+<span class="sourceLineNo">133</span>    }<a name="line.133"></a>
+<span class="sourceLineNo">134</span><a name="line.134"></a>
+<span class="sourceLineNo">135</span>    @Override<a name="line.135"></a>
+<span class="sourceLineNo">136</span>    public ISSN reset() {<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        this.value = null;<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        this.formatted = null;<a name="line.138"></a>
+<span class="sourceLineNo">139</span>        this.createWithChecksum = false;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>        return this;<a name="line.140"></a>
+<span class="sourceLineNo">141</span>    }<a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>    public GTIN toGTIN() throws NumberFormatException {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        return new GTIN().set("977" + value.substring(0, 7) + "000").createChecksum(true).normalize().verify();<a name="line.144"></a>
+<span class="sourceLineNo">145</span>    }<a name="line.145"></a>
+<span class="sourceLineNo">146</span><a name="line.146"></a>
+<span class="sourceLineNo">147</span>    public GTIN toGTIN(String additionalCode) throws NumberFormatException {<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        // "977" + ISSN + add-on + placeholder for createChecksum<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        return new GTIN().set("977" + value.substring(0, 7) + additionalCode + "0").createChecksum(true).normalize().verify();<a name="line.149"></a>
+<span class="sourceLineNo">150</span>    }<a name="line.150"></a>
+<span class="sourceLineNo">151</span><a name="line.151"></a>
+<span class="sourceLineNo">152</span>    private boolean check() {<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        int l = createWithChecksum ? value.length() : value.length() - 1;<a name="line.153"></a>
+<span class="sourceLineNo">154</span>        int checksum = 0;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>        int weight;<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        int val;<a name="line.156"></a>
+<span class="sourceLineNo">157</span>        for (int i = 0; i &lt; l; i++) {<a name="line.157"></a>
+<span class="sourceLineNo">158</span>            val = value.charAt(i) - '0';<a name="line.158"></a>
+<span class="sourceLineNo">159</span>            weight = 8 - i;<a name="line.159"></a>
+<span class="sourceLineNo">160</span>            checksum += weight * val;<a name="line.160"></a>
+<span class="sourceLineNo">161</span>        }<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        int chk = checksum % 11;<a name="line.162"></a>
+<span class="sourceLineNo">163</span>        char p = chk == 0 ? '0' : chk == 1 ? 'X' : (char)((11-chk) + '0');<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        return p == Character.toUpperCase(value.charAt(l));<a name="line.164"></a>
+<span class="sourceLineNo">165</span>    }<a name="line.165"></a>
+<span class="sourceLineNo">166</span><a name="line.166"></a>
+<span class="sourceLineNo">167</span>    private String dehyphenate(String isbn) {<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        StringBuilder sb = new StringBuilder(isbn);<a name="line.168"></a>
+<span class="sourceLineNo">169</span>        int i = sb.indexOf("-");<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        while (i &gt; 0) {<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            sb.deleteCharAt(i);<a name="line.171"></a>
+<span class="sourceLineNo">172</span>            i = sb.indexOf("-");<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        }<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        if (sb.length() &gt; 7) {<a name="line.174"></a>
+<span class="sourceLineNo">175</span>            this.formatted = sb.substring(0, 4) + "-" + sb.substring(4, 8);<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        }<a name="line.176"></a>
+<span class="sourceLineNo">177</span>        return sb.toString();<a name="line.177"></a>
+<span class="sourceLineNo">178</span>    }<a name="line.178"></a>
+<span class="sourceLineNo">179</span><a name="line.179"></a>
+<span class="sourceLineNo">180</span>}<a name="line.180"></a>
 
 
 
@@ -241,6 +246,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>
