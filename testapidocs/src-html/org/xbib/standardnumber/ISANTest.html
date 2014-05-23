@@ -84,7 +84,19 @@
 <span class="sourceLineNo">076</span>        assertEquals(isan.normalizedValue(), "00003BAB93520000G00000000Q");<a name="line.76"></a>
 <span class="sourceLineNo">077</span>        assertEquals(isan.format(), "ISAN 0000-3BAB-9352-0000-G-0000-0000-Q");<a name="line.77"></a>
 <span class="sourceLineNo">078</span>    }<a name="line.78"></a>
-<span class="sourceLineNo">079</span>}<a name="line.79"></a>
+<span class="sourceLineNo">079</span><a name="line.79"></a>
+<span class="sourceLineNo">080</span>    @Test<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    public void testBrokenISAN() {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        try {<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            String value = "1435-1838 = Lehrergilde-Rundbrief";<a name="line.83"></a>
+<span class="sourceLineNo">084</span>            new ISAN().set(value).createChecksum(true).normalize().verify();<a name="line.84"></a>
+<span class="sourceLineNo">085</span>            assertTrue(false);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        } catch (NumberFormatException e) {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>            assertTrue(true);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        }<a name="line.88"></a>
+<span class="sourceLineNo">089</span>    }<a name="line.89"></a>
+<span class="sourceLineNo">090</span><a name="line.90"></a>
+<span class="sourceLineNo">091</span>}<a name="line.91"></a>
 
 
 

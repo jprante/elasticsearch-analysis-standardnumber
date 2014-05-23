@@ -77,7 +77,7 @@
 <span class="sourceLineNo">069</span>    @Override<a name="line.69"></a>
 <span class="sourceLineNo">070</span>    public GTIN normalize() {<a name="line.70"></a>
 <span class="sourceLineNo">071</span>        Matcher m = PATTERN.matcher(value);<a name="line.71"></a>
-<span class="sourceLineNo">072</span>        if (m.find()) {<a name="line.72"></a>
+<span class="sourceLineNo">072</span>        if (m.find() &amp;&amp; value.length() &gt;= m.end()) {<a name="line.72"></a>
 <span class="sourceLineNo">073</span>            this.value = dehyphenate(value.substring(m.start(), m.end()));<a name="line.73"></a>
 <span class="sourceLineNo">074</span>        }<a name="line.74"></a>
 <span class="sourceLineNo">075</span>        return this;<a name="line.75"></a>
