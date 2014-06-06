@@ -38,7 +38,7 @@
 <span class="sourceLineNo">030</span> *  0095-4403(199502/03)21:3&lt;12:WATIIB&gt;2.0.TX;2-J<a name="line.30"></a>
 <span class="sourceLineNo">031</span> *<a name="line.31"></a>
 <span class="sourceLineNo">032</span> */<a name="line.32"></a>
-<span class="sourceLineNo">033</span>public class SICI implements Comparable&lt;SICI&gt;, StandardNumber {<a name="line.33"></a>
+<span class="sourceLineNo">033</span>public class SICI extends AbstractStandardNumber implements Comparable&lt;SICI&gt;, StandardNumber {<a name="line.33"></a>
 <span class="sourceLineNo">034</span><a name="line.34"></a>
 <span class="sourceLineNo">035</span>    private static final Pattern PATTERN = Pattern.compile("[\\p{Graph}\\p{Punct}]{12,64}");<a name="line.35"></a>
 <span class="sourceLineNo">036</span><a name="line.36"></a>

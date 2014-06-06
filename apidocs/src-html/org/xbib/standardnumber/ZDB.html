@@ -15,13 +15,13 @@
 <span class="sourceLineNo">007</span>/**<a name="line.7"></a>
 <span class="sourceLineNo">008</span> * Zeitschriftendatenbank ID<a name="line.8"></a>
 <span class="sourceLineNo">009</span> *<a name="line.9"></a>
-<span class="sourceLineNo">010</span> *  ZDB is the world?s largest specialized database for serial titles (journals, annuals, newspapers, also<a name="line.10"></a>
+<span class="sourceLineNo">010</span> *  ZDB is the world’s largest specialized database for serial titles (journals, annuals, newspapers, also<a name="line.10"></a>
 <span class="sourceLineNo">011</span> *  e-journals).<a name="line.11"></a>
 <span class="sourceLineNo">012</span> *<a name="line.12"></a>
-<span class="sourceLineNo">013</span> * @see &lt;a href="http://support.d-nb.de/iltis/onlineRoutinen/Pruefziffernberechnung.htm"&gt;&lt;/a&gt;Pr?fziffernberechnung in ILTIS&lt;/a&gt;<a name="line.13"></a>
+<span class="sourceLineNo">013</span> * @see &lt;a href="http://support.d-nb.de/iltis/onlineRoutinen/Pruefziffernberechnung.htm"&gt;&lt;/a&gt;Prüfziffernberechnung in ILTIS&lt;/a&gt;<a name="line.13"></a>
 <span class="sourceLineNo">014</span> * @see &lt;a href="https://wiki.dnb.de/pages/viewpage.action?pageId=48139522"&gt;DNB Wiki&lt;/a&gt;<a name="line.14"></a>
 <span class="sourceLineNo">015</span> */<a name="line.15"></a>
-<span class="sourceLineNo">016</span>public class ZDB implements Comparable&lt;ZDB&gt;, StandardNumber {<a name="line.16"></a>
+<span class="sourceLineNo">016</span>public class ZDB extends AbstractStandardNumber implements Comparable&lt;ZDB&gt;, StandardNumber {<a name="line.16"></a>
 <span class="sourceLineNo">017</span><a name="line.17"></a>
 <span class="sourceLineNo">018</span>    private final static Pattern PATTERN = Pattern.compile("\\b[\\p{Digit}]{2,10}\\-{0,1}[\\p{Digit}xX]{1}\\b");<a name="line.18"></a>
 <span class="sourceLineNo">019</span><a name="line.19"></a>

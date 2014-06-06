@@ -1,4 +1,3 @@
-org.xbib.elasticsearch.index.analysis
 org.xbib.elasticsearch.index.analysis.standardnumber
 org.xbib.elasticsearch.index.mapper.standardnumber
 org.xbib.elasticsearch.plugin.analysis.standardnumber

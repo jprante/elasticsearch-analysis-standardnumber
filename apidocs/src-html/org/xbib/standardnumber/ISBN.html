@@ -48,7 +48,7 @@
 <span class="sourceLineNo">040</span> * @see &lt;a href="http://www.iana.org/assignments/urn-namespaces"&gt;The IANA URN assignments&lt;/a&gt;<a name="line.40"></a>
 <span class="sourceLineNo">041</span> * @see &lt;a href="http://www.isbn-international.org/download/List%20of%20Ranges.pdf"&gt;ISBN prefix list&lt;/a&gt;<a name="line.41"></a>
 <span class="sourceLineNo">042</span> */<a name="line.42"></a>
-<span class="sourceLineNo">043</span>public class ISBN implements Comparable&lt;ISBN&gt;, StandardNumber {<a name="line.43"></a>
+<span class="sourceLineNo">043</span>public class ISBN extends AbstractStandardNumber implements Comparable&lt;ISBN&gt;, StandardNumber {<a name="line.43"></a>
 <span class="sourceLineNo">044</span><a name="line.44"></a>
 <span class="sourceLineNo">045</span>    private static final Pattern PATTERN = Pattern.compile("[\\p{Digit}xX\\-]{10,17}");<a name="line.45"></a>
 <span class="sourceLineNo">046</span><a name="line.46"></a>

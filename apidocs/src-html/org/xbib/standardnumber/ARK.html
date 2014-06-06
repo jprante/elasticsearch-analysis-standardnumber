@@ -31,7 +31,7 @@
 <span class="sourceLineNo">023</span> * <a name="line.23"></a>
 <span class="sourceLineNo">024</span> * @see &lt;a href="http://www.cdlib.org/services/uc3/docs/jak_ARKs_Berlin_2012.pdf"&gt;10 years ARK&lt;/a&gt;<a name="line.24"></a>
 <span class="sourceLineNo">025</span> */<a name="line.25"></a>
-<span class="sourceLineNo">026</span>public class ARK implements Comparable&lt;ARK&gt;, StandardNumber {<a name="line.26"></a>
+<span class="sourceLineNo">026</span>public class ARK extends AbstractStandardNumber implements Comparable&lt;ARK&gt; {<a name="line.26"></a>
 <span class="sourceLineNo">027</span><a name="line.27"></a>
 <span class="sourceLineNo">028</span>    private static final Pattern PATTERN = Pattern.compile("[\\p{Graph}\\p{Punct}]{0,48}");<a name="line.28"></a>
 <span class="sourceLineNo">029</span><a name="line.29"></a>

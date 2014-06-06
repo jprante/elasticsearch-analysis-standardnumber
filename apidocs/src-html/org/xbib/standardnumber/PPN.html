@@ -19,7 +19,7 @@
 <span class="sourceLineNo">011</span> * (Project voor geIntegreerde Catalogus Automatisering) integrated library systems.<a name="line.11"></a>
 <span class="sourceLineNo">012</span> *<a name="line.12"></a>
 <span class="sourceLineNo">013</span> */<a name="line.13"></a>
-<span class="sourceLineNo">014</span>public class PPN implements Comparable&lt;PPN&gt;, StandardNumber {<a name="line.14"></a>
+<span class="sourceLineNo">014</span>public class PPN extends AbstractStandardNumber implements Comparable&lt;PPN&gt;, StandardNumber {<a name="line.14"></a>
 <span class="sourceLineNo">015</span><a name="line.15"></a>
 <span class="sourceLineNo">016</span>    private final static Pattern PATTERN = Pattern.compile("[\\p{Digit}]{3,10}\\-{0,1}[\\p{Digit}xX]{1}\\b");<a name="line.16"></a>
 <span class="sourceLineNo">017</span><a name="line.17"></a>

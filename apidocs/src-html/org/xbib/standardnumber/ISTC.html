@@ -15,16 +15,16 @@
 <span class="sourceLineNo">007</span> * ISO 21047 International Standard Text Code (ISTC)<a name="line.7"></a>
 <span class="sourceLineNo">008</span> *<a name="line.8"></a>
 <span class="sourceLineNo">009</span> * The International Standard Text Code (ISTC) is a numbering system for the unique identification<a name="line.9"></a>
-<span class="sourceLineNo">010</span> * of text-based works; the term ?work? can refer to any content appearing in conventional<a name="line.10"></a>
+<span class="sourceLineNo">010</span> * of text-based works; the term “work” can refer to any content appearing in conventional<a name="line.10"></a>
 <span class="sourceLineNo">011</span> * printed books, audio-books, static e-books or enhanced digital books, as well as content<a name="line.11"></a>
 <span class="sourceLineNo">012</span> * which might appear in a newspaper or journal.<a name="line.12"></a>
 <span class="sourceLineNo">013</span> *<a name="line.13"></a>
 <span class="sourceLineNo">014</span> * The ISTC provides sales analysis systems, retail websites, library catalogs and other<a name="line.14"></a>
 <span class="sourceLineNo">015</span> * bibliographic systems with a method of automatically linking together publications<a name="line.15"></a>
-<span class="sourceLineNo">016</span> * of the ?same content? and/or ?related content?, thus improving discoverability of<a name="line.16"></a>
+<span class="sourceLineNo">016</span> * of the “same content” and/or “related content”, thus improving discoverability of<a name="line.16"></a>
 <span class="sourceLineNo">017</span> * products and efficiencies.<a name="line.17"></a>
 <span class="sourceLineNo">018</span> *<a name="line.18"></a>
-<span class="sourceLineNo">019</span> * An ISTC number is the link between a user?s search for a piece of content and the<a name="line.19"></a>
+<span class="sourceLineNo">019</span> * An ISTC number is the link between a user’s search for a piece of content and the<a name="line.19"></a>
 <span class="sourceLineNo">020</span> * ultimate sale or loan of a publication.<a name="line.20"></a>
 <span class="sourceLineNo">021</span> *<a name="line.21"></a>
 <span class="sourceLineNo">022</span> * The standard was formally published in March 2009<a name="line.22"></a>
@@ -32,7 +32,7 @@
 <span class="sourceLineNo">024</span> * Checksum algorithm is ISO 7064 MOD 16/3<a name="line.24"></a>
 <span class="sourceLineNo">025</span> *<a name="line.25"></a>
 <span class="sourceLineNo">026</span> */<a name="line.26"></a>
-<span class="sourceLineNo">027</span>public class ISTC implements Comparable&lt;ISTC&gt;, StandardNumber {<a name="line.27"></a>
+<span class="sourceLineNo">027</span>public class ISTC extends AbstractStandardNumber implements Comparable&lt;ISTC&gt;, StandardNumber {<a name="line.27"></a>
 <span class="sourceLineNo">028</span><a name="line.28"></a>
 <span class="sourceLineNo">029</span>    private static final Pattern PATTERN = Pattern.compile("[\\p{Alnum}\\-\\s]{12,24}");<a name="line.29"></a>
 <span class="sourceLineNo">030</span><a name="line.30"></a>
