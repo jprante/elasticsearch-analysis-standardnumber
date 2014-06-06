@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  *
  * @see <a href="http://www.gtin.info/">GTIN info</a>
  */
-public class GTIN implements Comparable<GTIN>, StandardNumber {
+public class GTIN extends AbstractStandardNumber implements Comparable<GTIN>, StandardNumber {
 
     private static final Pattern PATTERN = Pattern.compile("\\b[\\p{Digit}\\-]{3,18}\\b");
 
@@ -69,7 +69,7 @@ public class GTIN implements Comparable<GTIN>, StandardNumber {
     @Override
     public GTIN normalize() {
         Matcher m = PATTERN.matcher(value);
-        if (m.find()) {
+        if (m.find() && value.length() >= m.end()) {
             this.value = dehyphenate(value.substring(m.start(), m.end()));
         }
         return this;

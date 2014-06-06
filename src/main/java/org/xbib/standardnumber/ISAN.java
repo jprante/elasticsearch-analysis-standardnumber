@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * The ISAN identifier is incorporated in many draft and final standards such as
  * AACS, DCI, MPEG, DVB, and ATSC.
  */
-public class ISAN implements Comparable<ISAN>, StandardNumber {
+public class ISAN extends AbstractStandardNumber implements Comparable<ISAN>, StandardNumber {
 
     private static final Pattern PATTERN = Pattern.compile("[\\p{Alnum}\\-]{16,34}");
 
@@ -84,7 +84,7 @@ public class ISAN implements Comparable<ISAN>, StandardNumber {
             throw new NumberFormatException();
         }
         if (!check()) {
-            throw new NumberFormatException("invalid createChecksum");
+            throw new NumberFormatException("invalid checksum");
         }
         return this;
     }
@@ -116,8 +116,8 @@ public class ISAN implements Comparable<ISAN>, StandardNumber {
 
     private boolean check() {
         if (versioned) {
-            int chk1 = check.compute(value.substring(0,17));
-            int chk2 = check.compute(value.substring(0,16) + value.substring(17,26));
+            int chk1 = value.length() >= 17 ? check.compute(value.substring(0,17)) : -1;
+            int chk2 = value.length() >= 26 ? check.compute(value.substring(0,16) + value.substring(17,26)) : -1;
             if (chk1 != 1) {
                 return false;
             }
@@ -146,23 +146,25 @@ public class ISAN implements Comparable<ISAN>, StandardNumber {
             i = sb.indexOf(" ");
         }
         this.formatted = "ISAN "
-                + sb.substring(0,4)
-                + "-"
-                + sb.substring(4,8)
-                + "-"
-                + sb.substring(8,12)
-                + "-"
-                + sb.substring(12,16)
-                + "-"
-                + sb.substring(16,17)
-                + (sb.length() > 17 ? "-"
-                        + sb.substring(17,21)
-                        + "-"
-                        + sb.substring(21,25)
-                        + "-"
-                        + sb.substring(25,26)
-                : ""
-        );
+                + (sb.length() < 4 ? sb :
+                    sb.substring(0,4) + "-"
+                + (sb.length() < 8 ? sb.substring(4) :
+                    sb.substring(4,8) + "-"
+                + (sb.length() < 12 ? sb.substring(8) :
+                    sb.substring(8,12) + "-"
+                + (sb.length() < 16 ? sb.substring(12) :
+                    sb.substring(12,16) + "-"
+                + (sb.length() < 17 ? sb.substring(16) :
+                    sb.substring(16,17))))));
+        if (sb.length() > 17) {
+            this.formatted = this.formatted + "-"
+                    + (sb.length() < 21 ? sb.substring(17) :
+                      (sb.substring(17, 21) + "-"
+                    + (sb.length() < 25 ? sb.substring(21) :
+                      (sb.substring(21, 25)  + "-"
+                    + (sb.length() < 26 ? sb.substring(25) :
+                      sb.substring(25, 26))))));
+        }
         return sb.toString();
     }
 }

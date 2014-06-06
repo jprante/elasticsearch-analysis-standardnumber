@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * international standards.
  *
  */
-public class UPC implements Comparable<UPC>, StandardNumber {
+public class UPC extends AbstractStandardNumber implements Comparable<UPC>, StandardNumber {
 
     private static final Pattern PATTERN = Pattern.compile("[\\p{Digit}]{0,12}");
 

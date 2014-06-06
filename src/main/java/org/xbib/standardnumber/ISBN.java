@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * @see <a href="http://www.iana.org/assignments/urn-namespaces">The IANA URN assignments</a>
  * @see <a href="http://www.isbn-international.org/download/List%20of%20Ranges.pdf">ISBN prefix list</a>
  */
-public class ISBN implements Comparable<ISBN>, StandardNumber {
+public class ISBN extends AbstractStandardNumber implements Comparable<ISBN>, StandardNumber {
 
     private static final Pattern PATTERN = Pattern.compile("[\\p{Digit}xX\\-]{10,17}");
 

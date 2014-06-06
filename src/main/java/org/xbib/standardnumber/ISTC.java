@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * Checksum algorithm is ISO 7064 MOD 16/3
  *
  */
-public class ISTC implements Comparable<ISTC>, StandardNumber {
+public class ISTC extends AbstractStandardNumber implements Comparable<ISTC>, StandardNumber {
 
     private static final Pattern PATTERN = Pattern.compile("[\\p{Alnum}\\-\\s]{12,24}");
 

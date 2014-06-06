@@ -76,4 +76,16 @@ public class ISANTest extends Assert {
         assertEquals(isan.normalizedValue(), "00003BAB93520000G00000000Q");
         assertEquals(isan.format(), "ISAN 0000-3BAB-9352-0000-G-0000-0000-Q");
     }
+
+    @Test
+    public void testBrokenISAN() {
+        try {
+            String value = "1435-1838 = Lehrergilde-Rundbrief";
+            new ISAN().set(value).createChecksum(true).normalize().verify();
+            assertTrue(false);
+        } catch (NumberFormatException e) {
+            assertTrue(true);
+        }
+    }
+
 }

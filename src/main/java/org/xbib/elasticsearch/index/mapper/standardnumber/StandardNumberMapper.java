@@ -15,7 +15,6 @@ import org.xbib.elasticsearch.index.analysis.standardnumber.Detector;
 import org.xbib.standardnumber.StandardNumber;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Map;
 

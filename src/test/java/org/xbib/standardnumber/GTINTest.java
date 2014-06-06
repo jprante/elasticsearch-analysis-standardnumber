@@ -37,5 +37,4 @@ public class GTINTest extends Assert {
         assertEquals("9783652002264", gtin.normalizedValue());
         assertEquals("9783652002264", gtin.format());
     }
-
 }

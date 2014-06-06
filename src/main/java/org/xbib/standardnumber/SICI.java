@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  *  0095-4403(199502/03)21:3<12:WATIIB>2.0.TX;2-J
  *
  */
-public class SICI implements Comparable<SICI>, StandardNumber {
+public class SICI extends AbstractStandardNumber implements Comparable<SICI>, StandardNumber {
 
     private static final Pattern PATTERN = Pattern.compile("[\\p{Graph}\\p{Punct}]{12,64}");
 

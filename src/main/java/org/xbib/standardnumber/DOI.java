@@ -1,6 +1,9 @@
 package org.xbib.standardnumber;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,17 +45,19 @@ import java.util.regex.Pattern;
  * for unique identification, persistence, resolution, metadata and semantic interoperability.
  *
  */
-public class DOI implements Comparable<DOI>, StandardNumber {
+public class DOI extends AbstractStandardNumber implements Comparable<DOI>, StandardNumber {
 
-    private static final Pattern PATTERN = Pattern.compile("\\b10\\.\\d{4}([.][0-9]+)*/[/-a-z0-9.()<>_:;\\\\]+\\b");
+    private static final Pattern DOI_PATTERN = Pattern.compile("\\b10\\.\\d{4}([.][0-9]+)*/[a-z0-9/\\-.()<>_:;\\\\]+\\b");
 
-    private static final Pattern URI_PATTERN = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]\\b");
-
-    private String prefix = "http://doi.org/";
+    private static final Pattern DOI_URI_PATTERN = Pattern.compile("\\b(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]\\b");
 
     private Object raw;
 
-    private URI value;
+    private String value;
+
+    private URI infoURI;
+    private URI httpDoi;
+    private URI httpDxDoi;
 
     @Override
     public String type() {
@@ -80,7 +85,7 @@ public class DOI implements Comparable<DOI>, StandardNumber {
         if (raw == null) {
             return this;
         }
-        this.value = make(raw.toString());
+        make(raw);
         return this;
     }
 
@@ -99,21 +104,22 @@ public class DOI implements Comparable<DOI>, StandardNumber {
 
     @Override
     public String normalizedValue() {
-        return value != null ? value.toString() : null;
+        return value;
     }
 
     @Override
     public String format() {
-        return value != null ? value.toString() : null;
+        return httpDoi != null ? httpDoi.toString() : ""; // preferred form
     }
 
-    public DOI prefix(String prefix) {
-        this.prefix = prefix;
-        return this;
-    }
-
-    public URI asURI() {
-        return value;
+    @Override
+    public Collection<String> getTypedVariants() {
+        return Arrays.asList(
+                value != null ? type().toUpperCase() + " " + value : null,
+                infoURI != null ? type().toUpperCase() + " " + infoURI.toString() : null,
+                httpDoi != null ? type().toUpperCase() + " " + httpDoi.toString() : null,
+                httpDxDoi != null ? type().toUpperCase() + " " + httpDxDoi.toString() : null
+        );
     }
 
     public DOI reset() {
@@ -121,25 +127,26 @@ public class DOI implements Comparable<DOI>, StandardNumber {
         return this;
     }
 
-    private URI make(String content) {
+    private void make(Object o) {
+        // DOIs are case insensitive in ASCII
+        // DOI service only use upper casing, we use lowercasing (better for search engines)
+        String content = o.toString().toLowerCase(Locale.US);
         // is it an already a DOI URI?
-        Matcher m = URI_PATTERN.matcher(content);
+        Matcher m = DOI_URI_PATTERN.matcher(content);
         if (m.find()) {
-            String t = content.substring(m.start(), m.end());
-            URI u = URI.create(t);
+            URI u = URI.create(content.substring(m.start(), m.end()));
             if ("http".equals(u.getScheme()) && ("dx.doi.org".equals(u.getHost()) || "doi.org".equals(u.getHost()))) {
-                m = PATTERN.matcher(u.getRawPath());
-                if (m.find()) {
-                    return u;
-                }
+                content = u.getRawPath();
+            } else {
+                return;
             }
         }
-        // not an URI, just the path?
-        m = PATTERN.matcher(content);
+        m = DOI_PATTERN.matcher(content);
         if (m.find()) {
-            return URI.create(prefix + content.substring(m.start(), m.end()));
-        } else {
-            return null;
+            this.value = content.substring(m.start(), m.end());
+            this.infoURI = URI.create("info:doi:" + value);
+            this.httpDoi = URI.create("http://doi.org/" + value);
+            this.httpDxDoi = URI.create("http://dx.doi.org/" + value);
         }
     }
 

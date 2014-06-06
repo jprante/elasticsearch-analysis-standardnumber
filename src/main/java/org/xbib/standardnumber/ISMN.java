@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  *
  * @see <a href="http://www.ismn-international.org/download/Web_ISMN%20Manual_2008-3.pdf">ISMN Manual 2008</a>
  */
-public class ISMN implements Comparable<ISMN>, StandardNumber {
+public class ISMN extends AbstractStandardNumber implements Comparable<ISMN>, StandardNumber {
 
     private static final Pattern PATTERN = Pattern.compile("[\\p{Digit}M\\-]{0,17}");
 

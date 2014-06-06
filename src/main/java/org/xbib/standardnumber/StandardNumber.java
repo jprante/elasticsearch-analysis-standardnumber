@@ -1,5 +1,7 @@
 package org.xbib.standardnumber;
 
+import java.util.Collection;
+
 /**
  * A standard number is a number that
  *
@@ -78,4 +80,6 @@ public interface StandardNumber {
     String format();
 
     StandardNumber reset();
+
+    Collection<String> getTypedVariants();
 }

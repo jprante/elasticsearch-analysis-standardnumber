@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * 
  * @see <a href="http://www.cdlib.org/services/uc3/docs/jak_ARKs_Berlin_2012.pdf">10 years ARK</a>
  */
-public class ARK implements Comparable<ARK>, StandardNumber {
+public class ARK extends AbstractStandardNumber implements Comparable<ARK> {
 
     private static final Pattern PATTERN = Pattern.compile("[\\p{Graph}\\p{Punct}]{0,48}");
 

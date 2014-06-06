@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @see <a href="http://support.d-nb.de/iltis/onlineRoutinen/Pruefziffernberechnung.htm"></a>Prüfziffernberechnung in ILTIS</a>
  * @see <a href="https://wiki.dnb.de/pages/viewpage.action?pageId=48139522">DNB Wiki</a>
  */
-public class ZDB implements Comparable<ZDB>, StandardNumber {
+public class ZDB extends AbstractStandardNumber implements Comparable<ZDB>, StandardNumber {
 
     private final static Pattern PATTERN = Pattern.compile("\\b[\\p{Digit}]{2,10}\\-{0,1}[\\p{Digit}xX]{1}\\b");
 

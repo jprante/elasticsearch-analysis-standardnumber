@@ -1,4 +1,3 @@
-
 package org.xbib.elasticsearch.index.analysis.standardnumber;
 
 import org.apache.lucene.analysis.Analyzer;

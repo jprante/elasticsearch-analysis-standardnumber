@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  * (Project voor geIntegreerde Catalogus Automatisering) integrated library systems.
  *
  */
-public class PPN implements Comparable<PPN>, StandardNumber {
+public class PPN extends AbstractStandardNumber implements Comparable<PPN>, StandardNumber {
 
     private final static Pattern PATTERN = Pattern.compile("[\\p{Digit}]{3,10}\\-{0,1}[\\p{Digit}xX]{1}\\b");
 

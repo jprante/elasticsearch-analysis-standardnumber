@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  *
  *  Checksum in accordance to ISO 7064 MOD-97
  */
-public class IBAN implements Comparable<IBAN>, StandardNumber {
+public class IBAN extends AbstractStandardNumber implements Comparable<IBAN>, StandardNumber {
 
     /**
      * Norway = 15, Malta = 31 + "IBAN "

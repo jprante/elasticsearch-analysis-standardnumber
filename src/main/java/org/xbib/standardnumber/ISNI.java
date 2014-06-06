@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  *
  * Checksum is in accordance to ISO/IEC 7064:2003, MOD 11-2
  */
-public class ISNI implements Comparable<ISNI>, StandardNumber {
+public class ISNI extends AbstractStandardNumber implements Comparable<ISNI>, StandardNumber {
 
     private final static Pattern PATTERN = Pattern.compile("[\\p{Digit}xX\\-\\s]{16,24}");
 

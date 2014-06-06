@@ -16,37 +16,41 @@ import static org.elasticsearch.common.collect.Lists.newLinkedList;
 
 public class Detector extends AbstractLifecycleComponent<Detector>  {
 
-    private final Set<StandardNumber> stdnums;
+    private final static ThreadLocal<Set<StandardNumber>> stdnums = new ThreadLocal<Set<StandardNumber>>();
 
     @Inject
     public Detector(Settings settings) {
         super(settings);
-        String[] s = settings.getAsArray("types", null);
-        Set<String> types = s != null ? Sets.newTreeSet(Arrays.asList(s)) : null;
-        this.stdnums = Sets.newLinkedHashSet();
-        stdnums.addAll(types == null ?
-                StandardNumberService.create() :
-                StandardNumberService.create(types));
     }
 
     @Override
     protected void doStart() throws ElasticsearchException {
-
     }
 
     @Override
     protected void doStop() throws ElasticsearchException {
-
     }
 
     @Override
     protected void doClose() throws ElasticsearchException {
+    }
 
+    protected Collection<StandardNumber> getStdNums() {
+        if (stdnums.get() == null) {
+            String[] s = settings.getAsArray("types", null);
+            Set<String> types = s != null ? Sets.newTreeSet(Arrays.asList(s)) : null;
+            Set<StandardNumber> set = Sets.newLinkedHashSet();
+            set.addAll(types == null ?
+                    StandardNumberService.create() :
+                    StandardNumberService.create(types));
+            stdnums.set(set);
+        }
+        return stdnums.get();
     }
 
     public Collection<StandardNumber> detect(CharSequence content) {
         Collection<StandardNumber> candidates = newLinkedList();
-        for (StandardNumber stdnum : stdnums) {
+        for (StandardNumber stdnum : getStdNums()) {
             stdnum.reset();
             try {
                 candidates.add(stdnum.set(content).normalize().verify());
@@ -59,15 +63,18 @@ public class Detector extends AbstractLifecycleComponent<Detector>  {
 
     public Collection<CharSequence> lookup(CharSequence content) {
         Collection<CharSequence> variants = newLinkedList();
-        for (StandardNumber stdnum : stdnums) {
+        for (StandardNumber stdnum : getStdNums()) {
             stdnum.reset();
             if (stdnum instanceof ISBN) {
                 handleISBN((ISBN) stdnum, content, variants);
             } else {
                 stdnum = stdnum.set(content).normalize();
                 if (stdnum.isValid()) {
-                    variants.add(stdnum.type().toUpperCase() + " " + stdnum.format());
-                    variants.add(stdnum.type().toUpperCase() + " " + stdnum.normalizedValue());
+                    for (String s : stdnum.getTypedVariants()) {
+                        if (s != null) {
+                            variants.add(s);
+                        }
+                    }
                 }
             }
         }

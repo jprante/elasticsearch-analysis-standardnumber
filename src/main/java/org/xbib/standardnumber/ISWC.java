@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * in the ISWC database.
  *
  */
-public class ISWC implements Comparable<ISWC>, StandardNumber {
+public class ISWC extends AbstractStandardNumber implements Comparable<ISWC>, StandardNumber {
 
     private static final Pattern PATTERN = Pattern.compile("[\\p{Alnum}\\-\\s]{10,13}");
 

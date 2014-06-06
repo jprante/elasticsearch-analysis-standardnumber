@@ -4,7 +4,6 @@ package org.xbib.elasticsearch.plugin.analysis.standardnumber;
 import org.elasticsearch.common.inject.Module;
 import org.elasticsearch.index.analysis.AnalysisModule;
 import org.elasticsearch.plugins.AbstractPlugin;
-import org.xbib.elasticsearch.index.analysis.ConcatTokenFilterFactory;
 import org.xbib.elasticsearch.index.analysis.standardnumber.StandardNumberAnalyzerProvider;
 import org.xbib.elasticsearch.index.analysis.standardnumber.StandardNumberTokenFilterFactory;
 
@@ -29,7 +28,6 @@ public class AnalysisStandardNumberPlugin extends AbstractPlugin {
     public void onModule(AnalysisModule module) {
         module.addAnalyzer("standardnumber", StandardNumberAnalyzerProvider.class);
         module.addTokenFilter("standardnumber", StandardNumberTokenFilterFactory.class);
-        module.addTokenFilter("concat", ConcatTokenFilterFactory.class);
     }
 
     @Override

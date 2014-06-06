@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  *  Numbers encoded in UPC and EAN barcodes are known as
  *  Global Trade Item Numbers (GTIN).
  */
-public class EAN implements Comparable<EAN>, StandardNumber {
+public class EAN extends AbstractStandardNumber implements Comparable<EAN>, StandardNumber {
 
     private static final Pattern PATTERN = Pattern.compile("\\b[\\p{Digit}\\s]{13,18}\\b");
 
