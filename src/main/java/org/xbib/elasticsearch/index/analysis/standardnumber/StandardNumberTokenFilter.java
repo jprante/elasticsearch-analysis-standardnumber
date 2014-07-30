@@ -1,10 +1,10 @@
 package org.xbib.elasticsearch.index.analysis.standardnumber;
 
-import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
+import org.apache.lucene.analysis.tokenattributes.PackedTokenAttributeImpl;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.util.AttributeSource;
 
@@ -15,7 +15,7 @@ import java.util.LinkedList;
 
 public class StandardNumberTokenFilter extends TokenFilter {
 
-    private final LinkedList<Token> tokens;
+    private final LinkedList<PackedTokenAttributeImpl> tokens;
 
     private final Detector detector;
 
@@ -29,7 +29,7 @@ public class StandardNumberTokenFilter extends TokenFilter {
 
     protected StandardNumberTokenFilter(TokenStream input, Detector detector) {
         super(input);
-        this.tokens = new LinkedList<Token>();
+        this.tokens = new LinkedList<PackedTokenAttributeImpl>();
         this.detector = detector;
     }
 
@@ -37,7 +37,7 @@ public class StandardNumberTokenFilter extends TokenFilter {
     public final boolean incrementToken() throws IOException {
         if (!tokens.isEmpty()) {
             assert current != null;
-            Token token = tokens.removeFirst();
+            PackedTokenAttributeImpl token = tokens.removeFirst();
             restoreState(current);
             termAtt.setEmpty().append(token);
             offsetAtt.setOffset(token.startOffset(), token.endOffset());
@@ -58,11 +58,11 @@ public class StandardNumberTokenFilter extends TokenFilter {
     protected void detectAll() throws CharacterCodingException {
         CharSequence term = new String(termAtt.buffer(), 0, termAtt.length());
         Collection<CharSequence> variants = detector.lookup(term);
-        int start = offsetAtt.startOffset();
         for (CharSequence ch : variants) {
             if (ch != null) {
-                String s = ch.toString();
-                tokens.add(new Token(s, start, start + s.length()));
+                PackedTokenAttributeImpl token = new PackedTokenAttributeImpl();
+                token.append(ch);
+                tokens.add(token);
             }
         }
     }
