@@ -76,7 +76,7 @@ public class ARK extends AbstractStandardNumber implements Comparable<ARK> {
 
     @Override
     public boolean isValid() {
-       return "ark".equals(value.getScheme());
+       return value != null && "ark".equals(value.getScheme());
     }
 
     /**

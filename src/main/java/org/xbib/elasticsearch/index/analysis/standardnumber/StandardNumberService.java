@@ -10,11 +10,9 @@ import org.xbib.standardnumber.ISBN;
 import org.xbib.standardnumber.ISMN;
 import org.xbib.standardnumber.ISNI;
 import org.xbib.standardnumber.ISSN;
-import org.xbib.standardnumber.ISTC;
 import org.xbib.standardnumber.ISWC;
 import org.xbib.standardnumber.ORCID;
 import org.xbib.standardnumber.PPN;
-import org.xbib.standardnumber.SICI;
 import org.xbib.standardnumber.StandardNumber;
 import org.xbib.standardnumber.UPC;
 import org.xbib.standardnumber.ZDB;
@@ -58,9 +56,6 @@ public class StandardNumberService {
         if  ("issn".equals(type)) {
             return new ISSN();
         }
-        if  ("istc".equals(type)) {
-            return new ISTC();
-        }
         if  ("iswc".equals(type)) {
             return new ISWC();
         }
@@ -69,9 +64,6 @@ public class StandardNumberService {
         }
         if  ("ppn".equals(type)) {
             return new PPN();
-        }
-        if  ("sici".equals(type)) {
-            return new SICI();
         }
         if  ("upc".equals(type)) {
             return new UPC();
@@ -102,11 +94,9 @@ public class StandardNumberService {
                 new ISMN(),
                 new ISNI(),
                 new ISSN(),
-                new ISTC(),
                 new ISWC(),
                 new ORCID(),
                 new PPN(),
-                new SICI(),
                 new UPC(),
                 new ZDB()
         };

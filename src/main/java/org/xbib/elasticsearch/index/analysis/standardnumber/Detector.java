@@ -85,18 +85,18 @@ public class Detector extends AbstractLifecycleComponent<Detector>  {
         ISBN isbn = stdnum.set(content).normalize();
         if (isbn.isValid()) {
             if (!isbn.isEAN()) {
-                // create up to 4 variants: ISBN, ISBN normalized, ISBN-13, ISBN-13 normalized
-                variants.add("ISBN " + isbn.ean(false).format());
-                variants.add("ISBN " + isbn.ean(false).normalizedValue());
+                // create variants: ISBN, ISBN normalized, ISBN-13, ISBN-13 normalized
+                variants.add(isbn.ean(false).format());
+                variants.add(isbn.ean(false).normalizedValue());
                 isbn = isbn.ean(true).set(content).normalize();
                 if (isbn.isValid()) {
-                    variants.add("ISBN " + isbn.format());
-                    variants.add("ISBN " + isbn.normalizedValue());
+                    variants.add(isbn.format());
+                    variants.add(isbn.normalizedValue());
                 }
             } else {
                 // 2 variants, do not create ISBN-10 for an ISBN-13
-                variants.add("ISBN " + isbn.ean(true).format());
-                variants.add("ISBN " + isbn.ean(true).normalizedValue());
+                variants.add(isbn.ean(true).format());
+                variants.add(isbn.ean(true).normalizedValue());
             }
         }
     }
