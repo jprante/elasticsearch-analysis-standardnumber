@@ -9,7 +9,6 @@ import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.Index;
 import org.elasticsearch.index.analysis.AbstractTokenFilterFactory;
 import org.elasticsearch.index.settings.IndexSettings;
-import org.xbib.elasticsearch.index.analysis.standardnumber.Detector;
 
 public class StandardNumberTokenFilterFactory extends AbstractTokenFilterFactory  {
 

@@ -3,7 +3,8 @@
       "analysis" : {
           "filter" : {
               "standardnumber" : {
-                  "type" : "standardnumber"
+                  "type" : "standardnumber",
+                  "number_types" : [ "isbn" ]
               }
           },
           "analyzer" : {

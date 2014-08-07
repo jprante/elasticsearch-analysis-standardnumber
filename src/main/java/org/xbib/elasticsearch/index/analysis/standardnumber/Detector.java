@@ -37,7 +37,7 @@ public class Detector extends AbstractLifecycleComponent<Detector>  {
 
     protected Collection<StandardNumber> getStdNums() {
         if (stdnums.get() == null) {
-            String[] s = settings.getAsArray("types", null);
+            String[] s = settings.getAsArray("number_types", null);
             Set<String> types = s != null ? Sets.newTreeSet(Arrays.asList(s)) : null;
             Set<StandardNumber> set = Sets.newLinkedHashSet();
             set.addAll(types == null ?

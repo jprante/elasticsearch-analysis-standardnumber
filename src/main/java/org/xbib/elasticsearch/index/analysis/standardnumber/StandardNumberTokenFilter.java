@@ -45,7 +45,7 @@ public class StandardNumberTokenFilter extends TokenFilter {
             return true;
         }
         if (input.incrementToken()) {
-            detectAll();
+            detect();
             if (!tokens.isEmpty()) {
                 current = captureState();
             }
@@ -55,7 +55,7 @@ public class StandardNumberTokenFilter extends TokenFilter {
         }
     }
 
-    protected void detectAll() throws CharacterCodingException {
+    protected void detect() throws CharacterCodingException {
         CharSequence term = new String(termAtt.buffer(), 0, termAtt.length());
         Collection<CharSequence> variants = detector.lookup(term);
         for (CharSequence ch : variants) {

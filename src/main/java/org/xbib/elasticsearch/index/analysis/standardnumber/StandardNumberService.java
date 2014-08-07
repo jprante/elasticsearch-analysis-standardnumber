@@ -26,50 +26,22 @@ import static org.elasticsearch.common.collect.Lists.newLinkedList;
 public class StandardNumberService {
 
     public static StandardNumber create(String type) {
-        if  ("ark".equals(type)) {
-            return new ARK();
-        }
-        if  ("doi".equals(type)) {
-            return new DOI();
-        }
-        if  ("ean".equals(type)) {
-            return new EAN();
-        }
-        if  ("gtin".equals(type)) {
-            return new GTIN();
-        }
-        if  ("iban".equals(type)) {
-            return new IBAN();
-        }
-        if  ("isan".equals(type)) {
-            return new ISAN();
-        }
-        if  ("isbn".equals(type)) {
-            return new ISBN();
-        }
-        if  ("ismn".equals(type)) {
-            return new ISMN();
-        }
-        if  ("isni".equals(type)) {
-            return new ISNI();
-        }
-        if  ("issn".equals(type)) {
-            return new ISSN();
-        }
-        if  ("iswc".equals(type)) {
-            return new ISWC();
-        }
-        if  ("orcid".equals(type)) {
-            return new ORCID();
-        }
-        if  ("ppn".equals(type)) {
-            return new PPN();
-        }
-        if  ("upc".equals(type)) {
-            return new UPC();
-        }
-        if  ("zdb".equals(type)) {
-            return new ZDB();
+        switch (type.toLowerCase()) {
+            case "ark" : return new ARK();
+            case "doi" : return new DOI();
+            case "ean" : return new EAN();
+            case "gtin": return new GTIN();
+            case "iban": return new IBAN();
+            case "isan": return new ISAN();
+            case "isbn": return new ISBN();
+            case "ismn": return new ISMN();
+            case "isni": return new ISNI();
+            case "issn": return new ISSN();
+            case "iswc": return new ISWC();
+            case "orcid": return new ORCID();
+            case "ppn": return new PPN();
+            case "upc": return new UPC();
+            case "zdb": return new ZDB();
         }
         return null;
     }
