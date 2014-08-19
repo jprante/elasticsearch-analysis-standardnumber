@@ -62,6 +62,48 @@ public class StandardNumberAnalysisTest {
                 "ISBN: 978-3-12-606004-2."), expected);
     }
 
+    /**
+     * Avoid nested ZDB-ID in ISBN like this
+     * 3826628225
+     * 978-3-8266-2822-1
+     * 9783826628221
+     * ZDB 826-6
+     * ZDB 8266
+     * by boundary matching for ZDBID.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testISBNWithEmbeddedZDB() throws IOException {
+        NamedAnalyzer namedAnalyzer = createAnalysisService().analyzer("standardnumber");
+        String[] expected = new String[]{
+                "ISBN",
+                "3-8266-2822-5",
+                "GTIN 3826628225",
+                "3826628225",
+                "978-3-8266-2822-1",
+                "9783826628221"
+
+        };
+        assertSimpleTSOutput(namedAnalyzer.tokenStream("content",
+                "ISBN 3-8266-2822-5"), expected);
+    }
+
+    /**
+     * "linux" is not an ISSN
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testNonISSN() throws IOException {
+        NamedAnalyzer namedAnalyzer = createAnalysisService().analyzer("standardnumber");
+        String[] expected = new String[]{
+                "linux"
+        };
+        assertSimpleTSOutput(namedAnalyzer.tokenStream("content",
+                "linux"), expected);
+    }
+
     private AnalysisService createAnalysisService() {
         Settings settings = ImmutableSettings.settingsBuilder().build();
 

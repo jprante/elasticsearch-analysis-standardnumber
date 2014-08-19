@@ -55,6 +55,7 @@ ZDB Zeitschriftendatenbank ID
 
 | Elasticsearch version    | Plugin      | Release date |
 | ------------------------ | ----------- | -------------|
+| 1.3.2                    | 1.3.0.3     | Aug 19, 2014 |
 | 1.3.1                    | 1.3.0.2     | Aug  7, 2014 |
 | 1.3.1                    | 1.3.0.1     | Aug  6, 2014 |
 | 1.3.1                    | 1.3.0.0     | Jul 30, 2014 |
@@ -70,6 +71,7 @@ Do not forget to restart the node after installing.
 
 | File                                             | SHA1                                     |
 | -------------------------------------------------| -----------------------------------------|
+| elasticsearch-standardnumber-1.3.0.3-plugin.zip  | e2f3b3298983ca74a155043ae731021779ad6a47 |
 | elasticsearch-standardnumber-1.3.0.2-plugin.zip  | 0241a9c57238c7ed769d38a8372ac4ad1226d701 |
 | elasticsearch-standardnumber-1.3.0.1-plugin.zip  | d142c896b1631b119e457ba9a8190d648d8f9005 |
 | elasticsearch-standardnumber-1.3.0.0-plugin.zip  | 72e799ee309c6c0a05d230e400bfff9fdcc70d4d |

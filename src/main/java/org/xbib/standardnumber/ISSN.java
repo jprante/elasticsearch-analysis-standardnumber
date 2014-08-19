@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
  */
 public class ISSN extends AbstractStandardNumber implements Comparable<ISSN>, StandardNumber {
 
-    private final static Pattern PATTERN = Pattern.compile("[0-9xX\\-]{8,9}");
+    private final static Pattern PATTERN = Pattern.compile("[0-9]{4}\\-?[0-9]{3}[0-9xX]");
 
     private String value;
 
@@ -87,13 +87,10 @@ public class ISSN extends AbstractStandardNumber implements Comparable<ISSN>, St
         return this;
     }
 
-
     @Override
     public ISSN normalize() {
         Matcher m = PATTERN.matcher(value);
-        if (m.find() && value.length() >= m.end()) {
-            this.value = dehyphenate(value.substring(m.start(), m.end()));
-        }
+        this.value = m.find() ? dehyphenate(value.substring(m.start(), m.end())) : null;
         return this;
     }
 
@@ -108,7 +105,7 @@ public class ISSN extends AbstractStandardNumber implements Comparable<ISSN>, St
             throw new NumberFormatException("invalid");
         }
         if (!check()) {
-            throw new NumberFormatException("bad createChecksum");
+            throw new NumberFormatException("bad checksum");
         }
         return this;
     }

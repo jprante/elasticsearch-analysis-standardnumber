@@ -10,6 +10,7 @@ import org.xbib.standardnumber.ISBN;
 import org.xbib.standardnumber.ISMN;
 import org.xbib.standardnumber.ISNI;
 import org.xbib.standardnumber.ISSN;
+import org.xbib.standardnumber.ISTC;
 import org.xbib.standardnumber.ISWC;
 import org.xbib.standardnumber.ORCID;
 import org.xbib.standardnumber.PPN;
@@ -37,6 +38,7 @@ public class StandardNumberService {
             case "ismn": return new ISMN();
             case "isni": return new ISNI();
             case "issn": return new ISSN();
+            case "istc": return new ISTC();
             case "iswc": return new ISWC();
             case "orcid": return new ORCID();
             case "ppn": return new PPN();
@@ -54,6 +56,7 @@ public class StandardNumberService {
         return stdnums;
     }
 
+    // do not contains ISTC and SICI by default, too broad character pattern filter mangles up everything.
     public static Collection<StandardNumber> create() {
         StandardNumber[] array = new StandardNumber[] {
                 new ARK(),
