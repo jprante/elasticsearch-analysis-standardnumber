@@ -63,7 +63,7 @@ ZDB Zeitschriftendatenbank ID
 
 ## Installation
 
-    ./bin/plugin -install standardnumber -url http://xbib.org/repository/org/xbib/elasticsearch/plugin/elasticsearch-standardnumber/1.3.0.2/elasticsearch-standardnumber-1.3.0.2-plugin.zip
+    ./bin/plugin -install analysis-standardnumber -url http://xbib.org/repository/org/xbib/elasticsearch/plugin/elasticsearch-analysis-standardnumber/1.3.0.3/elasticsearch-analysis-standardnumber-1.3.0.3-plugin.zip
 
 Do not forget to restart the node after installing.
 
