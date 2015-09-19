@@ -1,7 +1,8 @@
+[!ISBN Barcode](https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/EAN-13-ISBN-13.svg/320px-EAN-13-ISBN-13.svg.png)
 
-# Standardnumber Analysis Plugin for Elasticsearch
+# Standardnumber plugin for Elasticsearch
 
-Standardnumber is an analysis plugin for [Elasticsearch](http://github.com/elasticsearch/elasticsearch).
+Standardnumber is a plugin for [Elasticsearch](http://github.com/elasticsearch/elasticsearch).
 
 What are standard numbers? Standard numbers are globally unique character sequences, often digits, with
 rules, domains, and canonical forms defined by standardization bodies or organizations like the
@@ -53,29 +54,24 @@ ZDB Zeitschriftendatenbank ID
 
 ## Versions
 
-| Elasticsearch version    | Plugin      | Release date |
-| ------------------------ | ----------- | -------------|
-| 1.3.2                    | 1.3.0.3     | Aug 19, 2014 |
-| 1.3.1                    | 1.3.0.2     | Aug  7, 2014 |
-| 1.3.1                    | 1.3.0.1     | Aug  6, 2014 |
-| 1.3.1                    | 1.3.0.0     | Jul 30, 2014 |
-| 1.2.1                    | 1.2.1.0     | Jun  6, 2014 |
+| Elasticsearch     | Plugin         | Release date |
+| ----------------- | -------------- | -------------|
+| 2.0.0-beta2       | 2.0.0-beta2.0  | Sep 19, 2015 |
+| 1.3.2             | 1.3.0.3        | Aug 19, 2014 |
+| 1.3.1             | 1.3.0.2        | Aug  7, 2014 |
+| 1.3.1             | 1.3.0.1        | Aug  6, 2014 |
+| 1.3.1             | 1.3.0.0        | Jul 30, 2014 |
+| 1.2.1             | 1.2.1.0        | Jun  6, 2014 |
 
-## Installation
+## Installation 1.x
 
     ./bin/plugin -install analysis-standardnumber -url http://xbib.org/repository/org/xbib/elasticsearch/plugin/elasticsearch-analysis-standardnumber/1.3.0.3/elasticsearch-analysis-standardnumber-1.3.0.3-plugin.zip
 
+## Installation 2.x
+
+    ./bin/plugin install http://xbib.org/repository/org/xbib/elasticsearch/plugin/elasticsearch-analysis-standardnumber/2.0.0-beta2.0/elasticsearch-analysis-standardnumber-2.0.0-beta2.0-plugin.zip
+
 Do not forget to restart the node after installing.
-
-## Checksum
-
-| File                                             | SHA1                                     |
-| -------------------------------------------------| -----------------------------------------|
-| elasticsearch-standardnumber-1.3.0.3-plugin.zip  | e2f3b3298983ca74a155043ae731021779ad6a47 |
-| elasticsearch-standardnumber-1.3.0.2-plugin.zip  | 0241a9c57238c7ed769d38a8372ac4ad1226d701 |
-| elasticsearch-standardnumber-1.3.0.1-plugin.zip  | d142c896b1631b119e457ba9a8190d648d8f9005 |
-| elasticsearch-standardnumber-1.3.0.0-plugin.zip  | 72e799ee309c6c0a05d230e400bfff9fdcc70d4d |
-| elasticsearch-standardnumber-1.2.1.0.zip         | 3c881daed9a5355e8c37c2112ef80c7bb0feef97 |
 
 ## Project docs
 
@@ -197,7 +193,7 @@ which is equivalent to::
 
 # License
 
-Standardnumber Analysis Plugin for Elasticsearch
+Standardnumber plugin for Elasticsearch
 
 Copyright (C) 2013 Jörg Prante
 

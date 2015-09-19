@@ -1,40 +1,88 @@
-
+/*
+ * Copyright (C) 2014 Jörg Prante
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ */
 package org.xbib.elasticsearch.index.mapper.standardnumber;
 
+import org.apache.lucene.document.Field;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentParser;
-import org.elasticsearch.index.mapper.FieldMapperListener;
+import org.elasticsearch.index.mapper.FieldMapper;
+import org.elasticsearch.index.mapper.MappedFieldType;
 import org.elasticsearch.index.mapper.Mapper;
 import org.elasticsearch.index.mapper.MapperParsingException;
-import org.elasticsearch.index.mapper.MergeContext;
 import org.elasticsearch.index.mapper.MergeMappingException;
-import org.elasticsearch.index.mapper.ObjectMapperListener;
+import org.elasticsearch.index.mapper.MergeResult;
 import org.elasticsearch.index.mapper.ParseContext;
 import org.elasticsearch.index.mapper.core.StringFieldMapper;
-import org.xbib.elasticsearch.index.analysis.standardnumber.Detector;
+import org.xbib.elasticsearch.index.analysis.standardnumber.StandardnumberService;
 import org.xbib.standardnumber.StandardNumber;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.index.mapper.MapperBuilders.stringField;
 
-public class StandardNumberMapper implements Mapper {
+public class StandardnumberMapper extends FieldMapper {
 
     public static final String CONTENT_TYPE = "standardnumber";
 
-    public static class Builder extends Mapper.Builder<Builder, StandardNumberMapper> {
+    static final class StandardnumberFieldType extends MappedFieldType {
+
+        protected StandardnumberFieldType() {
+            super();
+        }
+
+        protected StandardnumberFieldType(StandardnumberMapper.StandardnumberFieldType ref) {
+            super(ref);
+        }
+
+        public StandardnumberMapper.StandardnumberFieldType clone() {
+            return new StandardnumberMapper.StandardnumberFieldType(this);
+        }
+
+        @Override
+        public String typeName() {
+            return "standardnumber";
+        }
+
+        public String value(Object value) {
+            return value == null ? null : value.toString();
+        }
+    }
+
+    public static class Builder extends FieldMapper.Builder<Builder, StandardnumberMapper> {
 
         private StringFieldMapper.Builder contentBuilder;
 
         private StringFieldMapper.Builder stdnumBuilder = stringField("standardnumber");
 
-        private Detector detector;
+        private StandardnumberService service;
 
-        public Builder(String name, Detector detector) {
-            super(name);
-            this.detector = detector;
+        public Builder(String name, StandardnumberService service) {
+            super(name, new StandardnumberFieldType());
+            this.service = service;
             this.contentBuilder = stringField(name);
             this.builder = this;
         }
@@ -50,32 +98,38 @@ public class StandardNumberMapper implements Mapper {
         }
 
         @Override
-        public StandardNumberMapper build(BuilderContext context) {
+        public StandardnumberMapper build(BuilderContext context) {
             context.path().add(name);
             StringFieldMapper contentMapper = contentBuilder.build(context);
             StringFieldMapper stdnumMapper = stdnumBuilder.build(context);
             context.path().remove();
-            return new StandardNumberMapper(name, detector, contentMapper, stdnumMapper);
+            return new StandardnumberMapper(name,
+                    fieldType,
+                    defaultFieldType,
+                    service,
+                    contentMapper,
+                    stdnumMapper);
         }
     }
 
     public static class TypeParser implements Mapper.TypeParser {
 
-        private Detector detector;
+        private StandardnumberService service;
 
-        public TypeParser(Detector detector) {
-            this.detector = detector;
+        public TypeParser(StandardnumberService service) {
+            this.service = service;
         }
 
         @SuppressWarnings({"unchecked","rawtypes"})
         @Override
-        public Mapper.Builder parse(String name, Map<String, Object> node, ParserContext parserContext)
+        public Mapper.Builder parse(String name, Map<String, Object> mapping, ParserContext parserContext)
                 throws MapperParsingException {
-            StandardNumberMapper.Builder builder = new Builder(name, detector);
-            for (Map.Entry<String, Object> entry : node.entrySet()) {
+            StandardnumberMapper.Builder builder = new Builder(name, service);
+            Iterator<Map.Entry<String, Object>> iterator = mapping.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, Object> entry = iterator.next();
                 String fieldName = entry.getKey();
                 Object fieldNode = entry.getValue();
-
                 if (fieldName.equals("fields")) {
                     Map<String, Object> fieldsNode = (Map<String, Object>) fieldNode;
                     for (Map.Entry<String, Object> fieldsEntry : fieldsNode.entrySet()) {
@@ -90,6 +144,7 @@ public class StandardNumberMapper implements Mapper {
                                     (Map<String, Object>) propNode, parserContext));
                         }
                     }
+                    iterator.remove();
                 }
             }
 
@@ -97,27 +152,24 @@ public class StandardNumberMapper implements Mapper {
         }
     }
 
-    private final String name;
-    private final Detector detector;
+    private final StandardnumberService service;
     private final StringFieldMapper contentMapper;
     private final StringFieldMapper stdnumMapper;
 
-    public StandardNumberMapper(String name, Detector detector,
+    public StandardnumberMapper(String name,
+                                MappedFieldType fieldType,
+                                MappedFieldType defaultFieldType,
+                                StandardnumberService service,
                                 StringFieldMapper contentMapper,
                                 StringFieldMapper stdnumMapper) {
-        this.name = name;
-        this.detector = detector;
+        super(name, fieldType, defaultFieldType, null, null,null);
+        this.service = service;
         this.contentMapper = contentMapper;
         this.stdnumMapper = stdnumMapper;
     }
 
     @Override
-    public String name() {
-        return name;
-    }
-
-    @Override
-    public void parse(ParseContext context) throws IOException {
+    public Mapper parse(ParseContext context) throws IOException {
         String content = null;
 
         XContentParser parser = context.parser();
@@ -126,53 +178,46 @@ public class StandardNumberMapper implements Mapper {
         if (token == XContentParser.Token.VALUE_STRING) {
             content = parser.text();
         }
-
-        context.externalValue(content);
+        if (content == null) {
+            return null;
+        }
+        context = context.createExternalValueContext(content);
         contentMapper.parse(context);
-
         try {
-            Collection<StandardNumber> stdnums = detector.detect(content);
+            Collection<StandardNumber> stdnums = service.detect(content);
             for (StandardNumber stdnum : stdnums) {
-                context.externalValue(stdnum.normalizedValue());
+                context = context.createExternalValueContext(stdnum.normalizedValue());
                 stdnumMapper.parse(context);
             }
         } catch(NumberFormatException e) {
-            context.externalValue("unknown");
+            context = context.createExternalValueContext("unknown");
             stdnumMapper.parse(context);
         }
+        return null;
     }
 
     @Override
-    public void merge(Mapper mergeWith, MergeContext mergeContext) throws MergeMappingException {
+    protected void parseCreateField(ParseContext parseContext, List<Field> fields) throws IOException {
     }
 
     @Override
-    public void traverse(FieldMapperListener fieldMapperListener) {
-        contentMapper.traverse(fieldMapperListener);
-        stdnumMapper.traverse(fieldMapperListener);
-    }
-
-    @Override
-    public void traverse(ObjectMapperListener objectMapperListener) {
-    }
-
-    @Override
-    public void close() {
-        contentMapper.close();
-        stdnumMapper.close();
+    public void merge(Mapper mergeWith, MergeResult mergeResult) throws MergeMappingException {
     }
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
-        builder.startObject(name);
+        builder.startObject(simpleName());
         builder.field("type", CONTENT_TYPE);
-
         builder.startObject("fields");
         contentMapper.toXContent(builder, params);
         stdnumMapper.toXContent(builder, params);
         builder.endObject();
-
         builder.endObject();
         return builder;
+    }
+
+    @Override
+    protected String contentType() {
+        return CONTENT_TYPE;
     }
 }

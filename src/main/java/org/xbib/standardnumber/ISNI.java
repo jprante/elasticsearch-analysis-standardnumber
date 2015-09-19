@@ -1,3 +1,25 @@
+/*
+ * Copyright (C) 2014 Jörg Prante
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ */
 package org.xbib.standardnumber;
 
 import org.xbib.standardnumber.check.iso7064.MOD112;
@@ -108,12 +130,9 @@ public class ISNI extends AbstractStandardNumber implements Comparable<ISNI>, St
 
     private boolean check() {
         if (createWithChecksum) {
-            this.value = check.encode(value.length() < 16 ? value : value.substring(0, value.length()-1));
+            this.value = check.encode(value.length() < 16 ? value : value.substring(0, value.length() - 1));
         }
-        if (value.length() < 16) {
-            return false;
-        }
-        return check.verify(value);
+        return value.length() >= 16 && check.verify(value);
     }
 
     private String clean(String isbn) {

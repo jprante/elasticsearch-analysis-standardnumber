@@ -1,4 +1,25 @@
-
+/*
+ * Copyright (C) 2014 Jörg Prante
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ */
 package org.xbib.standardnumber;
 
 import javax.xml.stream.XMLEventReader;
@@ -117,7 +138,7 @@ public class ISBN extends AbstractStandardNumber implements Comparable<ISBN>, St
 
     /**
      * Get the normalized value of this standard book number
-     * 
+     *
      * @return the value of this standard book number
      */
     @Override
@@ -136,8 +157,8 @@ public class ISBN extends AbstractStandardNumber implements Comparable<ISBN>, St
             return null;
         }
         return eanPreferred ?
-                        fix(eanvalue != null ? eanvalue : "978" + value) :
-                        fix("978" + value).substring(4);
+                fix(eanvalue) :
+                fix("978" + value).substring(4);
     }
 
     @Override
@@ -157,6 +178,8 @@ public class ISBN extends AbstractStandardNumber implements Comparable<ISBN>, St
 
     /**
      * Prefer European Article Number (EAN, ISBN-13)
+     * @param preferEAN true if EAN should be preferred
+     * @return this ISBN object
      */
     public ISBN ean(boolean preferEAN) {
         this.eanPreferred = preferEAN;
@@ -426,7 +449,7 @@ public class ISBN extends AbstractStandardNumber implements Comparable<ISBN>, St
             ranges = new ArrayList<String>();
             length = 0;
             try {
-                InputStream in = getClass().getResourceAsStream("/org/xbib/standardnumber/RangeMessage.xml");
+                InputStream in = getClass().getResourceAsStream("/standardnumber/RangeMessage.xml");
                 XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
                 XMLEventReader xmlReader = xmlInputFactory.createXMLEventReader(in);
                 while (xmlReader.hasNext()) {
@@ -493,7 +516,4 @@ public class ISBN extends AbstractStandardNumber implements Comparable<ISBN>, St
             return ranges;
         }
     }
-
 }
-
-

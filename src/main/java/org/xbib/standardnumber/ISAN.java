@@ -1,3 +1,25 @@
+/*
+ * Copyright (C) 2014 Jörg Prante
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ */
 package org.xbib.standardnumber;
 
 import org.xbib.standardnumber.check.iso7064.MOD3736;
@@ -14,7 +36,7 @@ import java.util.regex.Pattern;
  * It was developed within an ISO (International Organisation for Standardisation) TC46/SC9
  * working group. ISAN is managed and run by ISAN-IA.
  *
- * The ISAN standard (ISO standard 15706:2002 & ISO 15706-2) is recommended or required
+ * The ISAN standard (ISO standard 15706:2002, ISO 15706-2) is recommended or required
  * as the audiovisual identifier of choice for producers, studios, broadcasters,
  * Internet media providers and video games publishers who need to encode, track, and
  * distribute video in a variety of formats.
