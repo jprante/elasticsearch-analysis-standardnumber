@@ -1,4 +1,4 @@
-[!ISBN Barcode](https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/EAN-13-ISBN-13.svg/320px-EAN-13-ISBN-13.svg.png)
+[![0](https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/EAN-13-ISBN-13.svg/320px-EAN-13-ISBN-13.svg.png)](https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/EAN-13-ISBN-13.svg/320px-EAN-13-ISBN-13.svg.png)
 
 # Standardnumber plugin for Elasticsearch
 
