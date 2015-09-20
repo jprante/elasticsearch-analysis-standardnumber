@@ -1,5 +1,7 @@
 [![0](https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/EAN-13-ISBN-13.svg/320px-EAN-13-ISBN-13.svg.png)](https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/EAN-13-ISBN-13.svg/320px-EAN-13-ISBN-13.svg.png)
 
+Image taken from Wikipedia https://commons.wikimedia.org/wiki/File:EAN-13-ISBN-13.svg
+
 # Standardnumber plugin for Elasticsearch
 
 Standardnumber is a plugin for [Elasticsearch](http://github.com/elasticsearch/elasticsearch).
