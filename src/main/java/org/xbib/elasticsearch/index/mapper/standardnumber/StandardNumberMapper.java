@@ -23,18 +23,17 @@
 package org.xbib.elasticsearch.index.mapper.standardnumber;
 
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexOptions;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.index.mapper.FieldMapper;
 import org.elasticsearch.index.mapper.MappedFieldType;
 import org.elasticsearch.index.mapper.Mapper;
 import org.elasticsearch.index.mapper.MapperParsingException;
-import org.elasticsearch.index.mapper.MergeMappingException;
-import org.elasticsearch.index.mapper.MergeResult;
 import org.elasticsearch.index.mapper.ParseContext;
 import org.elasticsearch.index.mapper.core.StringFieldMapper;
-import org.xbib.elasticsearch.index.analysis.standardnumber.StandardnumberService;
-import org.xbib.standardnumber.StandardNumber;
+import org.xbib.elasticsearch.common.standardnumber.StandardNumber;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -47,6 +46,13 @@ import static org.elasticsearch.index.mapper.MapperBuilders.stringField;
 public class StandardnumberMapper extends FieldMapper {
 
     public static final String CONTENT_TYPE = "standardnumber";
+
+    public static final class Defaults {
+        public static final StandardnumberFieldType FIELD_TYPE = new StandardnumberFieldType();
+        static {
+            FIELD_TYPE.freeze();
+        }
+    }
 
     static final class StandardnumberFieldType extends MappedFieldType {
 
@@ -81,7 +87,7 @@ public class StandardnumberMapper extends FieldMapper {
         private StandardnumberService service;
 
         public Builder(String name, StandardnumberService service) {
-            super(name, new StandardnumberFieldType());
+            super(name, Defaults.FIELD_TYPE, Defaults.FIELD_TYPE);
             this.service = service;
             this.contentBuilder = stringField(name);
             this.builder = this;
@@ -99,13 +105,30 @@ public class StandardnumberMapper extends FieldMapper {
 
         @Override
         public StandardnumberMapper build(BuilderContext context) {
+            MappedFieldType defaultFieldType = Defaults.FIELD_TYPE.clone();
+            if (this.fieldType.indexOptions() != IndexOptions.NONE && !this.fieldType.tokenized()) {
+                defaultFieldType.setOmitNorms(true);
+                defaultFieldType.setIndexOptions(IndexOptions.DOCS);
+                if (!this.omitNormsSet && this.fieldType.boost() == 1.0F) {
+                    this.fieldType.setOmitNorms(true);
+                }
+                if (!this.indexOptionsSet) {
+                    this.fieldType.setIndexOptions(IndexOptions.DOCS);
+                }
+            }
+            defaultFieldType.freeze();
+            this.setupFieldType(context);
+
             context.path().add(name);
             StringFieldMapper contentMapper = contentBuilder.build(context);
             StringFieldMapper stdnumMapper = stdnumBuilder.build(context);
             context.path().remove();
             return new StandardnumberMapper(name,
-                    fieldType,
+                    this.fieldType,
                     defaultFieldType,
+                    context.indexSettings(),
+                    multiFieldsBuilder.build(this, context),
+                    copyTo,
                     service,
                     contentMapper,
                     stdnumMapper);
@@ -116,7 +139,7 @@ public class StandardnumberMapper extends FieldMapper {
 
         private StandardnumberService service;
 
-        public TypeParser(StandardnumberService service) {
+        public void setService(StandardnumberService service) {
             this.service = service;
         }
 
@@ -135,7 +158,6 @@ public class StandardnumberMapper extends FieldMapper {
                     for (Map.Entry<String, Object> fieldsEntry : fieldsNode.entrySet()) {
                         String propName = fieldsEntry.getKey();
                         Object propNode = fieldsEntry.getValue();
-
                         if (name.equals(propName)) {
                             builder.content((StringFieldMapper.Builder) parserContext.typeParser("string").parse(name,
                                     (Map<String, Object>) propNode, parserContext));
@@ -153,16 +175,19 @@ public class StandardnumberMapper extends FieldMapper {
     }
 
     private final StandardnumberService service;
-    private final StringFieldMapper contentMapper;
-    private final StringFieldMapper stdnumMapper;
+    private final FieldMapper contentMapper;
+    private final FieldMapper stdnumMapper;
 
-    public StandardnumberMapper(String name,
+    public StandardnumberMapper(String simpleName,
                                 MappedFieldType fieldType,
                                 MappedFieldType defaultFieldType,
+                                Settings indexSettings,
+                                MultiFields multiFields,
+                                CopyTo copyTo,
                                 StandardnumberService service,
-                                StringFieldMapper contentMapper,
-                                StringFieldMapper stdnumMapper) {
-        super(name, fieldType, defaultFieldType, null, null,null);
+                                FieldMapper contentMapper,
+                                FieldMapper stdnumMapper) {
+        super(simpleName, fieldType, defaultFieldType, indexSettings, multiFields, copyTo);
         this.service = service;
         this.contentMapper = contentMapper;
         this.stdnumMapper = stdnumMapper;
@@ -171,10 +196,8 @@ public class StandardnumberMapper extends FieldMapper {
     @Override
     public Mapper parse(ParseContext context) throws IOException {
         String content = null;
-
         XContentParser parser = context.parser();
         XContentParser.Token token = parser.currentToken();
-
         if (token == XContentParser.Token.VALUE_STRING) {
             content = parser.text();
         }
@@ -198,10 +221,6 @@ public class StandardnumberMapper extends FieldMapper {
 
     @Override
     protected void parseCreateField(ParseContext parseContext, List<Field> fields) throws IOException {
-    }
-
-    @Override
-    public void merge(Mapper mergeWith, MergeResult mergeResult) throws MergeMappingException {
     }
 
     @Override

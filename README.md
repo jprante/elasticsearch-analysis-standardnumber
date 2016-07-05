@@ -58,6 +58,7 @@ ZDB Zeitschriftendatenbank ID
 
 | Elasticsearch     | Plugin         | Release date |
 | ----------------- | -------------- | -------------|
+| 2.3.3             | 2.3.3.0        | Jul  5, 2016 |
 | 2.0.0-beta2       | 2.0.0-beta2.0  | Sep 19, 2015 |
 | 1.3.2             | 1.3.0.3        | Aug 19, 2014 |
 | 1.3.1             | 1.3.0.2        | Aug  7, 2014 |
@@ -65,19 +66,15 @@ ZDB Zeitschriftendatenbank ID
 | 1.3.1             | 1.3.0.0        | Jul 30, 2014 |
 | 1.2.1             | 1.2.1.0        | Jun  6, 2014 |
 
+## Installation 2.x
+
+    ./bin/plugin install http://xbib.org/repository/org/xbib/elasticsearch/plugin/elasticsearch-standardnumber/2.3.3.0/elasticsearch-standardnumber-2.3.3.0-plugin.zip
+
 ## Installation 1.x
 
     ./bin/plugin -install analysis-standardnumber -url http://xbib.org/repository/org/xbib/elasticsearch/plugin/elasticsearch-analysis-standardnumber/1.3.0.3/elasticsearch-analysis-standardnumber-1.3.0.3-plugin.zip
 
-## Installation 2.x
-
-    ./bin/plugin install http://xbib.org/repository/org/xbib/elasticsearch/plugin/elasticsearch-analysis-standardnumber/2.0.0-beta2.0/elasticsearch-analysis-standardnumber-2.0.0-beta2.0-plugin.zip
-
 Do not forget to restart the node after installing.
-
-## Project docs
-
-The Maven project site is available at [Github](http://jprante.github.io/elasticsearch-standardnumber)
 
 ## Issues
 
@@ -85,14 +82,15 @@ All feedback is welcome! If you find issues, please post them at [Github](https:
 
 # Example
 
-In the settings, set up a token filter of type "standardnumber"::
+In the settings, set up a token filter of type "standardnumber"
 
     {
        "index" : {
           "analysis" : {
               "filter" : {
                   "standardnumber" : {
-                      "type" : "standardnumber"
+                      "type" : "standardnumber",
+                      "number_types" : [ "isbn" ]
                   }
               },
               "analyzer" : {
@@ -118,8 +116,7 @@ will be tokenized into::
     "9781617291623",
     "EAN 9781617291623",
     "GTIN 9781617291623",
-    "ISBN 978-1-61729-162-3",
-    "ISBN 9781617291623"
+    "978-1-61729-162-3"
 
 The formatting of ISBN-13 was added as an extra token to the stream.
 
@@ -138,10 +135,10 @@ The content ``Die ISBN von Lucene in Action lautet 1-9339-8817-7.`` will be toke
     "Action",
     "lautet",
     "1-9339-8817-7.",
-    "ISBN 1-933988-17-7",
-    "ISBN 1933988177",
-    "ISBN 978-1-933988-17-7",
-    "ISBN 9781933988177"
+    "1-933988-17-7",
+    "1933988177",
+    "978-1-933988-17-7",
+    "9781933988177"
 
 ISBN-10 were the only form valid before Januar 1, 2007. Such old ISBNs will be reformatted, validated, and
 normalized into ISBN-10/ISBN13 variant forms, which are added as extra tokens to the token stream.

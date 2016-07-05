@@ -25,9 +25,10 @@ package org.xbib.elasticsearch.index.analysis.standardnumber;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PackedTokenAttributeImpl;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+import org.elasticsearch.common.settings.Settings;
+import org.xbib.elasticsearch.index.mapper.standardnumber.StandardnumberService;
 
 import java.io.IOException;
 import java.nio.charset.CharacterCodingException;
@@ -38,20 +39,23 @@ public class StandardnumberTokenFilter extends TokenFilter {
 
     private final LinkedList<PackedTokenAttributeImpl> tokens;
 
-    private final StandardnumberService standardnumberService;
+    private final StandardnumberService service;
+
+    private final Settings settings;
 
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
-
-    private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 
     private final PositionIncrementAttribute posIncAtt = addAttribute(PositionIncrementAttribute.class);
 
     private State current;
 
-    protected StandardnumberTokenFilter(TokenStream input, StandardnumberService standardnumberService) {
+    protected StandardnumberTokenFilter(TokenStream input,
+                                        StandardnumberService service,
+                                        Settings settings) {
         super(input);
-        this.tokens = new LinkedList<PackedTokenAttributeImpl>();
-        this.standardnumberService = standardnumberService;
+        this.tokens = new LinkedList<>();
+        this.service = service;
+        this.settings = settings;
     }
 
     @Override
@@ -61,7 +65,6 @@ public class StandardnumberTokenFilter extends TokenFilter {
             PackedTokenAttributeImpl token = tokens.removeFirst();
             restoreState(current);
             termAtt.setEmpty().append(token);
-            offsetAtt.setOffset(token.startOffset(), token.endOffset());
             posIncAtt.setPositionIncrement(0);
             return true;
         }
@@ -78,7 +81,7 @@ public class StandardnumberTokenFilter extends TokenFilter {
 
     protected void detect() throws CharacterCodingException {
         CharSequence term = new String(termAtt.buffer(), 0, termAtt.length());
-        Collection<CharSequence> variants = standardnumberService.lookup(term);
+        Collection<CharSequence> variants = service.lookup(settings, term);
         for (CharSequence ch : variants) {
             if (ch != null) {
                 PackedTokenAttributeImpl token = new PackedTokenAttributeImpl();

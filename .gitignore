@@ -1,11 +1,14 @@
 /data
+/build
 /work
 /logs
 /.idea
 /target
 .DS_Store
 *.iml
-/.project
 /.settings
 /.classpath
-.*.swp
+/.project
+/.gradle
+
+/plugins

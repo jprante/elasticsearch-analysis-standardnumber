@@ -28,6 +28,8 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.analysis.AnalysisModule;
 import org.elasticsearch.plugins.Plugin;
 import org.xbib.elasticsearch.index.analysis.standardnumber.StandardnumberAnalysisBinderProcessor;
+import org.xbib.elasticsearch.index.mapper.standardnumber.StandardnumberMapperModule;
+import org.xbib.elasticsearch.index.mapper.standardnumber.StandardnumberMapperTypeParser;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,9 +38,11 @@ public class StandardnumberPlugin extends Plugin {
 
     private final Settings settings;
 
+    private final StandardnumberMapperTypeParser standardnumberMapperTypeParser;
     @Inject
     public StandardnumberPlugin(Settings settings) {
         this.settings = settings;
+        this.standardnumberMapperTypeParser = new StandardnumberMapperTypeParser();
     }
 
     @Override
@@ -58,10 +62,10 @@ public class StandardnumberPlugin extends Plugin {
     }
 
     @Override
-    public Collection<Module> indexModules(Settings indexSettings) {
+    public Collection<Module> nodeModules() {
         Collection<Module> modules = new ArrayList<>();
         if (settings.getAsBoolean("plugins.standardnumber.enabled", true)) {
-            modules.add(new StandardnumberIndexModule());
+            modules.add(new StandardnumberMapperModule(standardnumberMapperTypeParser));
         }
         return modules;
     }
